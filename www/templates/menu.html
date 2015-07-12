@@ -26,8 +26,12 @@
           <a ui-sref="app.players"
              ui-sref-active="current"
              class="item" menu-close>
-              <i class="icon ion-ios-home"></i>
+              <i class="icon ion-ios-people"></i>
               Spelers</a>
+          <a ng-click="logout()"
+             class="item"
+             ng-controller="LogoutCtrl">
+              <i class="icon ion-android-exit"></i> Uitloggen</a>
 
       </ion-list>
     </ion-content>

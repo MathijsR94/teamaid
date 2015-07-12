@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'firebase'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'firebase'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -22,6 +22,41 @@ angular.module('starter', ['ionic', 'starter.controllers', 'firebase'])
 
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
+      .state('tab', {
+          url: "/tab",
+          abstract: true,
+          templateUrl: "templates/tabs.html"
+      })
+
+      .state('tab.login', {
+          url: '/login',
+          views: {
+              'tab-account': {
+                  templateUrl: 'templates/login.html',
+                  controller: 'LoginCtrl'
+              }
+          }
+      })
+
+      .state('tab.lostpassword', {
+          url: '/wachtwoordvergeten',
+          views: {
+              'tab-lostpassword': {
+                  templateUrl: 'templates/lostpassword.html',
+                  controller: 'ForgotPasswordCtrl'
+              }
+          }
+      })
+
+      .state('tab.register', {
+          url: '/registreren',
+          views: {
+              'tab-register': {
+                  templateUrl: 'templates/register.html',
+                  controller: 'RegisterCtrl'
+              }
+          }
+      })
 
   .state('app', {
     url: "/app",
@@ -48,5 +83,5 @@ angular.module('starter', ['ionic', 'starter.controllers', 'firebase'])
       }
     });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/home');
+  $urlRouterProvider.otherwise('/tab/login');
 });

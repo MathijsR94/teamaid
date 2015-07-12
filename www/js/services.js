@@ -37,9 +37,29 @@ angular.module('starter.services', [])
                         alert("Password reset email sent successfully!");
                     }
                 });
-            },
-            connectedRef: function () {
-                return ref.child(".info").child("connected");
             }
         }
     })
+
+    .factory('User', function ($firebaseObject, $firebaseArray, $q, $timeout, firebaseRef) {
+        var ref = firebaseRef.ref();
+        var user = ref.getAuth();
+        //var members = $firebaseObject(ref.child("Members").child(user.uid));
+        var accountData =  $firebaseArray(ref.child("Users").child(user.uid));
+        console.log(accountData);
+        return {
+            all: function () {
+                return members;
+            },
+            getMember: function () {
+                var deferred = $q.defer();
+                members.$loaded(function () {
+                    deferred.resolve(members.$getRecord(selectedMember));
+                });
+                return deferred.promise;
+            },
+            getAccountData: function() {
+                return accountData;
+            }
+        }
+    });
