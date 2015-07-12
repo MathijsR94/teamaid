@@ -1,9 +1,11 @@
 <ion-view view-title="Spelers">
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="player in players">
-        {{player.firstName}} {{player.lastName}}
+      <ion-item ng-repeat="team in teams">
+            {{team.$id}}
       </ion-item>
     </ion-list>
+
+      <button ng-click="addTeam()">Voeg team toe</button>
   </ion-content>
 </ion-view>

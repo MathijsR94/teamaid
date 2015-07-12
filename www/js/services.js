@@ -62,4 +62,30 @@ angular.module('starter.services', [])
                 return accountData;
             }
         }
+    })
+
+    .factory('Teams', function ($firebaseArray, firebaseRef) {
+        var ref = firebaseRef.ref();
+        var teamsRef = ref.child("Teams");
+        var teams = $firebaseArray(ref.child("Teams"));
+
+
+        return {
+            ref: function() {
+                return teamsRef;
+            },
+            getTeams: function() {
+                return teams;
+            },
+            addTeam: function(teamName) {
+                teams.$add({
+                    teamName: teamName
+                });
+                teams.$loaded(function() {
+                    var lastTeam = teams[teams.length -1];
+                    console.log(teams[teams.length -1]);
+                    return lastTeam;
+                })
+            }
+        }
     });

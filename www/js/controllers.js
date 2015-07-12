@@ -20,11 +20,16 @@ angular.module('starter.controllers', [])
             fireBaseData.resetPassword(em);
         }
     })
-    .controller('RegisterCtrl', function ($scope, firebaseRef, $state) {
+    .controller('RegisterCtrl', function ($scope, Teams, $state) {
         //Create user methode
-        $scope.register = function (em, pwd, firstName, insertion, lastName) {
+
+        $scope.addTeam = function(teamName) {
+            Teams.addTeam(teamName);
+        }
+
+        $scope.createPlayer = function (teamId, fistName, lastName, insertion, em, pwd) {
             if (firstName != null && lastName != null && em != null && pwd != null) {
-                firebaseRef.ref().createUser({
+                Teams.teamsRef().createUser({
                     email: em,
                     password: pwd
                 }, function (error) {
@@ -40,12 +45,12 @@ angular.module('starter.controllers', [])
                                 alert("Error creating user:" +  error);
                         }
                     } else {
-                        firebaseRef.ref().authWithPassword({
+                            Teams.teamsRef().authWithPassword({
                             email: em,
                             password: pwd
                         }, function (error, authData) {
                             if (error === null) {
-                                var usersRef = firebaseRef.ref().child("Users");
+                                var usersRef = Teams.teamsRef();
                                 var uid = authData.uid;
                                 var ins = "";
                                 if (insertion != null) ins = insertion;
@@ -95,7 +100,11 @@ angular.module('starter.controllers', [])
     .controller('HomeCtrl', function ($scope, User) {
 
     })
-    .controller('PlayersCtrl', function ($scope, User) {
-        $scope.user = User.getAccountData();
+    .controller('PlayersCtrl', function ($scope, Teams) {
+        $scope.teams = Teams.getTeams();
+        $scope.addTeam = function () {
+            console.log('efhui');
+            Teams.addTeam('Bla', 'Zwolle');
+        };
     })
 
