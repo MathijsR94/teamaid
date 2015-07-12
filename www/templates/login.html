@@ -1,0 +1,61 @@
+<ion-view title="Account">
+    <ion-content has-header="true" padding="true">
+        <div class="row row-center">
+            <div class="col center">
+                <!--<img src="img/logo-kleur-88.png" alt="logo"/>-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-center">
+                <h3 class="center">Inloggen</h3>
+
+                <form id='inputform' name="userForm" ng-submit="login(em, pwd, userForm.$valid)" novalidate
+                      method="post">
+                    <div class="list">
+                        <label class="item-input">
+                            <span class="input-label">Email</span>
+                            <input ng-class="{ 'has-error' : userForm.password.$invalid && userForm.$submitted}"
+                                   placeholder="Email" type="email" ng-model="em" name="email" data-index="1" required/>
+                        </label>
+
+                        <div class="form-errors"
+                             ng-show="userForm.email.$invalid && userForm.$submitted"
+                             ng-messages="userForm.email.$error"
+                             ng-messages-include="templates/error-messages.html">
+
+                        </div>
+
+                        <label class="item-input">
+                            <span class="input-label">Wachtwoord</span>
+                            <input ng-class="{ 'has-error' : userForm.password.$invalid && userForm.$submitted}"
+                                   placeholder="Wachtwoord" type="password" ng-model="pwd" name="password"
+                                   data-index="2" required/>
+                        </label>
+
+                        <div class="form-errors"
+                             ng-show="userForm.password.$error && userForm.$submitted"
+                             ng-messages="userForm.password.$error"
+                             ng-messages-include="templates/error-messages.html">
+
+                        </div>
+
+                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                            Login
+                        </button>
+                    </div>
+                    <div class="col center">
+                        <button class="button button-clear button-greenbricks waves-light waves-effect"
+                                ui-sref="tab.register">
+                            Registreren
+                        </button>
+                        <button class="button button-clear button-greenbricks waves-light waves-effect"
+                                ui-sref="tab.lostpassword">
+                            Wachtwoord vergeten
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </ion-content>
+</ion-view>

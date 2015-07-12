@@ -1,0 +1,72 @@
+<ion-view title="Registreren">
+    <ion-content>
+        <div class="row row-center">
+            <div class="col col-center">
+                <form name="registerForm"
+                      ng-submit="register(em, pwd, voornaam, tussenvoegsel, achternaam, bedrijf, isValid)" novalidate>
+                    <div class="list">
+                        <!--Voornaam + validatie-->
+                        <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
+                            <span class="input-label">Voornaam</span>
+                            <input type="text" ng-model="voornaam" name="voornaam" required/>
+                        </label>
+
+                        <div class="form-errors"
+                             ng-show="registerForm.voornaam.$error && registerForm.$submitted"
+                             ng-messages="registerForm.voornaam.$error"
+                             ng-messages-include="templates/error-messages.html">
+
+                        </div>
+                        <!--einde voornaam-->
+
+                        <!--tussenvoegsel + validatie-->
+                        <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
+                            <span class="input-label">Tussenvoegsel</span>
+                            <input type="text" ng-model="tussenvoegsel" name="tussenvoegsel" required/>
+                        </label>
+
+                        <div class="form-errors"
+                             ng-show="registerForm.tussenvoegsel.$error && registerForm.$submitted"
+                             ng-messages="registerForm.tussenvoegsel.$error"
+                             ng-messages-include="templates/error-messages.html">
+
+                        </div>
+                        <!--einde tussenvoegsel-->
+
+                        <!--achternaam + validatie-->
+                        <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
+                            <span class="input-label">Achternaam</span>
+                            <input type="text" ng-model="achternaam" name="achternaam" required/>
+                        </label>
+
+                        <div class="form-errors"
+                             ng-show="registerForm.achternaam.$error && registerForm.$submitted"
+                             ng-messages="registerForm.achternaam.$error"
+                             ng-messages-include="templates/error-messages.html">
+
+                        </div>
+                        <!--einde achternaam-->
+
+                        <label class="item item-input">
+                            <span class="input-label">Email</span>
+                            <input type="text" ng-model="em" required/>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label">Password</span>
+                            <input type="password" ng-model="pwd" required/>
+                        </label>
+
+
+                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                            Registreren
+                        </button>
+                    </div>
+                </form>
+                <button class="button button-block button-clear button-stable waves-light waves-effect"
+                        ui-sref="tab.login">
+                    Annuleren
+                </button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
