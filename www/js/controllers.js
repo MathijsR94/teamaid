@@ -24,12 +24,14 @@ angular.module('starter.controllers', [])
         //Create user methode
 
         $scope.addTeam = function(teamName) {
-            Teams.addTeam(teamName);
+            $scope.teamId = Teams.addTeam(teamName);
+
         }
 
-        $scope.createPlayer = function (teamId, fistName, lastName, insertion, em, pwd) {
+        $scope.createPlayer = function (firstName, lastName, insertion, em, pwd) {
+            console.log('createPlayer');
             if (firstName != null && lastName != null && em != null && pwd != null) {
-                Teams.teamsRef().createUser({
+                Teams.teamsRef().addPlayer({
                     email: em,
                     password: pwd
                 }, function (error) {
@@ -50,16 +52,17 @@ angular.module('starter.controllers', [])
                             password: pwd
                         }, function (error, authData) {
                             if (error === null) {
-                                var usersRef = Teams.teamsRef();
+                                var teamsRef = Teams.teamsRef();
                                 var uid = authData.uid;
                                 var ins = "";
                                 if (insertion != null) ins = insertion;
-                                usersRef.child(uid).set({
+                                teamsRef.child(uid).set({
                                     firstName: firstName,
                                     insertion: ins,
                                     lastName: lastName,
                                     email: em,
-                                    registerDate: Firebase.ServerValue.TIMESTAMP
+                                    registerDate: Firebase.ServerValue.TIMESTAMP,
+                                    teamId: $scope.teamId
                                 });
                                 $state.go('app.home');
                             } else alert("Er ging wat mis:", error);

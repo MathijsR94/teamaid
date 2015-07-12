@@ -3,7 +3,7 @@
         <div class="row row-center">
             <div class="col col-center">
                 <form name="registerForm"
-                      ng-submit="addTeam(teamName); createPlayer(teamId, fn, ln, in, em, pass)" novalidate>
+                      ng-submit="addTeam(teamName); createPlayer(fn, ln, in, em, pwd)" novalidate>
                     <h3>Team</h3>
                     <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
                         <span class="input-label">Teamnaam</span>
@@ -14,21 +14,21 @@
                         <!--Voornaam + validatie-->
                         <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
                             <span class="input-label">Voornaam</span>
-                            <input type="text" ng-model="firstName" name="firstName" required/>
+                            <input type="text" ng-model="fn" name="fn" required/>
                         </label>
                         <!--einde voornaam-->
 
                         <!--tussenvoegsel + validatie-->
                         <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
                             <span class="input-label">Tussenvoegsel</span>
-                            <input type="text" ng-model="insertion" name="insertion" required/>
+                            <input type="text" ng-model="in" name="in" required/>
                         </label>
                         <!--einde tussenvoegsel-->
 
                         <!--achternaam + validatie-->
                         <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
                             <span class="input-label">Achternaam</span>
-                            <input type="text" ng-model="lastName" name="lastName" required/>
+                            <input type="text" ng-model="ln" name="ln" required/>
                         </label>
                         <!--einde achternaam-->
 
