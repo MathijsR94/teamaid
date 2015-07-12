@@ -93,9 +93,9 @@ angular.module('starter.controllers', [])
     })
 
     .controller('HomeCtrl', function ($scope, User) {
-        $scope.members = User.all();
+
     })
     .controller('PlayersCtrl', function ($scope, User) {
-        $scope.players = User.getAccountData();
+        $scope.user = User.getAccountData();
     })
 

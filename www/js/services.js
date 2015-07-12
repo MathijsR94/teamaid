@@ -49,15 +49,15 @@ angular.module('starter.services', [])
         console.log(accountData);
         return {
             all: function () {
-                return members;
+                return accountData;
             },
-            getMember: function () {
-                var deferred = $q.defer();
-                members.$loaded(function () {
-                    deferred.resolve(members.$getRecord(selectedMember));
-                });
-                return deferred.promise;
-            },
+            //getMember: function () {
+            //    var deferred = $q.defer();
+            //    members.$loaded(function () {
+            //        deferred.resolve(members.$getRecord(selectedMember));
+            //    });
+            //    return deferred.promise;
+            //},
             getAccountData: function() {
                 return accountData;
             }
