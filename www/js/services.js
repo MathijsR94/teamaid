@@ -78,7 +78,9 @@ angular.module('starter.services', [])
                 return teams;
             },
             addTeam: function(teamName) {
-                teams.$add({
+				var $teamsCount = teams.length;
+				var thisTeam = teamsRef.child($teamsCount+":"+teamName)
+                thisTeam.set({
                     teamName: teamName
                 });
                 var deferred = $q.defer();
