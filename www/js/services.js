@@ -79,8 +79,8 @@ angular.module('starter.services', [])
             },
             addTeam: function(teamName) {
 				var $teamsCount = teams.length;
-				var thisTeam = teamsRef.child($teamsCount+":"+teamName)
-                thisTeam.set({
+				var thisTeamRef = teamsRef.child($teamsCount+":"+teamName);
+                thisTeamRef.set({
                     teamName: teamName
                 });
                 var deferred = $q.defer();
@@ -88,6 +88,13 @@ angular.module('starter.services', [])
                     deferred.resolve(teams[teams.length -1]);
                 });
                 return deferred.promise;
-            }
+            },
+			linkPlayer: function(teamId,uid) {
+				var thisTeamRef = teamsRef.child(teamId);
+				var players = $firebaseArray(thisTeamRef.child("Players"));
+				var player={};
+				player[uid] = true
+				players.$add(player);
+			}
         }
     });

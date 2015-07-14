@@ -55,7 +55,6 @@ angular.module('starter.controllers', [])
                                 var usersRef = fireBaseData.ref().child("Users");
                                 var uid = authData.uid;
                                 var ins = "";
-								var Teams = {};
                                 if (insertion != null) ins = insertion;
                                 usersRef.child(uid).set({
                                     firstName: firstName,
@@ -65,14 +64,16 @@ angular.module('starter.controllers', [])
                                     registerDate: Firebase.ServerValue.TIMESTAMP
                                 });
 								// add team to teams
-								Teams[$scope.teamId] = true
-								usersRef.child(uid).child("Teams").set( Teams );
+								var usrTeams = {};
+								usrTeams[$scope.teamId] = true
+								usersRef.child(uid).child("Teams").set( usrTeams );
 								
 								//add admin position 
-								Admins[$scope.teamId] = true
-								usersRef.child(uid).child("Admins").set( Admins );
+								var usrAdmins = {};
+								usrAdmins[$scope.teamId] = true
+								usersRef.child(uid).child("Admins").set( usrAdmins );
 								
-                                //Teams.linkPlayer($scope.teamId, uid);
+                                Teams.linkPlayer($scope.teamId, uid);
                                 $state.go('app.home');
                             } else alert("Er ging wat mis:", error);
                         });
