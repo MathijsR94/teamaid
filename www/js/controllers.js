@@ -20,18 +20,18 @@ angular.module('starter.controllers', [])
             fireBaseData.resetPassword(em);
         }
     })
-    .controller('RegisterCtrl', function ($scope, Teams, $state) {
+    .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams) {
         //Create user methode
-
         $scope.addTeam = function(teamName) {
-            $scope.teamId = Teams.addTeam(teamName);
+            $scope.getTeamId = Teams.addTeam(teamName);
+            $scope.getTeamId.then(function(data){
+                $scope.teamId = data.$id;
+            })
 
         }
-
         $scope.createPlayer = function (firstName, lastName, insertion, em, pwd) {
-            console.log('createPlayer');
             if (firstName != null && lastName != null && em != null && pwd != null) {
-                Teams.teamsRef().addPlayer({
+                fireBaseData.ref().createUser({
                     email: em,
                     password: pwd
                 }, function (error) {
@@ -44,33 +44,36 @@ angular.module('starter.controllers', [])
                                 alert("The specified email is not a valid email.");
                                 break;
                             default:
-                                alert("Error creating user:" +  error);
+                                alert("Error creating user:", error);
                         }
                     } else {
-                            Teams.teamsRef().authWithPassword({
+                        fireBaseData.ref().authWithPassword({
                             email: em,
                             password: pwd
                         }, function (error, authData) {
                             if (error === null) {
-                                var teamsRef = Teams.teamsRef();
+                                var usersRef = fireBaseData.ref().child("Users");
                                 var uid = authData.uid;
                                 var ins = "";
                                 if (insertion != null) ins = insertion;
-                                teamsRef.child(uid).set({
+                                usersRef.child(uid).set({
                                     firstName: firstName,
                                     insertion: ins,
                                     lastName: lastName,
                                     email: em,
-                                    registerDate: Firebase.ServerValue.TIMESTAMP,
-                                    teamId: $scope.teamId
+                                    teamId: $scope.teamId,
+                                    registerDate: Firebase.ServerValue.TIMESTAMP
                                 });
+                                Teams.linkPlayer($scope.teamId, uid);
                                 $state.go('app.home');
                             } else alert("Er ging wat mis:", error);
                         });
                     }
                 });
+
             }
             else alert('Vul alle gegevens in!');
+
         }
     })
     .controller('LoginCtrl', function ($scope, firebaseRef, $state) {
@@ -105,9 +108,12 @@ angular.module('starter.controllers', [])
     })
     .controller('PlayersCtrl', function ($scope, Teams) {
         $scope.teams = Teams.getTeams();
-        $scope.addTeam = function () {
-            console.log('efhui');
-            Teams.addTeam('Bla', 'Zwolle');
-        };
+
+        $scope.teams.$loaded(function() {
+            for(var value in $scope.teams) {
+                console.log(value);
+            }
+        })
+
     })
 
