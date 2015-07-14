@@ -64,7 +64,7 @@ angular.module('starter.services', [])
         }
     })
 
-    .factory('Teams', function ($firebaseArray, firebaseRef) {
+    .factory('Teams', function ($firebaseArray, firebaseRef, $q) {
         var ref = firebaseRef.ref();
         var teamsRef = ref.child("Teams");
         var teams = $firebaseArray(ref.child("Teams"));
@@ -81,11 +81,11 @@ angular.module('starter.services', [])
                 teams.$add({
                     teamName: teamName
                 });
-                teams.$loaded(function() {
-                    var lastTeam = teams[teams.length -1];
-                    console.log(teams[teams.length -1]);
-                    return lastTeam;
-                })
+                var deferred = $q.defer();
+                teams.$loaded(function () {
+                    deferred.resolve(teams[teams.length -1]);
+                });
+                return deferred.promise;
             }
         }
     });
