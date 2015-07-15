@@ -79,8 +79,8 @@ angular.module('starter.services', [])
             },
             addTeam: function(teamName) {
 				var $teamsCount = teams.length;
-				var thisTeamRef = teamsRef.child($teamsCount+":"+teamName);
-                thisTeamRef.set({
+				//var thisTeamRef = teamsRef.push(teamName);
+                teams.$add({
                     teamName: teamName
                 });
                 var deferred = $q.defer();
@@ -92,9 +92,10 @@ angular.module('starter.services', [])
 			linkPlayer: function(teamId,uid) {
 				var thisTeamRef = teamsRef.child(teamId);
 				var players = $firebaseArray(thisTeamRef.child("Players"));
-				var player={};
-				player[uid] = true
-				players.$add(player);
+				var player = {};
+				player[uid] = true;
+                console.log(player[uid]);
+				players.push(player);
 			}
         }
     });

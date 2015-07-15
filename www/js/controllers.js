@@ -22,14 +22,7 @@ angular.module('starter.controllers', [])
     })
     .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams) {
         //Create user methode
-        $scope.addTeam = function(teamName) {
-            $scope.getTeamId = Teams.addTeam(teamName);
-            $scope.getTeamId.then(function(data){
-                $scope.teamId = data.$id;
-            })
-
-        }
-        $scope.createPlayer = function (firstName, lastName, insertion, em, pwd) {
+        $scope.createPlayer = function (teamName, firstName, lastName, insertion, em, pwd) {
             if (firstName != null && lastName != null && em != null && pwd != null) {
                 fireBaseData.ref().createUser({
                     email: em,
@@ -54,27 +47,35 @@ angular.module('starter.controllers', [])
                             if (error === null) {
                                 var usersRef = fireBaseData.ref().child("Users");
                                 var uid = authData.uid;
+
+                                console.log(uid);
                                 var ins = "";
+                                $scope.getTeamId = Teams.addTeam(teamName);
+                                $scope.getTeamId.then(function(data){
+                                    $scope.teamId = data.$id;
                                 if (insertion != null) ins = insertion;
                                 usersRef.child(uid).set({
                                     firstName: firstName,
                                     insertion: ins,
                                     lastName: lastName,
                                     email: em,
+                                    teamId: $scope.teamId,
                                     registerDate: Firebase.ServerValue.TIMESTAMP
                                 });
-								// add team to teams
-								var usrTeams = {};
-								usrTeams[$scope.teamId] = true
-								usersRef.child(uid).child("Teams").set( usrTeams );
-								
-								//add admin position 
-								var usrAdmins = {};
-								usrAdmins[$scope.teamId] = true
-								usersRef.child(uid).child("Admins").set( usrAdmins );
-								
-                                Teams.linkPlayer($scope.teamId, uid);
+                                    
+                                //add team to teams
+                                console.log(data);
+                                var usrTeams = {};
+                                usrTeams[uid] = true;
+                                fireBaseData.ref().child("Teams").child($scope.teamId).child("Players").update(usrTeams);
+
+                                //add admin position
+                                var usrAdmins = {};
+                                usrAdmins[uid] = true;
+                                fireBaseData.ref().child("Admins").child($scope.teamId).update(usrAdmins);
+
                                 $state.go('app.home');
+                                });
                             } else alert("Er ging wat mis:", error);
                         });
                     }
