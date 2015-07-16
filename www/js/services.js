@@ -67,8 +67,9 @@ angular.module('starter.services', [])
     .factory('Teams', function ($firebaseArray, firebaseRef, $q) {
         var ref = firebaseRef.ref();
         var teamsRef = ref.child("Teams");
+		
         var teams = $firebaseArray(ref.child("Teams"));
-
+		
 
         return {
             ref: function() {
@@ -78,9 +79,7 @@ angular.module('starter.services', [])
                 return teams;
             },
             addTeam: function(teamName) {
-				var $teamsCount = teams.length;
-				var thisTeamRef = teamsRef.child($teamsCount+":"+teamName);
-                thisTeamRef.set({
+				teams.$add({
                     teamName: teamName
                 });
                 var deferred = $q.defer();
@@ -90,11 +89,30 @@ angular.module('starter.services', [])
                 return deferred.promise;
             },
 			linkPlayer: function(teamId,uid) {
-				var thisTeamRef = teamsRef.child(teamId);
-				var players = $firebaseArray(thisTeamRef.child("Players"));
+				var playersRef = teamsRef.child(teamId).child("Players");
 				var player={};
-				player[uid] = true
-				players.$add(player);
+				player[uid] = true;
+				playersRef.update(player);
+			}
+        }
+    })
+	
+	.factory('Admins', function ($firebaseArray, firebaseRef, $q) {
+        var ref = firebaseRef.ref();
+        var adminsRef = ref.child("Admins");
+		
+        var admins = $firebaseArray(ref.child("Admins"));
+		
+
+        return {
+            ref: function() {
+                return adminsRef;
+            },
+			linkAdmin: function(teamId,uid) {
+				var teamAdminsRef = adminsRef.child(teamId);
+				var admin={};
+				admin[uid] = true;
+				teamAdminsRef.update(admin);
 			}
         }
     });

@@ -20,7 +20,7 @@ angular.module('starter.controllers', [])
             fireBaseData.resetPassword(em);
         }
     })
-    .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams) {
+    .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams, Admins) {
         //Create user methode
         $scope.addTeam = function(teamName) {
             $scope.getTeamId = Teams.addTeam(teamName);
@@ -69,9 +69,7 @@ angular.module('starter.controllers', [])
 								usersRef.child(uid).child("Teams").set( usrTeams );
 								
 								//add admin position 
-								var usrAdmins = {};
-								usrAdmins[$scope.teamId] = true
-								usersRef.child(uid).child("Admins").set( usrAdmins );
+								Admins.linkAdmin($scope.teamId,uid);
 								
                                 Teams.linkPlayer($scope.teamId, uid);
                                 $state.go('app.home');
