@@ -90,10 +90,11 @@ angular.module('starter.services', [])
                 return deferred.promise;
             },
 			linkPlayer: function(teamId,uid) {
-				var playersRef = teamsRef.child(teamId).child("Players");
+				var thisTeamRef = teamsRef.child(teamId);
+				var players = $firebaseArray(thisTeamRef.child("Players"));
 				var player={};
 				player[uid] = true
-				playersRef.update(player);
+				players.$add(player);
 			}
         }
     });
