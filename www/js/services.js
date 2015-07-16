@@ -44,12 +44,26 @@ angular.module('starter.services', [])
     .factory('User', function ($firebaseObject, $firebaseArray, $q, $timeout, firebaseRef) {
         var ref = firebaseRef.ref();
         var user = ref.getAuth();
-        //var members = $firebaseObject(ref.child("Members").child(user.uid));
-        var accountData =  $firebaseArray(ref.child("Users").child(user.uid));
-        console.log(accountData);
+        var accountData =  $firebaseObject(ref.child("Users").child(user.uid));
+        var userTeamsRef = ref.child("Users").child(user.uid).child("Teams");
         return {
             all: function () {
                 return accountData;
+            },
+            getName: function() {
+                var deferred = $q.defer();
+                accountData.$loaded(function () {
+                    deferred.resolve(accountData);
+                });
+                return deferred.promise;
+            },
+            getTeam: function() {
+                var teamId = $firebaseArray(userTeamsRef);
+                var deferred = $q.defer();
+                teamId.$loaded(function () {
+                    deferred.resolve(teamId[0].$id);
+                });
+                return deferred.promise;
             },
             //getMember: function () {
             //    var deferred = $q.defer();
@@ -67,17 +81,16 @@ angular.module('starter.services', [])
     .factory('Teams', function ($firebaseArray, firebaseRef, $q) {
         var ref = firebaseRef.ref();
         var teamsRef = ref.child("Teams");
-		
+        var usersRef = ref.child("Users");
+        var user = ref.getAuth();
         var teams = $firebaseArray(ref.child("Teams"));
-		
+
 
         return {
             ref: function() {
                 return teamsRef;
             },
-            getTeams: function() {
-                return teams;
-            },
+
             addTeam: function(teamName) {
 				teams.$add({
                     teamName: teamName
@@ -88,12 +101,23 @@ angular.module('starter.services', [])
                 });
                 return deferred.promise;
             },
-			linkPlayer: function(teamId,uid) {
-				var playersRef = teamsRef.child(teamId).child("Players");
-				var player={};
-				player[uid] = true;
-				playersRef.update(player);
-			}
+			linkPlayer: function(teamId, firstName, ins, lastName, uid) {
+				var playersRef = teamsRef.child(teamId).child("Players").child(uid);
+				playersRef.update({
+                        firstName: firstName,
+                        insertion: ins,
+                        lastName: lastName
+                });
+			},
+            getPlayers: function(teamId) {
+                var deferred = $q.defer();
+                var players = $firebaseArray(teamsRef.child(teamId).child("Players"));
+
+                players.$loaded(function () {
+                    deferred.resolve(players);
+                });
+                return deferred.promise;
+            }
         }
     })
 	

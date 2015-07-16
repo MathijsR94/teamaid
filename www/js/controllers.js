@@ -65,13 +65,13 @@ angular.module('starter.controllers', [])
                                 });
 								// add team to teams
 								var usrTeams = {};
-								usrTeams[$scope.teamId] = true
+								usrTeams[$scope.teamId] = true;
 								usersRef.child(uid).child("Teams").set( usrTeams );
 								
 								//add admin position 
 								Admins.linkAdmin($scope.teamId,uid);
 								
-                                Teams.linkPlayer($scope.teamId, uid);
+                                Teams.linkPlayer($scope.teamId, firstName, ins, lastName, uid);
                                 $state.go('app.home');
                             } else alert("Er ging wat mis:", error);
                         });
@@ -113,14 +113,13 @@ angular.module('starter.controllers', [])
     .controller('HomeCtrl', function ($scope, User) {
 
     })
-    .controller('PlayersCtrl', function ($scope, Teams) {
-        $scope.teams = Teams.getTeams();
+    .controller('PlayersCtrl', function ($scope, Teams, User) {
+        User.getTeam().then(function(data) {
+           $scope.teamId = data;
 
-        $scope.teams.$loaded(function() {
-            for(var value in $scope.teams) {
-                console.log(value);
-            }
+        Teams.getPlayers($scope.teamId).then(function(data){
+            $scope.players = data;
         })
-
+        });
     })
 
