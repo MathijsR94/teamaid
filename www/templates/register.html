@@ -3,7 +3,7 @@
         <div class="row row-center">
             <div class="col col-center">
                 <form name="registerForm"
-                      ng-submit="addTeam(teamName); createPlayer(fn, ln, in, em, pwd)" novalidate>
+                      ng-submit="createTeam(teamName, fn, ln, in, em, pwd)" novalidate>
                     <h3>Team</h3>
                     <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
                         <span class="input-label">Teamnaam</span>

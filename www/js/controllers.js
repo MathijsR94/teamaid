@@ -22,14 +22,7 @@ angular.module('starter.controllers', [])
     })
     .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams, Admins) {
         //Create user methode
-        $scope.addTeam = function(teamName) {
-            $scope.getTeamId = Teams.addTeam(teamName);
-            $scope.getTeamId.then(function(data){
-                $scope.teamId = data.$id;
-            })
-
-        }
-        $scope.createPlayer = function (firstName, lastName, insertion, em, pwd) {
+        $scope.createTeam = function (teamName, firstName, lastName, insertion, em, pwd) {
             if (firstName != null && lastName != null && em != null && pwd != null) {
                 fireBaseData.ref().createUser({
                     email: em,
@@ -63,16 +56,24 @@ angular.module('starter.controllers', [])
                                     email: em,
                                     registerDate: Firebase.ServerValue.TIMESTAMP
                                 });
-								// add team to teams
+								
+								$scope.getTeamId = Teams.addTeam(teamName);
+								$scope.getTeamId.then(function(data){
+								var teamId = data.$id;
+								
+								// link User to team
+								Teams.linkPlayer(teamId, firstName, ins, lastName, uid);
+								
+								// add team to User
 								var usrTeams = {};
-								usrTeams[$scope.teamId] = true;
+								usrTeams[teamId] = true;
 								usersRef.child(uid).child("Teams").set( usrTeams );
 								
 								//add admin position 
-								Admins.linkAdmin($scope.teamId,uid);
+								Admins.linkAdmin(teamId,uid);
 								
-                                Teams.linkPlayer($scope.teamId, firstName, ins, lastName, uid);
-                                $state.go('app.home');
+								$state.go('app.home');
+							});
                             } else alert("Er ging wat mis:", error);
                         });
                     }
@@ -113,13 +114,72 @@ angular.module('starter.controllers', [])
     .controller('HomeCtrl', function ($scope, User) {
 
     })
-    .controller('PlayersCtrl', function ($scope, Teams, User) {
+	
+	
+    .controller('PlayersCtrl', function ($scope, Teams, User, $state) {
         User.getTeam().then(function(data) {
-           $scope.teamId = data;
-
-        Teams.getPlayers($scope.teamId).then(function(data){
-            $scope.players = data;
-        })
+			$scope.teamId = data;
+			Teams.getPlayers($scope.teamId).then(function(data){
+				$scope.players = data;
+			});
         });
+		$scope.invitePlayer = function() {
+			$state.go('app.invite');
+		}
+    })
+	
+	.controller('InvitesCtrl', function ($scope, fireBaseData, User, $state) {
+        User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			console.log($scope.teamId);
+        });
+		
+		$scope.invite = function ( em ) {
+			var inviteRef = fireBaseData.ref().child("Teams").child("PendingInvites");
+			var newInvite = {};
+			
+			newInvite[removeSpecials(em)] = em;
+			inviteRef.update( newInvite );
+			
+			alert("Implementeer : verstuur email nu XXX");
+			
+			$state.go('app.players');
+			
+		}
     })
 
+	.controller('ActivitiesCtrl', function ($scope, fireBaseData, User, $state) {
+        User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			console.log($scope.teamId);
+        });
+		
+		$scope.invite = function ( em ) {
+			var inviteRef = fireBaseData.ref().child("Teams").child("PendingInvites");
+			var newInvite = {};
+			
+			newInvite[removeSpecials(em)] = em;
+			inviteRef.update( newInvite );
+			
+			alert("Implementeer : verstuur email nu XXX");
+			
+			$state.go('app.players');
+			
+		}
+    })	
+
+	function removeSpecials(str) {
+			var lower = str.toLowerCase();
+			var upper = str.toUpperCase();
+
+			var res = "";
+			for(var i=0; i<lower.length; ++i) {
+				if(lower[i] != upper[i] || lower[i].trim() === '')
+					res += str[i];
+				else
+					if (str[i] == '@') {
+						res += "_at_";
+					}
+			}
+			return res;
+	}

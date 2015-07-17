@@ -1,0 +1,27 @@
+<ion-view title="Invite Player">
+    <ion-content>
+        <div class="row row-center">
+            <div class="col col-center">
+                <form name="inviteForm"
+                      ng-submit="invite(em)" novalidate>
+                    <h3>Email</h3>
+                    <div class="list">
+                        <label class="item item-input">
+                            <span class="input-label">Email</span>
+                            <input type="text" ng-model="em" required/>
+                        </label>
+                    </div>
+                    <div>
+                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                            Invite
+                        </button>
+                    </div>
+                </form>
+                <button class="button button-block button-clear button-stable waves-light waves-effect"
+                        ui-sref="tab.players">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

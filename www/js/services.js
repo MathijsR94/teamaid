@@ -139,4 +139,9 @@ angular.module('starter.services', [])
 				teamAdminsRef.update(admin);
 			}
         }
-    });
+    })
+	
+	.factory('Activities', function ($firebaseArray, firebaseRef, $q) {
+        var ref = firebaseRef.ref();
+       
+    })

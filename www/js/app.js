@@ -81,6 +81,42 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
           controller: 'PlayersCtrl'
         }
       }
+    })
+	.state('app.games', {
+      url: "/games",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/games.html",
+          controller: 'ActivitiesCtrl'
+        }
+      }
+    })
+	.state('app.practises', {
+      url: "/practises",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/practises.html",
+          controller: 'ActivitiesCtrl'
+        }
+      }
+    })
+	.state('app.events', {
+      url: "/events",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/events.html",
+          controller: 'ActivitiesCtrl'
+        }
+      }
+    })
+	.state('app.invite', {
+      url: "/invite",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/invite.html",
+          controller: 'InvitesCtrl'
+        }
+      }
     });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/login');
