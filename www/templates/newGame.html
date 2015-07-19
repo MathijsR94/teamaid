@@ -1,0 +1,40 @@
+<ion-view title="New Game">
+    <ion-content>
+        <div class="row row-center">
+            <div class="col col-center">
+                <form name="registerForm"
+                      ng-submit="newGame(date,time,home,away)" novalidate>
+                    <h3>Wedstrijd</h3>
+                    <div class="list">
+						<label class="item item-input">
+                            <span class="input-label">Datum</span>
+                            <input type="date" ng-model="date" required/>
+                        </label>
+						<label class="item item-input">
+                            <span class="input-label">Tijd</span>
+                            <input type="text" ng-model="time" required/>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label">Thuis</span>
+                            <input type="text" ng-model="home" required/>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label">Uit</span>
+                            <input type="text" ng-model="away" required/>
+                        </label>
+                    </div>
+					
+                    <div>
+                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                            Toevoegen
+                        </button>
+                    </div>
+                </form>
+                <button class="button button-block button-clear button-stable waves-light waves-effect"
+                        ui-sref="tab.games">
+                    Annuleren
+                </button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

@@ -1,11 +1,11 @@
-<ion-view view-title="Spelers">
+<ion-view view-title="Wedstrijden">
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="game in activities">
-            {{game}}
+      <ion-item ng-repeat="game in games">
+            {{game.date}} {{game.time}} {{game.home}} vs {{game.away}}
       </ion-item>
     </ion-list>
 
-      <button ng-click="invitePlayer()">Add player</button>
+      <button ng-click="addGame()">Add game</button>
   </ion-content>
 </ion-view>

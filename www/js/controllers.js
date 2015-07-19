@@ -117,8 +117,11 @@ angular.module('starter.controllers', [])
 	
 	
     .controller('PlayersCtrl', function ($scope, Teams, User, $state) {
-        User.getTeam().then(function(data) {
+		
+        $scope.getTeam = User.getTeam().then(function(data) {
+			
 			$scope.teamId = data;
+			
 			Teams.getPlayers($scope.teamId).then(function(data){
 				$scope.players = data;
 			});
@@ -128,10 +131,9 @@ angular.module('starter.controllers', [])
 		}
     })
 	
-	.controller('InvitesCtrl', function ($scope, fireBaseData, User, $state) {
-        User.getTeam().then(function(data) {
+	.controller('InvitesCtrl', function ($scope, fireBaseData, User, $state,$ionicHistory) {
+        $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
-			console.log($scope.teamId);
         });
 		
 		$scope.invite = function ( em ) {
@@ -143,29 +145,49 @@ angular.module('starter.controllers', [])
 			
 			alert("Implementeer : verstuur email nu XXX");
 			
-			$state.go('app.players');
+			$ionicHistory.goBack();
 			
 		}
     })
 
-	.controller('ActivitiesCtrl', function ($scope, fireBaseData, User, $state) {
-        User.getTeam().then(function(data) {
+	.controller('GamesCtrl', function ($scope, Games, Teams, User, $state, $ionicHistory,fireBaseData) {
+		
+		$scope.shouldShowDelete = false;
+		$scope.shouldShowReorder = false;
+		$scope.listCanSwipe = true;
+		
+		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
-			console.log($scope.teamId);
+			
+			if(User.isAdmin($scope.teamId)){
+				$scope.shouldShowDelete = true;
+				$scope.shouldShowReorder = false;
+			}
+			
+			//var gamesRef = fireBaseData.ref().child("Games").child($scope.teamId);
+			//
+			//$scope.games= {};
+			//var count = 0;
+			//gamesRef.once("value",function(gamesList){
+			//	//create array
+			//});
+			
+			//console.log($scope.games);
+
+			Games.getGames($scope.teamId).then(function(data){
+				$scope.games = data;
+			});
         });
 		
-		$scope.invite = function ( em ) {
-			var inviteRef = fireBaseData.ref().child("Teams").child("PendingInvites");
-			var newInvite = {};
-			
-			newInvite[removeSpecials(em)] = em;
-			inviteRef.update( newInvite );
-			
-			alert("Implementeer : verstuur email nu XXX");
-			
-			$state.go('app.players');
-			
+		$scope.addGame = function(){
+			$state.go('app.newGame');
 		}
+		
+		$scope.newGame = function (date, time, home, away){
+			Games.createGame($scope.teamId, date, time, home, away);
+			$ionicHistory.goBack();
+		}
+		
     })	
 
 	function removeSpecials(str) {
@@ -182,4 +204,16 @@ angular.module('starter.controllers', [])
 					}
 			}
 			return res;
+	}
+	
+	function formattedDate(date) {
+    var d = new Date(date || Date.now()),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [month, day, year].join('-');
 	}

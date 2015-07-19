@@ -50,13 +50,7 @@ angular.module('starter.services', [])
             all: function () {
                 return accountData;
             },
-            getName: function() {
-                var deferred = $q.defer();
-                accountData.$loaded(function () {
-                    deferred.resolve(accountData);
-                });
-                return deferred.promise;
-            },
+
             getTeam: function() {
                 var teamId = $firebaseArray(userTeamsRef);
                 var deferred = $q.defer();
@@ -65,13 +59,14 @@ angular.module('starter.services', [])
                 });
                 return deferred.promise;
             },
-            //getMember: function () {
-            //    var deferred = $q.defer();
-            //    members.$loaded(function () {
-            //        deferred.resolve(members.$getRecord(selectedMember));
-            //    });
-            //    return deferred.promise;
-            //},
+
+			isAdmin: function(teamId){
+				
+				var adminRef = ref.child("Admins").child(teamId).child(user.uid);
+				adminRef.once("value", function(data){
+					return data.val();
+				});
+			},
             getAccountData: function() {
                 return accountData;
             }
@@ -110,9 +105,8 @@ angular.module('starter.services', [])
                 });
 			},
             getPlayers: function(teamId) {
-                var deferred = $q.defer();
+				var deferred = $q.defer();
                 var players = $firebaseArray(teamsRef.child(teamId).child("Players"));
-
                 players.$loaded(function () {
                     deferred.resolve(players);
                 });
@@ -141,7 +135,38 @@ angular.module('starter.services', [])
         }
     })
 	
-	.factory('Activities', function ($firebaseArray, firebaseRef, $q) {
+	.factory('Games', function ($firebaseArray, firebaseRef, $q) {
         var ref = firebaseRef.ref();
-       
+		var gamesRef = ref.child("Games");
+		
+		return {
+			getGames: function(teamId) {
+				var deferred = $q.defer();
+				var games = $firebaseArray(gamesRef.child(teamId));
+
+				games.$loaded(function () {
+					deferred.resolve(games);
+				});
+				return deferred.promise;
+			},
+			createGame: function(teamId, date, time, home, away){
+				var teamGamesRef = gamesRef.child(teamId);
+				var games = $firebaseArray(teamGamesRef);
+				games.$add({
+					date : date.toString(),
+					home : home,
+					away : away
+				});			
+			},
+			updateGame: function(teamId,gameId, date, time, home, away){
+				var gameRef = gamesRef.child(teamId).child(gameId);
+				gameRef.update({
+					date : date.toString(),
+					time : time,
+					home : home,
+					away : away
+				});
+			}
+			
+		}
     })
