@@ -137,7 +137,7 @@ angular.module('starter.controllers', [])
         });
 		
 		$scope.invite = function ( em ) {
-			var inviteRef = fireBaseData.ref().child("Teams").child("PendingInvites");
+			var inviteRef = fireBaseData.ref().child("Teams").child($scope.teamId).child("PendingInvites");
 			var newInvite = {};
 			
 			newInvite[removeSpecials(em)] = em;
@@ -150,7 +150,7 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('GamesCtrl', function ($scope, Games, Teams, User, $state, $ionicHistory,fireBaseData) {
+	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData) {
 		
 		$scope.shouldShowDelete = false;
 		$scope.shouldShowReorder = false;
@@ -164,32 +164,115 @@ angular.module('starter.controllers', [])
 				$scope.shouldShowReorder = false;
 			}
 			
-			//var gamesRef = fireBaseData.ref().child("Games").child($scope.teamId);
-			//
-			//$scope.games= {};
-			//var count = 0;
-			//gamesRef.once("value",function(gamesList){
-			//	//create array
-			//});
-			
-			//console.log($scope.games);
-
 			Games.getGames($scope.teamId).then(function(data){
 				$scope.games = data;
 			});
         });
 		
+		$scope.currentDate = new Date();
+		$scope.title = "Selecteer datum";
+
+		$scope.datePickerCallback = function (val) {
+			if(typeof(val)==='undefined'){      
+				console.log('Date not selected');
+			}else{
+				console.log('Selected date is : ', val);
+				$scope.gameDate = val;
+			}
+		};
+
+		$scope.slots = {epochTime: 12600, format: 24, step: 15};
+
+		$scope.timePickerCallback = function (val) {
+		  if (typeof (val) === 'undefined') {
+			console.log('Time not selected');
+		  } else {
+			console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+			$scope.gameTime = val;
+		  }
+		};	
+		
 		$scope.addGame = function(){
 			$state.go('app.newGame');
 		}
 		
-		$scope.newGame = function (date, time, home, away){
-			Games.createGame($scope.teamId, date, time, home, away);
+		$scope.newGame = function (home, away){
+			if (typeof ($scope.gameDate) === 'undefined' || typeof ($scope.gameTime) === 'undefined') {
+				
+		  } else {
+			Games.createGame($scope.teamId, $scope.gameDate, $scope.gameTime, home, away);
 			$ionicHistory.goBack();
+		  }
+		};
+		
+    })
+
+	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory,fireBaseData) {
+		
+		$scope.shouldShowDelete = false;
+		$scope.shouldShowReorder = false;
+		$scope.listCanSwipe = true;
+		$scope.currentDate = new Date();
+		$scope.title = "Selecteer datum";
+		$scope.slots = {epochTime: 12600, format: 24, step: 15};
+		
+		$scope.datePickerCallback = function (val) {
+			if(typeof(val)==='undefined'){      
+				console.log('Date not selected');
+			}else{
+				console.log('Selected date is : ', val);
+				$scope.date = val;
+			}
+		};
+
+		$scope.timePickerCallback = function (val) {
+		  if (typeof (val) === 'undefined') {
+			console.log('Time not selected');
+		  } else {
+			console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+			$scope.time = val;
+		  }
+		};	
+		
+		$scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			
+			if(User.isAdmin($scope.teamId)){
+				$scope.shouldShowDelete = true;
+				$scope.shouldShowReorder = false;
+			}
+			
+			Practises.getPractises($scope.teamId).then(function(data){
+				$scope.practises = data;
+			});
+        })
+		
+		$scope.addPractise = function(){
+			$state.go('app.newPractise');
+		}
+		
+		$scope.newPractise = function (location,repeat){
+			if (typeof ($scope.date) === 'undefined' || typeof ($scope.time) === 'undefined') {
+				
+		  } else {
+			 console.log(repeat);
+			Practises.createPractise($scope.teamId, $scope.date, $scope.time, location, repeat);
+			$ionicHistory.goBack();
+		  }
 		}
 		
     })	
 
+	.controller('BoeteCtrl', function ($scope, fireBaseData, User, Boetes, $state,$ionicHistory) {
+        $scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+        });
+		$scope.uid = fireBaseData.ref().getAuth().uid;
+		
+		$scope.addBoete = Boetes.addBoete( value, type, $scope.uid, $scope.teamId );
+    })
+	
+	
 	function removeSpecials(str) {
 			var lower = str.toLowerCase();
 			var upper = str.toUpperCase();

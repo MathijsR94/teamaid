@@ -3,17 +3,15 @@
         <div class="row row-center">
             <div class="col col-center">
                 <form name="registerForm"
-                      ng-submit="newGame(date,time,home,away)" novalidate>
+                      ng-submit="newGame(home,away)" novalidate>
                     <h3>Wedstrijd</h3>
                     <div class="list">
-						<label class="item item-input">
-                            <span class="input-label">Datum</span>
-                            <input type="date" ng-model="date" required/>
-                        </label>
-						<label class="item item-input">
-                            <span class="input-label">Tijd</span>
-                            <input type="text" ng-model="time" required/>
-                        </label>
+						<ionic-datepicker idate="currentDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+							<button class="button button-block button-positive"> {{ currentDate | date:'dd - MMMM - yyyy' }} </button>
+						</ionic-datepicker>
+						<ionic-timepicker etime="slots.epochTime" format="slots.format" step="slots.step" callback="timePickerCallback">    
+							<button class="button button-block button-positive"> <standard-time-no-meridian etime='slots.epochTime'></standard-time-no-meridian></button>
+						</ionic-timepicker>
                         <label class="item item-input">
                             <span class="input-label">Thuis</span>
                             <input type="text" ng-model="home" required/>

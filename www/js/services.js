@@ -149,18 +149,64 @@ angular.module('starter.services', [])
 				});
 				return deferred.promise;
 			},
-			createGame: function(teamId, date, time, home, away){
+			createGame: function(teamId, gameDate, gameTime, home, away){
 				var teamGamesRef = gamesRef.child(teamId);
 				var games = $firebaseArray(teamGamesRef);
+
 				games.$add({
-					date : date.toString(),
+					date : gameDate.toString(),
+					time : gameTime,
 					home : home,
 					away : away
 				});			
 			},
-			updateGame: function(teamId,gameId, date, time, home, away){
+			updateGame: function(teamId,gameId, date, hr, min, home, away){
 				var gameRef = gamesRef.child(teamId).child(gameId);
 				gameRef.update({
+					date : date.toString(),
+					time : hr + ":" + min,
+					home : home,
+					away : away
+				});
+			}
+			
+		}
+		
+    })
+	.factory('Practises', function ($firebaseArray, firebaseRef, $q) {
+        var ref = firebaseRef.ref();
+		var practiseRef = ref.child("Practises");
+		
+		return {
+			getPractises: function(teamId) {
+				var deferred = $q.defer();
+				var practises = $firebaseArray(practiseRef.child(teamId));
+
+				practises.$loaded(function () {
+					deferred.resolve(practises);
+				});
+				return deferred.promise;
+			},
+			createPractise: function(teamId, date, time, location,repeat){
+				var teamPractiseRef = practiseRef.child(teamId);
+				console.log(date);
+				console.log(time);
+				console.log(location);
+				console.log(repeat);
+				var practises = $firebaseArray(teamPractiseRef);
+				for (i = 0; i < repeat; i++) {
+					date.setDate(date.getDate() + (7));
+					console.log(date);					
+					practises.$add({
+						date : date.toString(),
+						time : time,
+						location : location,
+					});	
+				};					
+			},
+			updatePractise: function(teamId,practiseId, date, time, home, away){
+				var practiseRef = PractiseRef.child(teamId).child(practiseId);
+				practiseRef.update({
 					date : date.toString(),
 					time : time,
 					home : home,
@@ -169,4 +215,39 @@ angular.module('starter.services', [])
 			}
 			
 		}
+		
     })
+	.factory('Boetes', function ($firebaseArray, firebaseRef, $q) {
+		var boeteRef = fireBaseData.ref().child("Boetes");
+			
+        var ref = firebaseRef.ref();
+        var adminsRef = ref.child("Admins");
+		
+        var admins = $firebaseArray(ref.child("Admins"));
+		
+
+        return {
+            ref: function() {
+                return boeteRef;
+            },
+			addBoete: function(value, type ,uid, teamId) {
+				var currentRef = boeteRef.child($scope.teamId).child(uid);
+				var boetes = $firebaseArray(currentRef);
+				
+				boetes.$add({
+					type : type,
+					value : value,
+					timestamp : Firebase.ServerValue.TIMESTAMP
+				});
+				
+				
+				newInvite[Firebase.ServerValue.TIMESTAMP] = em;
+				inviteRef.update( newInvite );
+				
+				alert("Implementeer : verstuur email nu XXX");
+				
+				$ionicHistory.goBack();
+			}
+        }
+	})
+		

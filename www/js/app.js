@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'firebase'])
+var app = angular.module('starter', ['ionic', 'ionic-datepicker','ionic-timepicker','starter.controllers', 'starter.services', 'firebase'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -20,6 +20,89 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   });
 })
 
+app.directive('standardTimeNoMeridian', function() {
+  return {
+    restrict: 'AE',
+    replace: true,
+    scope: {
+      etime: '=etime'
+    },
+    template: "<strong>{{stime}}</strong>",
+    link: function(scope, elem, attrs) {
+
+      scope.stime = epochParser(scope.etime, 'time');
+
+      function prependZero(param) {
+        if (String(param).length < 2) {
+          return "0" + String(param);
+        }
+        return param;
+      }
+
+      function epochParser(val, opType) {
+        if (val === null) {
+          return "00:00";
+        } else {
+          if (opType === 'time') {
+            var hours = parseInt(val / 3600);
+            var minutes = (val / 60) % 60;
+
+            return (prependZero(hours) + ":" + prependZero(minutes));
+          }
+        }
+      }
+
+      scope.$watch('etime', function(newValue, oldValue) {
+        scope.stime = epochParser(scope.etime, 'time');
+      });
+
+    }
+  };
+})
+
+app.directive('dateTime', function() {
+  return {
+    restrict: 'AE',
+    replace: true,
+    scope: {
+      sdate: '=sdate'
+    },
+    template: "<strong>{{date}}</strong>",
+    link: function(scope, elem, attrs) {
+
+		scope.date = dateParser(scope.sdate,'MM-DD-YYYY');
+		
+		function dateParser(val, format) {
+			if (val === null) {
+			  return "invalid Date";
+			} 
+			else{
+				var newDate = new Date(val);
+				if (format === 'MM-DD-YYYY') {
+				
+				return (newDate.getDate() + "-" + (newDate.getMonth()+1) + "-" + newDate.getFullYear());
+				}
+				else {
+					if (format === 'YYYY-DD-MM') {
+
+						return (newDate.getFullYear() + "-" + newDate.getDate() + "-" +(newDate.getMonth()+1));
+					}
+					else{ //(format === 'MM-DD-YYYY') 
+						console.log(newDate);
+						return ( newDate.getDate() + "-" + (newDate.getMonth()+1) + "-" + newDate.getFullYear());
+					}
+				}
+			}
+		}
+		
+		//scope.$watch('sdate', function(newValue, oldValue) {
+		//scope.date = dateParser(scope.sdate,'MM-DD-YYYY');
+		//});
+
+    }
+  };
+})
+ 
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
       .state('tab', {
@@ -105,7 +188,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       views: {
         'menuContent': {
           templateUrl: "templates/practises.html",
-          controller: 'ActivitiesCtrl'
+          controller: 'PractisesCtrl'
+        }
+      }
+    })
+	.state('app.newPractise', {
+      url: "/newPractise",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/newPractise.html",
+          controller: 'PractisesCtrl'
         }
       }
     })
@@ -114,7 +206,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       views: {
         'menuContent': {
           templateUrl: "templates/events.html",
-          controller: 'ActivitiesCtrl'
+          controller: 'EventsCtrl'
         }
       }
     })

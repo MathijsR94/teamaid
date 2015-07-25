@@ -1,0 +1,43 @@
+<ion-view title="New Training">
+    <ion-content>
+        <div class="row row-center">
+            <div class="col col-center">
+                <form name="registerForm"
+                      ng-submit="newPractise(location,repeat)" novalidate>
+                    <h3>Wedstrijd</h3>
+                    <div class="list">
+						<ionic-datepicker idate="currentDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+							<button class="button button-block button-positive"> {{ currentDate | date:'dd - MMMM - yyyy' }} </button>
+						</ionic-datepicker>
+						<ionic-timepicker etime="slots.epochTime" format="slots.format" step="slots.step" callback="timePickerCallback">    
+							<button class="button button-block button-positive"> <standard-time-no-meridian etime='slots.epochTime'></standard-time-no-meridian></button>
+						</ionic-timepicker>
+                        <label class="item item-input">
+                            <span class="input-label">Locatie</span>
+                            <input type="text" ng-model="location" required/>
+                        </label>
+						
+						<li class="item item-checkbox">
+							<label class="checkbox">
+								<input type="checkbox">
+							</label>
+							Herhalen voor <input type="text" id="repeatFactor"  enabled="" value="1"> weken
+						</li>
+						<label class="item range range-positive">
+							<input type="range" name="rangeInput" min="1" max="52" ng-model="repeat" value="1" onchange="document.getElementById('repeatFactor').value=this.value;">                                                       
+						</label>
+                    </div>				
+                    <div>
+                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                            Toevoegen
+                        </button>
+                    </div>
+                </form>
+                <button class="button button-block button-clear button-stable waves-light waves-effect"
+                        ui-sref="tab.games">
+                    Annuleren
+                </button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

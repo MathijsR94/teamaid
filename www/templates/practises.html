@@ -1,11 +1,10 @@
-<ion-view view-title="Spelers">
+<ion-view view-title="Trainingen">
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="game in activities">
-            {{game}}
+      <ion-item ng-repeat="practise in practises">
+            <date-Time sdate='practise.date'></date-Time> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
       </ion-item>
     </ion-list>
-
-      <button ng-click="invitePlayer()">Add player</button>
+      <button ng-click="addPractise()">Add training</button>
   </ion-content>
 </ion-view>
