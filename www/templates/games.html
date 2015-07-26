@@ -1,10 +1,11 @@
 <ion-view view-title="Wedstrijden">
   <ion-content>
+	<button class="button button-block button-positive" ng-click="addGame()">Add game</button>
     <ion-list>
       <ion-item ng-repeat="game in games">
             <date-Time sdate='game.date'></date-Time> <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> {{game.home}} vs {{game.away}}
       </ion-item>
     </ion-list>
-      <button ng-click="addGame()">Add game</button>
+      
   </ion-content>
 </ion-view>

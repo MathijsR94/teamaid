@@ -189,19 +189,15 @@ angular.module('starter.services', [])
 			},
 			createPractise: function(teamId, date, time, location,repeat){
 				var teamPractiseRef = practiseRef.child(teamId);
-				console.log(date);
-				console.log(time);
-				console.log(location);
-				console.log(repeat);
 				var practises = $firebaseArray(teamPractiseRef);
-				for (i = 0; i < repeat; i++) {
-					date.setDate(date.getDate() + (7));
-					console.log(date);					
+				for (i = 0; i < repeat; i++) {					
 					practises.$add({
 						date : date.toString(),
 						time : time,
-						location : location,
+						location : location
 					});	
+					// increase a week
+					date.setDate(date.getDate() + (7));
 				};					
 			},
 			updatePractise: function(teamId,practiseId, date, time, home, away){
@@ -217,37 +213,56 @@ angular.module('starter.services', [])
 		}
 		
     })
-	.factory('Boetes', function ($firebaseArray, firebaseRef, $q) {
-		var boeteRef = fireBaseData.ref().child("Boetes");
-			
-        var ref = firebaseRef.ref();
-        var adminsRef = ref.child("Admins");
+	.factory('Finance', function ($firebaseArray, firebaseRef, $q) {
+		var financeRef = firebaseRef.ref().child("Finance");
 		
-        var admins = $firebaseArray(ref.child("Admins"));
-		
+		return{
+			getCredits: function(teamId) {
+				var deferred = $q.defer();
+				var credits = $firebaseArray(financeRef.child(teamId));
 
-        return {
-            ref: function() {
-                return boeteRef;
-            },
-			addBoete: function(value, type ,uid, teamId) {
-				var currentRef = boeteRef.child($scope.teamId).child(uid);
-				var boetes = $firebaseArray(currentRef);
+				credits.$loaded(function () {
+					deferred.resolve(credits);
+				});
+				return deferred.promise;
+			},
+			newCredit: function( teamId, uid, value, comment ) {
+				var balance = 0;
+				var playerRef = financeRef.child(teamId).child(uid);
+				var credits = $firebaseArray(playerRef.child("credits"));
 				
-				boetes.$add({
-					type : type,
-					value : value,
-					timestamp : Firebase.ServerValue.TIMESTAMP
+				// read old balance
+				playerRef.once('value', function(dataSnapshot) {
+					if(dataSnapshot.val() !== null){
+						balance =dataSnapshot.val().balance;
+					}
+					else{ // this user is new to credits lets instantiate
+						// get his name
+						firebaseRef.child("Users").child(uid).once(function(data) {
+							if(data.val() !== null){
+								playerRef.update({
+									firstName: data.val().firstName,
+									insertion: data.val().insertion,
+									lastname:data.val().lastName,
+									balance: 0
+								});
+							}
+						})
+					}
+				});
+				// write back new balance
+				playerRef.update({
+					balance: ((+balance) + (+value))
 				});
 				
-				
-				newInvite[Firebase.ServerValue.TIMESTAMP] = em;
-				inviteRef.update( newInvite );
-				
-				alert("Implementeer : verstuur email nu XXX");
-				
-				$ionicHistory.goBack();
-			}
-        }
+				// add credit to the list
+				var timestamp = new Date();
+				credits.$add({
+					timestamp : timestamp.toString(),
+					value : value,
+					comment : comment
+				});	
+            }
+		}
 	})
 		

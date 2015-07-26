@@ -1,10 +1,11 @@
 <ion-view view-title="Trainingen">
   <ion-content>
+	<button class="button button-block button-positive" ng-click="addPractise()">Add training</button>
     <ion-list>
       <ion-item ng-repeat="practise in practises">
             <date-Time sdate='practise.date'></date-Time> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
       </ion-item>
     </ion-list>
-      <button ng-click="addPractise()">Add training</button>
+      
   </ion-content>
 </ion-view>

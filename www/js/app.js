@@ -210,6 +210,24 @@ app.directive('dateTime', function() {
         }
       }
     })
+	.state('app.teamFinance', {
+      url: "/teamFinanance",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/teamFinance.html",
+          controller: 'teamFinanceCtrl'
+        }
+      }
+    })
+	.state('app.newCredit', {
+      url: "/newCedit",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/newCredit.html",
+          controller: 'CreditsCtrl'
+        }
+      }
+    })
 	.state('app.invite', {
       url: "/invite",
       views: {
@@ -219,6 +237,10 @@ app.directive('dateTime', function() {
         }
       }
     });
+	
+	
+	
+	
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/login');
 });

@@ -155,7 +155,27 @@ angular.module('starter.controllers', [])
 		$scope.shouldShowDelete = false;
 		$scope.shouldShowReorder = false;
 		$scope.listCanSwipe = true;
-		
+		$scope.currentDate = new Date();
+		$scope.title = "Selecteer datum";
+		$scope.slots = {epochTime: 52200, format: 24, step: 15};
+
+		$scope.datePickerCallback = function (val) {
+			if(typeof(val)==='undefined'){      
+				console.log('Date not selected');
+			}else{
+				console.log('Selected date is : ', val);
+				$scope.gameDate = val;
+			}
+		};
+
+		$scope.timePickerCallback = function (val) {
+		  if (typeof (val) === 'undefined') {
+			console.log('Time not selected');
+		  } else {
+			console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+			$scope.gameTime = val;
+		  }
+		};
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			
@@ -168,29 +188,6 @@ angular.module('starter.controllers', [])
 				$scope.games = data;
 			});
         });
-		
-		$scope.currentDate = new Date();
-		$scope.title = "Selecteer datum";
-
-		$scope.datePickerCallback = function (val) {
-			if(typeof(val)==='undefined'){      
-				console.log('Date not selected');
-			}else{
-				console.log('Selected date is : ', val);
-				$scope.gameDate = val;
-			}
-		};
-
-		$scope.slots = {epochTime: 12600, format: 24, step: 15};
-
-		$scope.timePickerCallback = function (val) {
-		  if (typeof (val) === 'undefined') {
-			console.log('Time not selected');
-		  } else {
-			console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-			$scope.gameTime = val;
-		  }
-		};	
 		
 		$scope.addGame = function(){
 			$state.go('app.newGame');
@@ -214,9 +211,14 @@ angular.module('starter.controllers', [])
 		$scope.listCanSwipe = true;
 		$scope.currentDate = new Date();
 		$scope.title = "Selecteer datum";
-		$scope.slots = {epochTime: 12600, format: 24, step: 15};
+		$scope.slots = {epochTime: 73800, format: 24, step: 15};
 		
-		$scope.datePickerCallback = function (val) {
+		$scope.weeks = 0;
+		$scope.drag = function(value) {
+			$scope.weeks = value;
+		};
+
+		$scope.datePickerCallback = function(val) {
 			if(typeof(val)==='undefined'){      
 				console.log('Date not selected');
 			}else{
@@ -225,7 +227,7 @@ angular.module('starter.controllers', [])
 			}
 		};
 
-		$scope.timePickerCallback = function (val) {
+		$scope.timePickerCallback = function(val) {
 		  if (typeof (val) === 'undefined') {
 			console.log('Time not selected');
 		  } else {
@@ -251,27 +253,60 @@ angular.module('starter.controllers', [])
 			$state.go('app.newPractise');
 		}
 		
-		$scope.newPractise = function (location,repeat){
-			if (typeof ($scope.date) === 'undefined' || typeof ($scope.time) === 'undefined') {
+		$scope.newPractise = function(location,repeatValue){
+			if (typeof ($scope.date) === 'undefined' || typeof ($scope.time) === 'undefined'|| typeof (repeatValue) === 'undefined') {
 				
-		  } else {
-			 console.log(repeat);
-			Practises.createPractise($scope.teamId, $scope.date, $scope.time, location, repeat);
-			$ionicHistory.goBack();
-		  }
+			} else {		
+				Practises.createPractise($scope.teamId, $scope.date, $scope.time, location, repeatValue);
+				//return to previous page
+				$ionicHistory.goBack();
+			}	
 		}
 		
     })	
 
-	.controller('BoeteCtrl', function ($scope, fireBaseData, User, Boetes, $state,$ionicHistory) {
+	.controller('teamFinanceCtrl', function ($scope, User, Finance, $state) {
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
+			
+			Finance.getCredits($scope.teamId).then(function(data){
+				$scope.credits = data;
+				console.log($scope.credits);
+			});
         });
-		$scope.uid = fireBaseData.ref().getAuth().uid;
+		$scope.toggleGroup = function(group) {
+			if ($scope.isGroupShown(group)) {
+			  $scope.shownGroup = null;
+			} else {
+			  $scope.shownGroup = group;
+			}
+		};
+		$scope.isGroupShown = function(group) {
+			return $scope.shownGroup === group;
+		};
 		
-		$scope.addBoete = Boetes.addBoete( value, type, $scope.uid, $scope.teamId );
+		$scope.addCredit = function(){
+			$state.go('app.newCredit');
+		}
     })
 	
+	.controller('CreditsCtrl', function ($scope, Teams, User, Finance, $state,$ionicHistory) {
+        $scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			$scope.nbsp = " "; // whitespace
+			Teams.getPlayers($scope.teamId).then(function(data){
+				$scope.players = data;
+			});
+        });
+		
+		$scope.newCredit = function(uid, value, comment){
+			console.log(uid);
+			Finance.newCredit($scope.teamId, uid, value, comment);
+			$ionicHistory.goBack();
+		}
+    })
+	
+
 	
 	function removeSpecials(str) {
 			var lower = str.toLowerCase();
