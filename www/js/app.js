@@ -210,12 +210,12 @@ app.directive('dateTime', function() {
         }
       }
     })
-	.state('app.teamFinance', {
-      url: "/teamFinanance",
+	.state('app.Finance', {
+      url: "/Finanance",
       views: {
         'menuContent': {
-          templateUrl: "templates/teamFinance.html",
-          controller: 'teamFinanceCtrl'
+          templateUrl: "templates/Finance.html",
+          controller: 'FinanceCtrl'
         }
       }
     })

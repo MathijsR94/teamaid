@@ -151,10 +151,20 @@ angular.module('starter.controllers', [])
     })
 
 	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData) {
-		
 		$scope.shouldShowDelete = false;
-		$scope.shouldShowReorder = false;
-		$scope.listCanSwipe = true;
+		$scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			
+			if(User.isAdmin($scope.teamId)){
+				$scope.shouldShowDelete = true;
+			}
+			
+			Games.getGames($scope.teamId).then(function(data){
+				$scope.games = data;
+			});
+        });
+		
+		
 		$scope.currentDate = new Date();
 		$scope.title = "Selecteer datum";
 		$scope.slots = {epochTime: 52200, format: 24, step: 15};
@@ -176,18 +186,6 @@ angular.module('starter.controllers', [])
 			$scope.gameTime = val;
 		  }
 		};
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			
-			if(User.isAdmin($scope.teamId)){
-				$scope.shouldShowDelete = true;
-				$scope.shouldShowReorder = false;
-			}
-			
-			Games.getGames($scope.teamId).then(function(data){
-				$scope.games = data;
-			});
-        });
 		
 		$scope.addGame = function(){
 			$state.go('app.newGame');
@@ -265,11 +263,11 @@ angular.module('starter.controllers', [])
 		
     })	
 
-	.controller('teamFinanceCtrl', function ($scope, User, Finance, $state) {
+	.controller('FinanceCtrl', function ($scope, User, Finance, $state) {
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			
-			Finance.getCredits($scope.teamId).then(function(data){
+			$scope.getCredits = Finance.getCredits($scope.teamId).then(function(data){
 				$scope.credits = data;
 				console.log($scope.credits);
 			});
