@@ -151,16 +151,19 @@ angular.module('starter.controllers', [])
     })
 
 	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData) {
-		$scope.shouldShowDelete = false;
+		$scope.ShowDelete = true;
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			
+			//werkt nog niet
 			if(User.isAdmin($scope.teamId)){
-				$scope.shouldShowDelete = true;
+				
+				$scope.ShowDelete = true;
 			}
-			
-			Games.getGames($scope.teamId).then(function(data){
-				$scope.games = data;
+
+			Games.getGames($scope.teamId).orderByChild("date").once("value",function(dataX){
+				console.log(dataX.val());
+				$scope.games = dataX.val();
 			});
         });
 		

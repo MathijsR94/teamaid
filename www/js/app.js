@@ -147,15 +147,15 @@ app.directive('dateTime', function() {
     templateUrl: "templates/menu.html",
     controller: 'AppCtrl'
   })
-      .state('app.home', {
-          url: "/home",
-          views: {
-              'menuContent': {
-                  templateUrl: "templates/home.html",
-                  controller: 'HomeCtrl'
-              }
-          }
-      })
+	.state('app.home', {
+	  url: "/home",
+	  views: {
+		  'menuContent': {
+			  templateUrl: "templates/home.html",
+			  controller: 'HomeCtrl'
+		  }
+	  }
+	})
     .state('app.players', {
       url: "/spelers",
       views: {
@@ -237,10 +237,6 @@ app.directive('dateTime', function() {
         }
       }
     });
-	
-	
-	
-	
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/login');
 });

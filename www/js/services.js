@@ -64,7 +64,8 @@ angular.module('starter.services', [])
 				
 				var adminRef = ref.child("Admins").child(teamId).child(user.uid);
 				adminRef.once("value", function(data){
-					return data.val();
+					
+					return 1;
 				});
 			},
             getAccountData: function() {
@@ -141,13 +142,14 @@ angular.module('starter.services', [])
 		
 		return {
 			getGames: function(teamId) {
-				var deferred = $q.defer();
-				var games = $firebaseArray(gamesRef.child(teamId));
-
-				games.$loaded(function () {
-					deferred.resolve(games);
-				});
-				return deferred.promise;
+				return gamesRef.child(teamId);
+				//var deferred = $q.defer();
+				//var games = $firebaseArray(gamesRef.child(teamId));
+//
+				//games.$loaded(function () {
+				//	deferred.resolve(games);
+				//});
+				//return deferred.promise;
 			},
 			createGame: function(teamId, gameDate, gameTime, home, away){
 				var teamGamesRef = gamesRef.child(teamId);
