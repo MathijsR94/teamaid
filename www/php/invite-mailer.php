@@ -11,30 +11,31 @@ use PHPMailer;
 
 $params = json_decode(file_get_contents('php://input'), true);
 
-$tomail = $params['Tomail'];
-$userid = $params['UserID'];
+$tomail = $params['tomail'];
+$teamId = $params['teamId'];
+$teamnaam = $params['teamName'];
 
 try {
     $nextYear = time() + (60*60*24*365);
-    $generator = new TokenGenerator('pV73qwlhDlHSnNYRCr3zwosIWKojxvMPvewrUZpD'); //This Firebase secret isn't valid anymore
+    $generator = new TokenGenerator('onRdN22bDZ3622PLt6KKGHyHe3caLFNOaRfWEkPm'); //This Firebase secret isn't valid anymore
     $token = $generator
         ->setOption('expires', $nextYear)
-        ->setData(array('uid' => $userid . "server"))
+        ->setData(array('teamId' => $teamId, 'email'=> $$tomail))
         ->create();
 
     $mail = new PHPMailer();
 
-    $mail->SetFrom('henk@lab49.nl');
+    $mail->SetFrom('info@TeamAid.nl');
     $mail->AddAddress($tomail);
-    $mail->Subject = 'IFrame GreenBricks';
+    $mail->Subject = 'TeamAid Uitnodiging voor '.$teamnaam;
     $body = 'Beste,
 
-    Hierbij een link om een aanvraagmodule op uw website te plaatsen.
+    Hierbij een link om je aan te melden bij'.$teamnaam.'.
 
-    <iframe frameborder="0" width="300" height="200" src="http://gb1.lab49.nl/php/request-offer.php?auth=' .$token .'&location='.$userid.'"></iframe>
+    http://teamaid.nl/php/register-player.php?auth=' .$token .'&location='.$teamId.'
 
     Met vriendelijke groet,
-    GreenBricks Support';
+    TeamAid.nl';
     $mail->Body = (string)$body;
 //    $mail->IsHTML(true);
     if(!$mail->Send()) {

@@ -20,8 +20,8 @@ if(isset($_POST['sm'])) {
     $email = $_POST['em'];
     $tel = $_POST['tel'];
 
-    $url = 'https://glaring-torch-4850.firebaseio.com/';
-    $path = '/Leads/'.$location;
+    $url = https://amber-torch-2058.firebaseio.com/';
+    $path = '/Teams/'.$location;
     $data = array(
         "firstName" => $firstName,
         "insertion" => $insertion,
@@ -54,7 +54,7 @@ if(isset($_POST['sm'])) {
                 Voornaam:
             </td>
             <td>
-                <input type="text" name="vn" placeholder="Johan" required/>
+                <input type="text" name="vn" required/>
             </td>
         </tr>
         <tr>
@@ -62,7 +62,7 @@ if(isset($_POST['sm'])) {
                 Tussenvoegsel:
             </td>
             <td>
-                <input type="text" name="tv" placeholder="de"/>
+                <input type="text" name="tv" />
             </td>
         </tr>
         <tr>
@@ -70,15 +70,7 @@ if(isset($_POST['sm'])) {
                 Achternaam:
             </td>
             <td>
-                <input type="text" name="an" placeholder="Boer" required/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Woonplaats:
-            </td>
-            <td>
-                <input type="text" name="wp" placeholder="Harderwijk" required/>
+                <input type="text" name="an" required/>
             </td>
         </tr>
         <tr>
@@ -86,15 +78,15 @@ if(isset($_POST['sm'])) {
                 Email:
             </td>
             <td>
-                <input type="text" name="em" placeholder="voorbeeld@email.nl" required/>
+                <input type="text" name="em" value="" required/>
             </td>
         </tr>
-        <tr>
+		<tr>
             <td>
-                Telefoonnummer:
+                Password:
             </td>
             <td>
-                <input type="text" name="tel" placeholder="06-123456789" required/>
+                <input type="password" name="pwd" required/>
             </td>
         </tr>
         <tr colspan="2">
