@@ -161,7 +161,7 @@ angular.module('starter.controllers', [])
 				$scope.ShowDelete = true;
 			}
 
-			Games.getGames($scope.teamId).orderByChild("date").on("value",function(dataX){
+			Games.getGames($scope.teamId).orderByChild("date").once("value",function(dataX){
 				console.log(dataX.val());
 				$scope.games = dataX.val();
 			});
