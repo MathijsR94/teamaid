@@ -2,15 +2,14 @@
     <ion-content>
         <div class="row row-center">
             <div class="col col-center">
-                <form name="registerForm"
-                      ng-submit="newGame(home,away)" novalidate>
+                <form name="registerForm">
                     <h3>Wedstrijd</h3>
                     <div class="list">
-						<ionic-datepicker idate="currentDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
-							<button class="button button-block button-positive"> {{ currentDate | date:'dd - MMMM - yyyy' }} </button>
+						<ionic-datepicker name="date" idate="gameDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+							<button class="button button-block button-positive"> {{ gameDate | date:'dd - MMMM - yyyy' }} </button>
 						</ionic-datepicker>
-						<ionic-timepicker etime="slots.epochTime" format="slots.format" step="slots.step" callback="timePickerCallback">    
-							<button class="button button-block button-positive"> <standard-time-no-meridian etime='slots.epochTime'></standard-time-no-meridian></button>
+						<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
+							<button class="button button-block button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
 						</ionic-timepicker>
                         <label class="item item-input">
                             <span class="input-label">Thuis</span>
@@ -23,7 +22,7 @@
                     </div>
 					
                     <div>
-                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="newGame(home,away, time, date)">
                             Toevoegen
                         </button>
                     </div>

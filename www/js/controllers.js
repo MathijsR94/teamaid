@@ -168,43 +168,52 @@ angular.module('starter.controllers', [])
         });
 		
 		
-		$scope.currentDate = new Date();
-		$scope.title = "Selecteer datum";
-		$scope.slots = {epochTime: 52200, format: 24, step: 15};
 
-		$scope.datePickerCallback = function (val) {
-			if(typeof(val)==='undefined'){      
-				console.log('Date not selected');
-			}else{
-				console.log('Selected date is : ', val);
-				$scope.gameDate = val;
-			}
-		};
 
-		$scope.timePickerCallback = function (val) {
-		  if (typeof (val) === 'undefined') {
-			console.log('Time not selected');
-		  } else {
-			console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-			$scope.gameTime = val;
-		  }
-		};
+
 		
 		$scope.addGame = function(){
 			$state.go('app.newGame');
 		}
-		
-		$scope.newGame = function (home, away){
-			if (typeof ($scope.gameDate) === 'undefined' || typeof ($scope.gameTime) === 'undefined') {
-				
-		  } else {
-			Games.createGame($scope.teamId, $scope.gameDate, $scope.gameTime, home, away);
-			$ionicHistory.goBack();
-		  }
-		};
-		
     })
+	.controller('newGamesCtrl', function($scope, User, Games, $ionicHistory) {
+		$scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			$scope.gameDate = new Date();
+			$scope.title = "Selecteer datum";
+			$scope.gameTime = 52200;
+			$scope.datePickerCallback = function (val) {
+				if (typeof(val) === 'undefined') {
+					console.log('Date not selected');
+				} else {
+					console.log('Selected date is : ', val);
+					$scope.gameDate = val;
+				}
+			};
 
+			$scope.timePickerCallback = function (val) {
+				if (typeof (val) === 'undefined') {
+					console.log('Time not selected');
+				} else {
+					console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+					$scope.gameTime = val;
+				}
+			};
+
+			$scope.newGame = function (home, away, time, date) {
+
+				if (typeof ($scope.gameDate) === 'undefined' || typeof ($scope.gameTime) === 'undefined') {
+					alert('hoi');
+				} else {
+					Games.createGame($scope.teamId, $scope.gameDate, $scope.gameTime, home, away);
+					console.dir($ionicHistory);
+					$ionicHistory.goBack();
+
+					alert();
+				}
+			}
+		})
+	})
 	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory,fireBaseData) {
 		
 		$scope.shouldShowDelete = false;

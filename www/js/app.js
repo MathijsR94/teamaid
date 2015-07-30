@@ -179,7 +179,7 @@ app.directive('dateTime', function() {
       views: {
         'menuContent': {
           templateUrl: "templates/newGame.html",
-          controller: 'GamesCtrl'
+          controller: 'newGamesCtrl'
         }
       }
     })
