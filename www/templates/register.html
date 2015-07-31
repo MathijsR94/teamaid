@@ -5,8 +5,8 @@
                 <form name="registerForm" novalidate>
 					
                     <ion-toggle ng-model="nieuwTeam.checked" ng-change="pushNotificationChange()">
-					  <span class="input-label" ng-if="nieuwTeam.checked == true">Bestaand Team</span>
-								<span class="input-label" ng-if="nieuwTeam.checked != true">Nieuw Team</span>
+					<span class="input-label" ng-if="nieuwTeam.checked != true">Bestaand Team</span>
+					<span class="input-label" ng-if="nieuwTeam.checked == true">Nieuw Team</span>
 					</ion-toggle>
 						<h3 ng-if="nieuwTeam.checked == true">Nieuw Team</h3>
 						<h3 ng-if="nieuwTeam.checked != true">Bestaand Team</h3>

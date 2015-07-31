@@ -23,6 +23,25 @@ angular.module('starter.controllers', [])
     .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams, Admins) {
         //Create user methode
         $scope.createTeam = function (teamName, newTeam, firstName, lastName, insertion, em, pwd) {
+			if(newTeam === true){
+				// teams can be added  allways
+				createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
+			}
+			else{
+				// teamRef must be a key in the DB
+				fireBaseData.ref().child("Teams").once('value', function(snapshot) {
+					if (snapshot.hasChild(teamName)) {
+						createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
+					}
+					else {
+						alert("That team does not exist");
+						return;
+					}
+				});
+			}
+		}
+		
+		function createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd) {
             if (firstName != null && lastName != null && em != null && pwd != null) {
                 fireBaseData.ref().createUser({
                     email: em,
@@ -176,20 +195,13 @@ angular.module('starter.controllers', [])
 			
 			//werkt nog niet
 			if(User.isAdmin($scope.teamId)){
-				
 				$scope.ShowDelete = true;
 			}
-
-			Games.getGames($scope.teamId).orderByChild("date").once("value",function(dataX){
-				console.log(dataX.val());
-				$scope.games = dataX.val();
+			Games.getGames($scope.teamId).on("value",function(snapshot){
+				$scope.games = snapshot.val();
+				console.log($scope.games);
 			});
         });
-		
-		
-
-
-
 		
 		$scope.addGame = function(){
 			$state.go('app.newGame');

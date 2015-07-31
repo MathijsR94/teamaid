@@ -62,11 +62,12 @@ angular.module('starter.services', [])
 
 			isAdmin: function(teamId){
 				
-				var adminRef = ref.child("Admins").child(teamId).child(user.uid);
-				adminRef.once("value", function(data){
+				// var adminRef = ref.child("Admins").child(teamId).child(user.uid);
+				// adminRef.once("value", function(data){
 					
-					return 1;
-				});
+					// return 1;
+				// });
+				return 1;
 			},
             getAccountData: function() {
                 return accountData;

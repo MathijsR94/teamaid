@@ -13,7 +13,7 @@
   	
 	
     <ion-list class="card item-text-wrap" ng-click="click1($event)" show-delete="ShowDelete">
-      <ion-item ng-repeat="game in games">
+      <ion-item ng-repeat="game in games | orderBy:'-date'">
             <date-Time sdate='game.date'></date-Time> <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> {{game.home}} vs {{game.away}}
 			<ion-delete-button class="ion-minus-circled"
 							   ng-click="items.splice($index, 1)">
