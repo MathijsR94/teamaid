@@ -20,7 +20,7 @@ if(isset($_POST['sm'])) {
     $email = $_POST['em'];
     $tel = $_POST['tel'];
 
-    $url = https://amber-torch-2058.firebaseio.com/';
+    $url = 'https://amber-torch-2058.firebaseio.com/';
     $path = '/Teams/'.$location;
     $data = array(
         "firstName" => $firstName,
@@ -36,7 +36,7 @@ if(isset($_POST['sm'])) {
     $firebase = new \Firebase\FirebaseLib($url, $token);
     $firebase->push($path, $data);
 
-    echo 'Het is gelukt! Er wordt zo spoedig mogelijk contact met u opgenomen. Dank voor uw aanvraag!';
+    echo 'Het is gelukt! je kunt nu inloggen op TeamAid.nl!';
 }
 ?>
 <!DOCTYPE html>

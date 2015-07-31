@@ -285,17 +285,8 @@ angular.module('starter.services', [])
 				contentType: "application/json; charset=utf-8",
 				dataType: "json"
 			}).success(function(data, status, headers, config) {
-				console.dir(data);
-				console.log(status);
-				console.log(headers);
-				console.log(config);
 				return true;
 			}).error(function(data, status, headers, config) {
-					console.log(data);
-				console.log(status);
-				console.log(headers);
-				console.log(config);
-				console.log('Failzors')
 				return false;
 			});
 		}
