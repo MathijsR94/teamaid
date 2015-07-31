@@ -267,4 +267,38 @@ angular.module('starter.services', [])
             }
 		}
 	})
+
+.factory('Mail', function($http){
+		return {
+		mailInvite: function(tomail, teamId, teamName){
+			var data = {
+				Tomail: tomail,
+				teamId: teamId,
+				teamName: teamName
+			};
+
+			$http({
+				method : 'POST',
+				url : 'php/invite-mailer.php',
+				data : data,
+				headers : { 'Content-Type': 'application/x-www-form-urlencoded', 'Access-Control-Allow-Origin' : true },
+				contentType: "application/json; charset=utf-8",
+				dataType: "json"
+			}).success(function(data, status, headers, config) {
+				console.dir(data);
+				console.log(status);
+				console.log(headers);
+				console.log(config);
+				return true;
+			}).error(function(data, status, headers, config) {
+					console.log(data);
+				console.log(status);
+				console.log(headers);
+				console.log(config);
+				console.log('Failzors')
+				return false;
+			});
+		}
+		};
+	})
 		

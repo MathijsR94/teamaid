@@ -131,7 +131,7 @@ angular.module('starter.controllers', [])
 		}
     })
 	
-	.controller('InvitesCtrl', function ($scope, fireBaseData, User, $state,$ionicHistory) {
+	.controller('InvitesCtrl', function ($scope, fireBaseData, User, Mail, $state,$ionicHistory) {
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
         });
@@ -143,7 +143,9 @@ angular.module('starter.controllers', [])
 			newInvite[removeSpecials(em)] = em;
 			inviteRef.update( newInvite );
 			
-			alert("Implementeer : verstuur email nu XXX");
+			//alert("Implementeer : verstuur email nu XXX");
+
+			Mail.mailInvite(em, $scope.teamId, 'lolol');
 			
 			$ionicHistory.goBack();
 			
