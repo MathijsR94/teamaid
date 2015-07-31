@@ -5,24 +5,18 @@
                 <form name="registerForm" novalidate>
 					
                     <ion-toggle ng-model="nieuwTeam.checked" ng-change="pushNotificationChange()">
-					  Nieuw Team
+					  <span class="input-label" ng-if="nieuwTeam.checked == true">Bestaand Team</span>
+								<span class="input-label" ng-if="nieuwTeam.checked != true">Nieuw Team</span>
 					</ion-toggle>
-					<div ng-if="nieuwTeam.checked == true">
-						<h3>Nieuw Team</h3>
+						<h3 ng-if="nieuwTeam.checked == true">Nieuw Team</h3>
+						<h3 ng-if="nieuwTeam.checked != true">Bestaand Team</h3>
 							<label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
-								<span class="input-label">Teamnaam</span>
-								<input type="text" ng-model="teamName" name="teamName" required/>
+								<span class="input-label" ng-if="nieuwTeam.checked == true">Teamnaam</span>
+								<span class="input-label" ng-if="nieuwTeam.checked != true">Team Referentie</span>
+								<input type="text" ng-model="teamName" name="teamName"/>
 							</label>
-						<h3>Beheerder</h3>
-					</div>
-					<div ng-if="nieuwTeam.checked != true">
-						<h3>Bestaand Team</h3>
-						<label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
-							<span class="input-label">Team refrentie</span>
-							<input type="text" ng-model="teamRef" name="teamRef" required/>
-						</label>
-						<h3>Speler</h3>
-					</div>
+						<h3 ng-if="nieuwTeam.checked == true">Beheerder</h3>
+						<h3 ng-if="nieuwTeam.checked != true">Speler</h3>
                     <div class="list">
                         <!--Voornaam + validatie-->
                         <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
@@ -55,7 +49,7 @@
                         </label>
                     </div>
                     <div>
-                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="createTeam(teamName,teamRef,nieuwTeam.checked, fn, ln, in, em, pwd)">
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="createTeam(teamName,nieuwTeam.checked, fn, ln, in, em, pwd)">
                             Registreren
                         </button>
                     </div>

@@ -22,7 +22,7 @@ angular.module('starter.controllers', [])
     })
     .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams, Admins) {
         //Create user methode
-        $scope.createTeam = function (teamName,teamRef, newTeam, firstName, lastName, insertion, em, pwd) {
+        $scope.createTeam = function (teamName, newTeam, firstName, lastName, insertion, em, pwd) {
             if (firstName != null && lastName != null && em != null && pwd != null) {
                 fireBaseData.ref().createUser({
                     email: em,
@@ -77,8 +77,8 @@ angular.module('starter.controllers', [])
 									});
 								}
 								else{
-									var teamId = teamRef;
-									console.log(teamRef);
+									var teamId = teamName;
+									console.log(teamName);
 											
 									// link User to team
 									Teams.linkPlayer(teamId, firstName, ins, lastName, uid);
