@@ -142,8 +142,11 @@ angular.module('starter.services', [])
 		var gamesRef = ref.child("Games");
 
 		return {
-			getGames: function(teamId) {
+			getGamesRef: function(teamId) {
 				return gamesRef.child(teamId);
+			},
+			getGames: function(teamId) {
+				return $firebaseArray(gamesRef.child(teamId));
 				//var deferred = $q.defer();
 				//var games = $firebaseArray(gamesRef.child(teamId));
 //

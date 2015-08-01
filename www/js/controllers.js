@@ -190,6 +190,7 @@ angular.module('starter.controllers', [])
 
 	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility) {
 		$scope.ShowDelete = true;
+
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			
@@ -197,10 +198,9 @@ angular.module('starter.controllers', [])
 			if(User.isAdmin($scope.teamId)){
 				$scope.ShowDelete = true;
 			}
-			Games.getGames($scope.teamId).on("value",function(snapshot){
-				$scope.games = snapshot.val();
-				console.log($scope.games);
-			});
+			$scope.games = Games.getGames($scope.teamId);
+			$scope.gamesRef = Games.getGamesRef($scope.teamId);
+			console.log($scope.gamesRef);
         });
 
 		$scope.getDetail = function($state) {
@@ -212,8 +212,11 @@ angular.module('starter.controllers', [])
 		}
 
 		$scope.onItemDelete = function(item) {
-			var index = $scope.games.indexOf(item);
-			$scope.games.splice(index, 1);
+			//var index = $scope.games.indexOf(item);
+			$scope.games.$remove(item);
+
+
+			$scope.gamesRef.set($scope.games);
 		};
 
 

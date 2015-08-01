@@ -16,7 +16,7 @@
       <ion-item ng-repeat="game in games | orderObjectBy:'date':true">
             <date-Time sdate='game.date'></date-Time> <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> {{game.home}} vs {{game.away}}
 			<ion-delete-button class="ion-minus-circled"
-							   ng-click="onItemDelete(game.id)">
+							   ng-click="onItemDelete($index)">
 			</ion-delete-button>
 			<ion-option-button class="button-assertive">Edit</ion-option-button>
 	  </ion-item>
