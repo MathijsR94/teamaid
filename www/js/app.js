@@ -174,6 +174,15 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
+		.state('app.games/:id', {
+			url: "/games/:id",
+			views: {
+				'menuContent': {
+					templateUrl: "templates/gameDetail.html",
+					controller: 'GamesCtrl'
+				}
+			}
+		})
 		.state('app.newGame', {
 		  url: "/newGame",
 		  views: {

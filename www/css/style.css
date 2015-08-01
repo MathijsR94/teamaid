@@ -16,3 +16,12 @@ img {
     clear : both;
     height : 40px;
 }
+
+.menu-bar {
+    background: #a10e10;
+    color: #fff;
+}
+
+.menu-bar .button-clear {
+    color: #fff;
+}

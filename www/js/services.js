@@ -140,7 +140,7 @@ angular.module('starter.services', [])
 	.factory('Games', function ($firebaseArray, firebaseRef, $q) {
         var ref = firebaseRef.ref();
 		var gamesRef = ref.child("Games");
-		
+
 		return {
 			getGames: function(teamId) {
 				return gamesRef.child(teamId);
@@ -292,5 +292,15 @@ angular.module('starter.services', [])
 			});
 		}
 		};
+	})
+
+	.factory('Utility', function(){
+		return {
+			deleteItem: function(array, index) {
+					//var array = array;
+					//array.splice(array.indexOf(index), 1);
+				console.log(array);
+			}
+		}
 	})
 		

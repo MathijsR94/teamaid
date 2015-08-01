@@ -188,7 +188,7 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData) {
+	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility) {
 		$scope.ShowDelete = true;
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
@@ -202,10 +202,21 @@ angular.module('starter.controllers', [])
 				console.log($scope.games);
 			});
         });
-		
+
+		$scope.getDetail = function($state) {
+			$state.go('app.Games/:id');
+		}
+
 		$scope.addGame = function(){
 			$state.go('app.newGame');
 		}
+
+		$scope.onItemDelete = function(item) {
+			var index = $scope.games.indexOf(item);
+			$scope.games.splice(index, 1);
+		};
+
+
     })
 	.controller('newGamesCtrl', function($scope, User, Games, $ionicHistory) {
 		$scope.getTeam = User.getTeam().then(function(data) {
@@ -350,6 +361,19 @@ angular.module('starter.controllers', [])
         
     })
 
+	.filter('orderObjectBy', function() {
+		return function(items, field, reverse) {
+			var filtered = [];
+			angular.forEach(items, function(item) {
+				filtered.push(item);
+			});
+			filtered.sort(function (a, b) {
+				return (a[field] > b[field] ? 1 : -1);
+			});
+			if(reverse) filtered.reverse();
+			return filtered;
+		};
+	});
 	
 	function removeSpecials(str) {
 			var lower = str.toLowerCase();
@@ -378,3 +402,5 @@ angular.module('starter.controllers', [])
 
     return [month, day, year].join('-');
 	}
+
+
