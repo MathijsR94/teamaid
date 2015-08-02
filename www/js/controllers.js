@@ -199,30 +199,33 @@ angular.module('starter.controllers', [])
 		$scope.isAdmin = false;
 
 		$scope.getTeam = User.getTeam().then(function(data) {
+			console.log('start getTeam');
 			$scope.teamId = data;
-			
-			//check if current user is Admin for this team
-			$scope.admin = User.isAdmin($scope.teamId).then(function(data) {
-				//console.log(data);
-				data.forEach( function(admin){
-					//console.log(admin);
-					//console.log(User.getUID());
-					if(admin.$id === User.getUID()){
+			console.log('after getTeam');
+			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
+				console.log('start admin');
+				console.log(admins);
+				admins.forEach(function (admin) {
+					console.log('foreach');
+					if (admin.$id === User.getUID()) {
+						console.log('if Admin');
 						$scope.isAdmin = true;
-						//console.log($scope.isAdmin);
+						console.log('isAdmin?: ' + $scope.isAdmin);
 					}
-					//console.log($scope.isAdmin);
+					console.log($scope.isAdmin);
 				});
-			//console.log($scope.isAdmin);				
 			});
+			//check if current user is Admin for this team
 			$scope.games = Games.getGames($scope.teamId);
 			$scope.gamesRef = Games.getGamesRef($scope.teamId);
 			//console.log($scope.gamesRef);
-			//console.log($scope.isAdmin);
-        });
-		
-		
-		console.log($scope.isAdmin);
+			console.log('eind getTeam');
+        })
+
+		$scope.showDelete = function() {
+			console.log('showdelete:' +  $scope.ShowDelete);
+			$scope.ShowDelete = !$scope.ShowDelete;
+		}
 		
 		$scope.addGame = function(){
 			$state.go('app.newGame');
@@ -242,7 +245,7 @@ angular.module('starter.controllers', [])
 			Games.setGame(game.$id);
 			$state.go('app.game_detail');
 		}
-
+		console.log($scope.isAdmin);
     })
 
 	.controller('Games_DetailCtrl', function ($scope, Games, User) {
