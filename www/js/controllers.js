@@ -170,18 +170,24 @@ angular.module('starter.controllers', [])
 	.controller('InvitesCtrl', function ($scope, fireBaseData, User, Mail, $state,$ionicHistory) {
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
+			
+        });
+		$scope.getTeamName = Teams.getTeamName().then(function(data) {
+			$scope.teamName = data;
+			
         });
 		
 		$scope.invite = function ( em ) {
-			var inviteRef = fireBaseData.ref().child("Teams").child($scope.teamId).child("PendingInvites");
-			var newInvite = {};
+		
+			//var inviteRef = fireBaseData.ref().child("Teams").child($scope.teamId).child("PendingInvites");
+			//var newInvite = {};
 			
-			newInvite[removeSpecials(em)] = em;
-			inviteRef.update( newInvite );
+			//newInvite[removeSpecials(em)] = em;
+			//inviteRef.update( newInvite );
 			
 			//alert("Implementeer : verstuur email nu XXX");
 
-			Mail.mailInvite(em, $scope.teamId, 'lolol');
+			Mail.mailInvite(em, $scope.teamId, $scope.teamName);
 			
 			$ionicHistory.goBack();
 			
@@ -196,14 +202,28 @@ angular.module('starter.controllers', [])
 			$scope.teamId = data;
 			
 			//check if current user is Admin for this team
-			$scope.isAdmin = User.isAdmin($scope.teamId);
-			console.log($scope.isAdmin);
-			
+			$scope.admin = User.isAdmin($scope.teamId).then(function(data) {
+				//console.log(data);
+				data.forEach( function(admin){
+					//console.log(admin);
+					//console.log(User.getUID());
+					if(admin.$id === User.getUID()){
+						$scope.isAdmin = true;
+						//console.log($scope.isAdmin);
+					}
+					//console.log($scope.isAdmin);
+				});
+			//console.log($scope.isAdmin);				
+			});
 			$scope.games = Games.getGames($scope.teamId);
 			$scope.gamesRef = Games.getGamesRef($scope.teamId);
-			console.log($scope.gamesRef);
+			//console.log($scope.gamesRef);
+			//console.log($scope.isAdmin);
         });
-
+		
+		
+		console.log($scope.isAdmin);
+		
 		$scope.addGame = function(){
 			$state.go('app.newGame');
 		}

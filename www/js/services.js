@@ -50,7 +50,9 @@ angular.module('starter.services', [])
             all: function () {
                 return accountData;
             },
-
+			getUID: function () {
+                return user.uid;
+            },
             getTeam: function() {
                 var teamId = $firebaseArray(userTeamsRef);
                 var deferred = $q.defer();
@@ -61,24 +63,18 @@ angular.module('starter.services', [])
             },
 
 			isAdmin: function(teamId){
-				var deferred = $q.defer();
+				
 				var admins = $firebaseArray(ref.child("Admins").child(teamId));
+				//ref.child("Admins").child(teamId).once("value",function(snap){
+				//	var admins = snap;
+				//});
+				
+				var deferred = $q.defer();
 				
 				admins.$loaded(function () {
-					deferred.resolve(admins);
-				});
-				
-				deferred.promise.then(function(data){
-					data.forEach(function(admin){
-						if(admin.$value === true){
-							// this user is marked ad admin return 1
-							return admin.$value;
-						}						
-					});
-					// not found as admin so return false
-					//return false;
-				});
-				
+                    deferred.resolve(admins);
+                });
+                return deferred.promise;			
 			},
             getAccountData: function() {
                 return accountData;
@@ -98,7 +94,14 @@ angular.module('starter.services', [])
             ref: function() {
                 return teamsRef;
             },
-
+			getTeamName: function(teamId) {
+                var deferred = $q.defer();
+                var team = $firebaseArray(teamsRef.child(teamId));
+                team.$loaded(function () {
+                    deferred.resolve(team.teamName);
+                });
+                return deferred.promise;
+            },
             addTeam: function(teamName) {
 				teams.$add({
                     teamName: teamName
