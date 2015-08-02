@@ -161,7 +161,6 @@ angular.module('starter.services', [])
                 var games = $firebaseArray(gamesRef.child(teamId));
                 games.$loaded(function(){
                     deferred.resolve(games.$getRecord(selectedGame));
-                    console.log(games.$getRecord(selectedGame));
                 });
 
                 return deferred.promise;
@@ -187,8 +186,8 @@ angular.module('starter.services', [])
 				});
 			},
 			setGame: function(gameId) {
+                localStorage.setItem("selectedGame", gameId);
 				selectedGame = gameId;
-				localStorage.setItem("selectedGame", gameId);
 			}
 			
 		}

@@ -230,8 +230,10 @@ angular.module('starter.controllers', [])
 	.controller('Games_DetailCtrl', function ($scope, Games, User) {
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
-			$scope.game = Games.getGame($scope.teamId);
-			console.log($scope.game.$id);
+			$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
+				$scope.game = game;
+			});
+
 		})
 	})
 	.controller('newGamesCtrl', function($scope, User, Games, $ionicHistory) {
