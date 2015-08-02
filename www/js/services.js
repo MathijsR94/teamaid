@@ -61,13 +61,24 @@ angular.module('starter.services', [])
             },
 
 			isAdmin: function(teamId){
+				var deferred = $q.defer();
+				var admins = $firebaseArray(ref.child("Admins").child(teamId));
 				
-				// var adminRef = ref.child("Admins").child(teamId).child(user.uid);
-				// adminRef.once("value", function(data){
-					
-					// return 1;
-				// });
-				return 1;
+				admins.$loaded(function () {
+					deferred.resolve(admins);
+				});
+				
+				deferred.promise.then(function(data){
+					data.forEach(function(admin){
+						if(admin.value === true){
+							// this user is marked ad admin return 1
+							return true;
+						}						
+					});
+					// not found as admin so return false
+					return false;
+				});
+				
 			},
             getAccountData: function() {
                 return accountData;
@@ -148,13 +159,6 @@ angular.module('starter.services', [])
 			},
 			getGames: function(teamId) {
 				return $firebaseArray(gamesRef.child(teamId));
-				//var deferred = $q.defer();
-				//var games = $firebaseArray(gamesRef.child(teamId));
-//
-				//games.$loaded(function () {
-				//	deferred.resolve(games);
-				//});
-				//return deferred.promise;
 			},
             getGame: function(teamId) {
                 var deferred = $q.defer();
