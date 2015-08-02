@@ -269,10 +269,34 @@ angular.module('starter.controllers', [])
 			$scope.teamId = data;
 			$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 				$scope.game = game;
+				$scope.home = game.home;
+				$scope.away = game.away;
 			})
-		})
+			$scope.gameDate = new Date();
+			$scope.title = "Selecteer datum";
+			$scope.gameTime = 52200;
 
-		$scope.updateGame = function(teamId, gameId) {
+		})
+		$scope.datePickerCallback = function (val) {
+			if (typeof(val) === 'undefined') {
+				console.log('Date not selected');
+			} else {
+				console.log('Selected date is : ', val);
+				$scope.gameDate = val;
+			}
+		};
+
+		$scope.timePickerCallback = function (val) {
+			if (typeof (val) === 'undefined') {
+				console.log('Time not selected');
+			} else {
+				console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+				$scope.gameTime = val;
+			}
+		};
+
+		$scope.updateGame = function(home, away, date, time) {
+			Games.updateGame($scope.teamId, $scope.gameId, date, time, home, away)
 		}
 	})
 	.controller('newGamesCtrl', function($scope, User, Games, $ionicHistory) {
@@ -307,8 +331,6 @@ angular.module('starter.controllers', [])
 					Games.createGame($scope.teamId, $scope.gameDate, $scope.gameTime, home, away);
 					console.dir($ionicHistory);
 					$ionicHistory.goBack();
-
-					alert();
 				}
 			}
 		})

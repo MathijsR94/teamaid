@@ -183,11 +183,11 @@ angular.module('starter.services', [])
 					away : away
 				});			
 			},
-			updateGame: function(teamId,gameId, date, hr, min, home, away){
+			updateGame: function(teamId, gameId, date, time, home, away){
 				var gameRef = gamesRef.child(teamId).child(gameId);
 				gameRef.update({
 					date : date.toString(),
-					time : hr + ":" + min,
+					time : time,
 					home : home,
 					away : away
 				});
