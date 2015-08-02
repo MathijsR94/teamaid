@@ -197,6 +197,7 @@ angular.module('starter.controllers', [])
 	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility, $stateParams) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
+		$scope.listSwipe = true;
 
 		$scope.getTeam = User.getTeam().then(function(data) {
 			console.log('start getTeam');
@@ -239,14 +240,11 @@ angular.module('starter.controllers', [])
 			$scope.gamesRef.set($scope.games);
 		};
 
-		$scope.editGame = function(item) {
-
-		}
 		$scope.getDetail = function(game) {
 			Games.setGame(game.$id);
 			$state.go('app.game', { gameId: game.$id});
 		}
-		$scope.selectGame = function(game) {
+		$scope.editGame = function(game) {
 			Games.setGame(game.$id);
 			$state.go('app.game_edit', { gameId: game.$id});
 		}
@@ -263,24 +261,20 @@ angular.module('starter.controllers', [])
 		})
 
 
-		//$http({
-		//	method: 'GET', url: 'hotels/' + $scope.hotelId + '/albums/' + $scope.albumId + '.json'
-		//}).success(function(data, status, headers, config){
-		//	$scope.photos = data;
-		//}).error(function(data, status, headers, config){
-		//	$scope.status = status;
-		//});
 	})
 
 	.controller('Games_EditCtrl', function ($scope, Games, User, $stateParams) {
 		$scope.gameId = $stateParams.gameId;
-		$scope.getTeam = User.getTeam().then(function(data) {
+		$scope.getTeam = User.getTeam().then(function (data) {
 			$scope.teamId = data;
-			$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
+			$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 				$scope.game = game;
 			})
 		})
-		})
+
+		$scope.updateGame = function(teamId, gameId) {
+		}
+	})
 	.controller('newGamesCtrl', function($scope, User, Games, $ionicHistory) {
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;

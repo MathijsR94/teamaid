@@ -17,7 +17,7 @@
 			<ion-delete-button class="ion-minus-circled"
 							   ng-click="onItemDelete(game)">
 			</ion-delete-button>
-			<ion-option-button class="button-assertive" ng-click="selectGame(game)">Edit</ion-option-button>
+			<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="editGame(game)">Edit</ion-option-button>
 	  </ion-item>
     </ion-list>
       
