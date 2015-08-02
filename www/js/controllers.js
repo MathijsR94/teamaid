@@ -190,14 +190,15 @@ angular.module('starter.controllers', [])
 
 	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility) {
 		$scope.ShowDelete = false;
+		$scope.isAdmin = false;
 
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			
 			//check if current user is Admin for this team
-			if(User.isAdmin($scope.teamId)){
-				$scope.ShowDelete = true;
-			}
+			$scope.isAdmin = User.isAdmin($scope.teamId);
+			console.log($scope.isAdmin);
+			
 			$scope.games = Games.getGames($scope.teamId);
 			$scope.gamesRef = Games.getGamesRef($scope.teamId);
 			console.log($scope.gamesRef);

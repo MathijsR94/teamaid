@@ -70,13 +70,13 @@ angular.module('starter.services', [])
 				
 				deferred.promise.then(function(data){
 					data.forEach(function(admin){
-						if(admin.value === true){
+						if(admin.$value === true){
 							// this user is marked ad admin return 1
-							return true;
+							return admin.$value;
 						}						
 					});
 					// not found as admin so return false
-					return false;
+					//return false;
 				});
 				
 			},

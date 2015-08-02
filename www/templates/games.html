@@ -1,8 +1,7 @@
 <ion-view view-title="Wedstrijden" has-subheader>
   <ion-header-bar class="bar-positive bar-subheader">
       <div class="buttons">
-        <button class="button button-icon icon ion-ios-minus-outline"
-          ng-click="ShowDelete = !ShowDelete;"></button>
+        <button ng-if="isAdmin == true" class="button button-icon icon ion-ios-minus-outline" ng-click="ShowDelete = !ShowDelete;"></button>
       </div>
       <h1 class="title"></h1>
       <div class="buttons">
@@ -12,13 +11,13 @@
   <ion-content>
   	
 	
-    <ion-list class="card item-text-wrap" ng-click="click1($event)" show-delete="ShowDelete">
+    <ion-list class="card item-text-wrap" ng-click="click1($event)" show-delete="ShowDelete" can-swipe="listSwipe">
       <ion-item ng-repeat="game in games | orderBy:'date'"ng-click="selectGame(game)">
             <date-Time sdate='game.date'></date-Time> <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> {{game.home}} vs {{game.away}}
 			<ion-delete-button class="ion-minus-circled"
 							   ng-click="onItemDelete(game)">
 			</ion-delete-button>
-			<ion-option-button class="button-assertive">Editt</ion-option-button>
+			<ion-option-button class="button-assertive">Edit</ion-option-button>
 	  </ion-item>
     </ion-list>
       
