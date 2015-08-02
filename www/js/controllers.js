@@ -212,15 +212,28 @@ angular.module('starter.controllers', [])
 		}
 
 		$scope.onItemDelete = function(item) {
-			//var index = $scope.games.indexOf(item);
 			$scope.games.$remove(item);
-
-
 			$scope.gamesRef.set($scope.games);
 		};
 
+		$scope.editGame = function(item) {
+
+		}
+
+		$scope.selectGame = function(game) {
+			Games.setGame(game.$id);
+			$state.go('app.game_detail');
+		}
 
     })
+
+	.controller('Games_DetailCtrl', function ($scope, Games, User) {
+		$scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			$scope.game = Games.getGame($scope.teamId);
+			console.log($scope.game.$id);
+		})
+	})
 	.controller('newGamesCtrl', function($scope, User, Games, $ionicHistory) {
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;

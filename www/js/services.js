@@ -140,6 +140,7 @@ angular.module('starter.services', [])
 	.factory('Games', function ($firebaseArray, firebaseRef, $q) {
         var ref = firebaseRef.ref();
 		var gamesRef = ref.child("Games");
+		var selectedGame = localStorage.getItem("selectedGame");
 
 		return {
 			getGamesRef: function(teamId) {
@@ -155,6 +156,16 @@ angular.module('starter.services', [])
 				//});
 				//return deferred.promise;
 			},
+            getGame: function(teamId) {
+                var deferred = $q.defer();
+                var games = $firebaseArray(gamesRef.child(teamId));
+                games.$loaded(function(){
+                    deferred.resolve(games.$getRecord(selectedGame));
+                    console.log(games.$getRecord(selectedGame));
+                });
+
+                return deferred.promise;
+            },
 			createGame: function(teamId, gameDate, gameTime, home, away){
 				var teamGamesRef = gamesRef.child(teamId);
 				var games = $firebaseArray(teamGamesRef);
@@ -174,6 +185,10 @@ angular.module('starter.services', [])
 					home : home,
 					away : away
 				});
+			},
+			setGame: function(gameId) {
+				selectedGame = gameId;
+				localStorage.setItem("selectedGame", gameId);
 			}
 			
 		}

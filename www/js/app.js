@@ -174,12 +174,21 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
-		.state('app.games/:id', {
-			url: "/games/:id",
+		//.state('app.games/:id', {
+		//	url: "/games/:id",
+		//	views: {
+		//		'menuContent': {
+		//			templateUrl: "templates/gameDetail.html",
+		//			controller: 'GamesCtrl'
+		//		}
+		//	}
+		//})
+		.state('app.game_detail', {
+			url: "/game_detail",
 			views: {
 				'menuContent': {
-					templateUrl: "templates/gameDetail.html",
-					controller: 'GamesCtrl'
+					templateUrl: "templates/game_detail.html",
+					controller: 'Games_DetailCtrl'
 				}
 			}
 		})
