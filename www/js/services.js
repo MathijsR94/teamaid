@@ -315,13 +315,21 @@ angular.module('starter.services', [])
 		};
 	})
 
-	.factory('Utility', function(){
-		return {
-			deleteItem: function(array, index) {
-					//var array = array;
-					//array.splice(array.indexOf(index), 1);
-				console.log(array);
-			}
-		}
-	})
+    .factory('Utility', function () {
+        return {
+            deleteItem: function (array, item, strippedItem) {
+                console.log(item);
+                console.log(strippedItem);
+                var array = array;
+                if (confirm('Weet je zeker dat je dit item wilt verwijderen?')) {
+                    array.$remove(item);
+                    return array;
+                }
+
+            },
+            editItem: function(item) {
+
+            }
+        }
+    })
 		

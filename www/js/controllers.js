@@ -200,19 +200,16 @@ angular.module('starter.controllers', [])
 			}
 			$scope.games = Games.getGames($scope.teamId);
 			$scope.gamesRef = Games.getGamesRef($scope.teamId);
-			//console.log($scope.gamesRef);
+			console.log($scope.gamesRef);
         });
-
-		$scope.getDetail = function($state) {
-			$state.go('app.Games/:id');
-		}
 
 		$scope.addGame = function(){
 			$state.go('app.newGame');
 		}
 
 		$scope.onItemDelete = function(item) {
-			$scope.games.$remove(item);
+			var strippedItem = angular.copy(item);
+			Utility.deleteItem($scope.games, item, strippedItem);
 			$scope.gamesRef.set($scope.games);
 		};
 
