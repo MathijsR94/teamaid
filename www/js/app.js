@@ -174,17 +174,8 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
-		//.state('app.games/:id', {
-		//	url: "/games/:id",
-		//	views: {
-		//		'menuContent': {
-		//			templateUrl: "templates/gameDetail.html",
-		//			controller: 'GamesCtrl'
-		//		}
-		//	}
-		//})
-		.state('app.game_detail', {
-			url: "/game_detail",
+		.state('app.game', {
+			url: "/game/:gameId",
 			views: {
 				'menuContent': {
 					templateUrl: "templates/game_detail.html",
@@ -192,6 +183,24 @@ app.directive('dateTime', function() {
 				}
 			}
 		})
+        .state('app.game_edit', {
+            url: "/game/:gameId/edit",
+            views: {
+                'menuContent': {
+                    templateUrl: "templates/game_edit.html",
+                    controller: 'Games_EditCtrl'
+                }
+            }
+        })
+		//.state('app.game_detail', {
+		//	url: "/game_detail",
+		//	views: {
+		//		'menuContent': {
+		//			templateUrl: "templates/game_detail.html",
+		//			controller: 'Games_DetailCtrl'
+		//		}
+		//	}
+		//})
 		.state('app.newGame', {
 		  url: "/newGame",
 		  views: {

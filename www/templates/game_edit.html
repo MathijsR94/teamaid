@@ -1,0 +1,25 @@
+<ion-view view-title="Edit Wedstrijd">
+    <ion-content>
+        <label class="item-input">
+            <span class="input-label">Thuisteam</span>
+            <input type="text"
+                   ng-model="game.home"/>
+        </label>
+        <label class="item-input">
+            <span class="input-label">Uitteam</span>
+            <input type="text"
+                   ng-model="game.away"/>
+        </label>
+
+        <label class="item-input">
+            <span class="input-label">Datum</span>
+            <span>{{game.date}}</span>
+        </label>
+        <ionic-datepicker name="date" idate="gameDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+            <button class="button button-block button-positive"> {{ gameDate | date:'dd - MMMM - yyyy' }} </button>
+        </ionic-datepicker>
+        <ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
+            <button class="button button-block button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+        </ionic-timepicker>
+    </ion-content>
+</ion-view>

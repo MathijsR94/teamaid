@@ -167,7 +167,7 @@ angular.module('starter.controllers', [])
 		}
     })
 	
-	.controller('InvitesCtrl', function ($scope, fireBaseData, User, Mail, $state,$ionicHistory) {
+	.controller('InvitesCtrl', function ($scope, fireBaseData, User,Teams,  Mail, $state,$ionicHistory) {
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			
@@ -194,7 +194,7 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility) {
+	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility, $stateParams) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
 
@@ -242,23 +242,45 @@ angular.module('starter.controllers', [])
 		$scope.editGame = function(item) {
 
 		}
-
+		$scope.getDetail = function(game) {
+			Games.setGame(game.$id);
+			$state.go('app.game', { gameId: game.$id});
+		}
 		$scope.selectGame = function(game) {
 			Games.setGame(game.$id);
-			$state.go('app.game_detail');
+			$state.go('app.game_edit', { gameId: game.$id});
 		}
 		console.log($scope.isAdmin);
     })
 
-	.controller('Games_DetailCtrl', function ($scope, Games, User) {
+	.controller('Games_DetailCtrl', function ($scope, Games, User, $stateParams) {
+		$scope.gameId = $stateParams.gameId;
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
 				$scope.game = game;
 			});
-
 		})
+
+
+		//$http({
+		//	method: 'GET', url: 'hotels/' + $scope.hotelId + '/albums/' + $scope.albumId + '.json'
+		//}).success(function(data, status, headers, config){
+		//	$scope.photos = data;
+		//}).error(function(data, status, headers, config){
+		//	$scope.status = status;
+		//});
 	})
+
+	.controller('Games_EditCtrl', function ($scope, Games, User, $stateParams) {
+		$scope.gameId = $stateParams.gameId;
+		$scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
+				$scope.game = game;
+			})
+		})
+		})
 	.controller('newGamesCtrl', function($scope, User, Games, $ionicHistory) {
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
