@@ -189,18 +189,18 @@ angular.module('starter.controllers', [])
     })
 
 	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility) {
-		$scope.ShowDelete = false;
+		$scope.ShowDelete = true;
 
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			
-			//check if current user is Admin for this team
+			//werkt nog niet
 			if(User.isAdmin($scope.teamId)){
 				$scope.ShowDelete = true;
 			}
 			$scope.games = Games.getGames($scope.teamId);
 			$scope.gamesRef = Games.getGamesRef($scope.teamId);
-			//console.log($scope.gamesRef);
+			console.log($scope.gamesRef);
         });
 
 		$scope.getDetail = function($state) {
