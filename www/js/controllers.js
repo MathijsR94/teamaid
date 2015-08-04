@@ -237,6 +237,7 @@ angular.module('starter.controllers', [])
 		$scope.onItemDelete = function(item) {
 			var strippedItem = angular.copy(item);
 			Utility.deleteItem($scope.games, item, strippedItem);
+			console.log($scope.games);
 			$scope.gamesRef.set($scope.games);
 		};
 
@@ -263,19 +264,19 @@ angular.module('starter.controllers', [])
 
 	})
 
-	.controller('Games_EditCtrl', function ($scope, Games, User, $stateParams) {
+	.controller('Games_EditCtrl', function ($scope, Games, User, $stateParams,$ionicHistory) {
 		$scope.gameId = $stateParams.gameId;
+		
 		$scope.getTeam = User.getTeam().then(function (data) {
 			$scope.teamId = data;
 			$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
+				$scope.gameDate = new Date(game.date);
+				$scope.title = "Selecteer datum";
+				$scope.gameTime = game.time;
 				$scope.game = game;
 				$scope.home = game.home;
 				$scope.away = game.away;
 			})
-			$scope.gameDate = new Date();
-			$scope.title = "Selecteer datum";
-			$scope.gameTime = 52200;
-
 		})
 		$scope.datePickerCallback = function (val) {
 			if (typeof(val) === 'undefined') {
@@ -295,8 +296,9 @@ angular.module('starter.controllers', [])
 			}
 		};
 
-		$scope.updateGame = function(home, away, date, time) {
-			Games.updateGame($scope.teamId, $scope.gameId, date, time, home, away)
+		$scope.updateGame = function(home, away) {
+			Games.updateGame($scope.teamId, $scope.gameId, $scope.gameDate, $scope.gameTime, home, away);
+			$ionicHistory.goBack();
 		}
 	})
 	.controller('newGamesCtrl', function($scope, User, Games, $ionicHistory) {
@@ -481,5 +483,3 @@ angular.module('starter.controllers', [])
 
     return [month, day, year].join('-');
 	}
-
-
