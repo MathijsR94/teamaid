@@ -82,7 +82,7 @@ angular.module('starter.services', [])
         }
     })
 
-    .factory('Teams', function ($firebaseArray, firebaseRef, $q) {
+    .factory('Teams', function ($firebaseArray, $firebaseObject, firebaseRef, $q) {
         var ref = firebaseRef.ref();
         var teamsRef = ref.child("Teams");
         var usersRef = ref.child("Users");
@@ -95,10 +95,12 @@ angular.module('starter.services', [])
                 return teamsRef;
             },
 			getTeamName: function(teamId) {
+			//console.log(teamId);
                 var deferred = $q.defer();
-                var team = $firebaseArray(teamsRef.child(teamId));
+                var team = $firebaseObject(teamsRef.child(teamId));
                 team.$loaded(function () {
                     deferred.resolve(team.teamName);
+					//console.log(team);
                 });
                 return deferred.promise;
             },
