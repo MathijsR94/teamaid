@@ -256,7 +256,7 @@ app.directive('dateTime', function() {
 		  }
 		})
 		.state('app.invite', {
-		  url: "/invite",
+		  url: "/invite/:teamId",
 		  views: {
 			'menuContent': {
 			  templateUrl: "templates/invite.html",
