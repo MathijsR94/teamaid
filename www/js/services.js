@@ -207,6 +207,46 @@ angular.module('starter.services', [])
                 });
                 return players;
             }
+			},
+			checkAttendance: function(type , uid, gameId, teamId ) {
+                switch(type){
+				case "present": 
+					var attendancePresent = $firebaseObject(gamesRef.child(teamId).child(gameId).child("Present"));
+					return(uid in attendancePresent);
+				break;
+				case "absent": 
+					var attendanceAbsent = $firebaseObject(gamesRef.child(teamId).child(gameId).child("Absent"));
+					return(uid in attendanceAbsent);
+				break;
+				default:
+					return 0;
+				break;
+				}
+			},
+			addAttendance: function(type , uid, gameId, teamId ) {
+                switch(type){
+				case "present": 
+					var player= {};
+					player[uid] = true;
+					if(checkAttendance("absent" , uid, gameId, teamId)){
+						// remove  from absent 
+					}
+					gamesRef.child(teamId).child(gameId).child("Present").update(player);
+					
+				break;
+				case "absent": 
+					var player= {};
+					player[uid] = true;
+					if(checkAttendance("present" , uid, gameId, teamId)){
+						// remove  from present 
+					}
+					gamesRef.child(teamId).child(gameId).child("Absent").update(player);
+				break;
+				default:
+					return 0;
+				break;
+				}
+			}
 		}
 		
     })

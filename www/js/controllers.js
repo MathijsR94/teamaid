@@ -266,10 +266,12 @@ angular.module('starter.controllers', [])
 				$scope.present = true;
 				$scope.absent = false;
 				$scope.unknown = false;
-				if(Games.CheckPresent(User.getUID()) === true ){
+				if(Games.checkAttendance("present",User.getUID(),$scope.gameId,$scope.teamId) === true ){
 					// already logged, no change needed
 				} else{
 					Games.addAttendance("present",User.getUID(),$scope.gameId);
+				}else{
+					Games.addAttendance("present",User.getUID(),$scope.gameId,$scope.teamId);
 					//insert it in the Present Array
 				}
 			break;
