@@ -243,9 +243,11 @@ angular.module('starter.controllers', [])
 
 	.controller('Games_DetailCtrl', function ($scope, Games, User, $stateParams) {
 		$scope.gameId = $stateParams.gameId;
+		
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
+				$scope.gameDate = new Date(game.date);
 				$scope.game = game;
 			});
 		})

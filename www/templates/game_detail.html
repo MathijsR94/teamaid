@@ -1,8 +1,20 @@
 <ion-view view-title="Wedstrijden">
     <ion-content>
         <ion-item>
-            GameID = {{game.$id}} wedstrijd = {{game.home}} vs {{game.away}} datum = {{game.date}}
+            <h1>{{game.home}} vs {{game.away}}</h1>
+			<span>{{ gameDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='game.time'></standard-time-no-meridian></span>
+			<div class="row responsive-sm">
+			  <div class="col"><span>aanwezig</span>
+				
+			  </div>
+			  <div class="col"><span>afwezig</span>
+			  
+			  </div>
+			  <div class="col"><span>unknown</span>
+			  
+			  </div>
+			</div>
         </ion-item>
-
+		
     </ion-content>
 </ion-view>

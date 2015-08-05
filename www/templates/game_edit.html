@@ -10,11 +10,6 @@
             <input type="text"
                    ng-model="away"/>
         </label>
-
-        <label class="item-input">
-            <span class="input-label">Datum</span>
-            <span>{{ gameDate | date:'dd - MMMM - yyyy' }}</span>
-        </label>
         <ionic-datepicker name="date" idate="gameDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
             <button class="button button-block button-positive"> {{ gameDate | date:'dd - MMMM - yyyy' }} </button>
         </ionic-datepicker>

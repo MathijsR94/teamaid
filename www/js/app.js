@@ -74,10 +74,11 @@ app.directive('dateTime', function() {
 		
 		function dateParser(val, format) {
 			if (val === null) {
-			  return "invalid Date";
+				return "invalid Date";
 			} 
 			else{
 				var newDate = new Date(val);
+				console.log(newDate);
 				if (format === 'MM-DD-YYYY') {
 				
 				return (newDate.getDate() + "-" + (newDate.getMonth()+1) + "-" + newDate.getFullYear());
