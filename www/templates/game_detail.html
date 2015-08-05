@@ -3,6 +3,11 @@
         <ion-item>
             <h1>{{game.home}} vs {{game.away}}</h1>
 			<span>{{ gameDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='game.time'></standard-time-no-meridian></span>
+			<div class="button-bar">
+			  <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }" ng-click="changeAttendance('present');">aanwezig</a>
+			  <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }" ng-click="changeAttendance('absent');">afwezig</a>
+			  <a ng-class="{ 'button button-royal' : unknown , 'button button-stable' : !unknown}">onbekend</a>
+			</div>
 			<div class="row responsive-sm">
 			  <div class="col"><span>aanwezig</span>
 				
@@ -10,7 +15,7 @@
 			  <div class="col"><span>afwezig</span>
 			  
 			  </div>
-			  <div class="col"><span>unknown</span>
+			  <div class="col"><span>onbekend</span>
 			  
 			  </div>
 			</div>

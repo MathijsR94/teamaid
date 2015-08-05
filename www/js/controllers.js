@@ -242,6 +242,9 @@ angular.module('starter.controllers', [])
 
 	.controller('Games_DetailCtrl', function ($scope, Games, User, $stateParams) {
 		$scope.gameId = $stateParams.gameId;
+		$scope.present = false;
+		$scope.absent = false;
+		$scope.unknown = true;
 		
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
@@ -250,6 +253,38 @@ angular.module('starter.controllers', [])
 				$scope.game = game;
 			});
 		})
+		
+		$scope.changeAttendance = function(type){
+		
+			switch(type){
+			
+			case "present": 
+				$scope.present = true;
+				$scope.absent = false;
+				$scope.unknown = false;
+				if(Games.CheckPresent(User.getUID()) === true ){
+					// already logged, no change needed
+				}else{
+					Games.addAttendance("present",User.getUID(),$scope.gameId);
+					//insert it in the Present Array
+				}
+			break;
+			case "absent": 
+				$scope.absent = true;
+				$scope.present = false;
+				$scope.unknown = false;
+			break;
+			default:
+				$scope.absent = false;
+				$scope.present = false;
+				$scope.unknown = true;
+			break;
+			}
+			
+			
+			
+		
+		}
 
 
 	})
