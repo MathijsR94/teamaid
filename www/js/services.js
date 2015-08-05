@@ -153,10 +153,11 @@ angular.module('starter.services', [])
         }
     })
 	
-	.factory('Games', function ($firebaseArray, firebaseRef, $q) {
+	.factory('Games', function ($firebaseArray, $firebaseObject, firebaseRef, $q) {
         var ref = firebaseRef.ref();
 		var gamesRef = ref.child("Games");
 		var selectedGame = localStorage.getItem("selectedGame");
+
 
 		return {
 			getGamesRef: function(teamId) {
@@ -197,8 +198,15 @@ angular.module('starter.services', [])
 			setGame: function(gameId) {
                 localStorage.setItem("selectedGame", gameId);
 				selectedGame = gameId;
-			}
-			
+			},
+            checkUnknown: function(present, absent, players) {
+                players.forEach(function(player) {
+                    if(!(player.$id in present) || !(player.$id in absent)) {
+                        players.push(player);
+                    }
+                });
+                return players;
+            }
 		}
 		
     })
@@ -226,7 +234,7 @@ angular.module('starter.services', [])
 				localStorage.setItem("selectedPractise", practiseId);
 				selectedPractise = practiseId;
 			},
-			createPractise: function(teamId, date, time, location,repeat){
+			createPractise: function(teamId, date, time, location, repeat){
 				var teamPractiseRef = practiseRef.child(teamId);
 				var practises = $firebaseArray(teamPractiseRef);
 				for (var i = 0; i < repeat; i++) {
