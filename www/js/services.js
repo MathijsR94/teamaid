@@ -206,8 +206,7 @@ angular.module('starter.services', [])
                     }
                 });
                 return players;
-            }
-			},
+            },
 			checkAttendance: function(type , uid, gameId, teamId ) {
                 switch(type){
 				case "present": 
