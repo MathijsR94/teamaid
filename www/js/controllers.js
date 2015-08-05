@@ -186,7 +186,6 @@ angular.module('starter.controllers', [])
 	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility, $stateParams) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
-		//$scope.listSwipe = true;
 
 		$scope.getTeam = User.getTeam().then(function(data) {
 			//console.log('start getTeam');
@@ -329,18 +328,40 @@ angular.module('starter.controllers', [])
 		})
 	})
 	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory,fireBaseData) {
-		
-		$scope.shouldShowDelete = false;
-		$scope.shouldShowReorder = false;
-		$scope.listCanSwipe = true;
-		$scope.currentDate = new Date();
-		$scope.title = "Selecteer datum";
-		$scope.slots = {epochTime: 73800, format: 24, step: 15};
-		
-		$scope.weeks = 0;
-		$scope.drag = function(value) {
-			$scope.weeks = value;
+		$scope.ShowDelete = false;
+		$scope.isAdmin = false;
+
+		$scope.getTeam = User.getTeam().then(function(data) {
+			//console.log('start getTeam');
+			$scope.teamId = data;
+
+			//check if current user is Admin for this team
+			$scope.practises = Practises.getPractises($scope.teamId);
+			$scope.practisesRef = Practises.getPractisesRef($scope.teamId);
+			//console.log($scope.gamesRef);
+			//console.log('eind getTeam');
+		}).then(function(){
+			//console.log('after getTeam');
+			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
+				//console.log('start admin');
+				//console.log(admins);
+				admins.forEach(function(admin){
+					//console.log('foreach');
+					if(admin.$id === User.getUID()){
+						//console.log('if Admin');
+						$scope.isAdmin = true;
+						console.log('isAdmin?: ' + $scope.isAdmin);
+					}
+					//console.log($scope.isAdmin);
+				});
+			});
+		});
+
+		$scope.showDelete = function() {
+			console.log('showdelete:' + $scope.ShowDelete);
+			$scope.ShowDelete = !$scope.ShowDelete;
 		};
+
 
 		$scope.datePickerCallback = function(val) {
 			if(typeof(val)==='undefined'){      
@@ -358,20 +379,13 @@ angular.module('starter.controllers', [])
 			console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
 			$scope.time = val;
 		  }
-		};	
-		
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			
-			if(User.isAdmin($scope.teamId)){
-				$scope.shouldShowDelete = true;
-				$scope.shouldShowReorder = false;
-			}
-			
-			Practises.getPractises($scope.teamId).then(function(data){
-				$scope.practises = data;
-			});
-        })
+		};
+
+        $scope.getDetail = function(practise) {
+            console.log('detail');
+            Practises.setPractise(practise);
+            $state.go('app.practise', { practiseId: practise });
+        }
 		
 		$scope.addPractise = function(){
 			$state.go('app.newPractise');
@@ -387,7 +401,20 @@ angular.module('starter.controllers', [])
 			}	
 		}
 		
-    })	
+    })
+
+    .controller('Practises_DetailCtrl', function ($scope, Practises, User, $stateParams) {
+
+        $scope.practiseId = $stateParams.practiseId;
+        $scope.getTeam = User.getTeam().then(function(data) {
+            $scope.teamId = data;
+            $scope.getPractise = Practises.getPractise($scope.teamId).then(function(practise) {
+                $scope.practise = practise;
+            });
+        })
+
+
+    })
 
 	.controller('FinanceCtrl', function ($scope, User, Finance, $state) {
         $scope.getTeam = User.getTeam().then(function(data) {

@@ -220,6 +220,15 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
+		.state('app.practise', {
+			url: "/practises/:practiseId",
+			views: {
+				'menuContent': {
+					templateUrl: "templates/practise_detail.html",
+					controller: 'Practises_DetailCtrl'
+				}
+			}
+		})
 		.state('app.newPractise', {
 		  url: "/newPractise",
 		  views: {

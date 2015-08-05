@@ -203,23 +203,43 @@ angular.module('starter.services', [])
 		
     })
 	.factory('Practises', function ($firebaseArray, firebaseRef, $q) {
-        var ref = firebaseRef.ref();
-		var practiseRef = ref.child("Practises");
-		
-		return {
-			getPractises: function(teamId) {
-				var deferred = $q.defer();
-				var practises = $firebaseArray(practiseRef.child(teamId));
+		var ref = firebaseRef.ref();
+		var practisesRef = ref.child("Practises");
+		var selectedPractise = localStorage.getItem("selectedPractise");
 
-				practises.$loaded(function () {
-					deferred.resolve(practises);
+		return {
+			getPractisesRef: function(teamId) {
+				return practisesRef.child(teamId);
+			},
+			getPractises: function(teamId) {
+				return $firebaseArray(practisesRef.child(teamId));
+			},
+			getPractise: function(practiseId) {
+				var deferred = $q.defer();
+				var practises = $firebaseArray(practisesRef.child(practiseId));
+                practises.$loaded(function(){
+					deferred.resolve(practises.$getRecord(selectedPractise));
 				});
 				return deferred.promise;
+			},
+			createPractise: function(teamId, practiseDate, practiseTime, location){
+				var teamGamesRef = gamesRef.child(teamId);
+				var practises = $firebaseArray(practisesRef);
+
+				practises.$add({
+					date : practiseDate.toString(),
+					time : practiseTime,
+					location : location
+				});
+			},
+			setPractise: function(practiseId) {
+				localStorage.setItem("selectedPractise", practiseId);
+				selectedGame = practiseId;
 			},
 			createPractise: function(teamId, date, time, location,repeat){
 				var teamPractiseRef = practiseRef.child(teamId);
 				var practises = $firebaseArray(teamPractiseRef);
-				for (i = 0; i < repeat; i++) {					
+				for (var i = 0; i < repeat; i++) {
 					practises.$add({
 						date : date.toString(),
 						time : time,
@@ -229,13 +249,12 @@ angular.module('starter.services', [])
 					date.setDate(date.getDate() + (7));
 				};					
 			},
-			updatePractise: function(teamId,practiseId, date, time, home, away){
+			updatePractise: function(teamId,practiseId, date, time, location){
 				var practiseRef = PractiseRef.child(teamId).child(practiseId);
 				practiseRef.update({
 					date : date.toString(),
 					time : time,
-					home : home,
-					away : away
+					location : location
 				});
 			}
 			

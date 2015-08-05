@@ -2,7 +2,7 @@
   <ion-content>
 	<button class="button button-block button-positive" ng-click="addPractise()">Add training</button>
     <ion-list>
-      <ion-item ng-repeat="practise in practises">
+      <ion-item ng-repeat="practise in practises" ng-click="getDetail(practise)">
             <date-Time sdate='practise.date'></date-Time> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
       </ion-item>
     </ion-list>
