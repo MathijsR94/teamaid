@@ -362,7 +362,7 @@ angular.module('starter.controllers', [])
 			}
 		})
 	})
-	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory,fireBaseData) {
+	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
 
@@ -425,7 +425,12 @@ angular.module('starter.controllers', [])
 		$scope.addPractise = function(){
 			$state.go('app.newPractise');
 		}
-		
+
+        $scope.onItemDelete = function(item) {
+            var strippedItem = angular.copy(item);
+            Utility.deleteItem($scope.practises, item, strippedItem);
+            $scope.practisesRef.set($scope.practises);
+        };
 		$scope.newPractise = function(location,repeatValue){
 			if (typeof ($scope.date) === 'undefined' || typeof ($scope.time) === 'undefined'|| typeof (repeatValue) === 'undefined') {
 				
@@ -435,6 +440,10 @@ angular.module('starter.controllers', [])
 				$ionicHistory.goBack();
 			}	
 		}
+        $scope.editPractise = function(practise) {
+            Practises.setPractise(practise.$id);
+            $state.go('app.practise_edit', { practiseId: practise.$id});
+        }
 		
     })
 
@@ -449,6 +458,43 @@ angular.module('starter.controllers', [])
         })
 
 
+    })
+
+    .controller('Practises_EditCtrl', function ($scope, Practises, User, $stateParams,$ionicHistory) {
+        $scope.practiseId = $stateParams.practiseId;
+
+        $scope.getTeam = User.getTeam().then(function (data) {
+            $scope.teamId = data;
+            $scope.getPractise = Practises.getPractise($scope.teamId).then(function (practise) {
+                $scope.practiseDate = new Date(practise.date);
+                $scope.title = "Selecteer datum";
+                $scope.practiseTime = practise.time;
+                $scope.practise = practise;
+                $scope.location = practise.location;
+            })
+        })
+        $scope.datePickerCallback = function (val) {
+            if (typeof(val) === 'undefined') {
+                console.log('Date not selected');
+            } else {
+                console.log('Selected date is : ', val);
+                $scope.practiseDate = val;
+            }
+        };
+
+        $scope.timePickerCallback = function (val) {
+            if (typeof (val) === 'undefined') {
+                console.log('Time not selected');
+            } else {
+                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                $scope.practiseTime = val;
+            }
+        };
+
+        $scope.updatePractise = function(location) {
+            Practises.updatePractise($scope.teamId, $scope.practiseId, $scope.practiseDate, $scope.practiseTime, location);
+            $ionicHistory.goBack();
+        }
     })
 
 	.controller('FinanceCtrl', function ($scope, User, Finance, $state) {
