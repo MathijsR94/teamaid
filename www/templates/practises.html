@@ -1,11 +1,25 @@
-<ion-view view-title="Trainingen">
-  <ion-content>
-	<button class="button button-block button-positive" ng-click="addPractise()">Add training</button>
-    <ion-list>
-      <ion-item ng-repeat="practise in practises" ng-click="getDetail(practise)">
-            <date-Time sdate='practise.date'></date-Time> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
-      </ion-item>
-    </ion-list>
-      
-  </ion-content>
+<ion-view view-title="Trainingen" has-subheader>
+    <ion-header-bar class="bar-positive bar-subheader">
+        <div class="buttons">
+            <button ng-if="isAdmin" class="button button-icon icon ion-ios-minus-outline" ng-click="showDelete()"></button>
+        </div>
+        <h1 class="title"></h1>
+        <div class="buttons">
+            <button class="button button-positive" ng-if="isAdmin" ng-click="addPractise()">Add game</button>
+        </div>
+    </ion-header-bar>
+    <ion-content>
+
+
+        <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
+            <ion-item ng-repeat="practise in practises | orderBy:'date'"ng-click="getDetail(practise.$id)">
+                <date-Time sdate='practise.date'></date-Time> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{game.location}}
+                <ion-delete-button class="ion-minus-circled"
+                                   ng-click="onItemDelete(practise)">
+                </ion-delete-button>
+                <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); editPractise(practise)">Edit</ion-option-button>
+            </ion-item>
+        </ion-list>
+
+    </ion-content>
 </ion-view>

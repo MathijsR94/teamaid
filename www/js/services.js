@@ -222,19 +222,9 @@ angular.module('starter.services', [])
 				});
 				return deferred.promise;
 			},
-			createPractise: function(teamId, practiseDate, practiseTime, location){
-				var teamGamesRef = gamesRef.child(teamId);
-				var practises = $firebaseArray(practisesRef);
-
-				practises.$add({
-					date : practiseDate.toString(),
-					time : practiseTime,
-					location : location
-				});
-			},
 			setPractise: function(practiseId) {
 				localStorage.setItem("selectedPractise", practiseId);
-				selectedGame = practiseId;
+				selectedPractise = practiseId;
 			},
 			createPractise: function(teamId, date, time, location,repeat){
 				var teamPractiseRef = practiseRef.child(teamId);
@@ -249,14 +239,15 @@ angular.module('starter.services', [])
 					date.setDate(date.getDate() + (7));
 				};					
 			},
-			updatePractise: function(teamId,practiseId, date, time, location){
-				var practiseRef = PractiseRef.child(teamId).child(practiseId);
+			updatePractise: function(teamId, practiseId, date, time, location){
+                console.log(teamId);
+				var practiseRef = practisesRef.child(teamId).child(practiseId);
 				practiseRef.update({
 					date : date.toString(),
 					time : time,
 					location : location
 				});
-			}
+            }
 			
 		}
 		
