@@ -11,13 +11,13 @@
                 </div>
                 <div class="row responsive-sm">
                     <div class="col"><span>aanwezig</span>
-						<ion-item ng-repeat="player in game.Present">
-                                   {{player}}
+						<ion-item ng-repeat="(id,value) in game.Present">
+                                   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
                         </ion-item>
                     </div>
                     <div class="col"><span>afwezig</span>
-						<ion-item ng-repeat="player in game.Absent">
-                                   {{player}}
+						<ion-item ng-repeat="(id,value) in game.Absent">
+                                   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
                         </ion-item>
                     </div>
                     <div class="col"><span>onbekend</span>
