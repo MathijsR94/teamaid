@@ -193,15 +193,6 @@ app.directive('dateTime', function() {
                 }
             }
         })
-		//.state('app.game_detail', {
-		//	url: "/game_detail",
-		//	views: {
-		//		'menuContent': {
-		//			templateUrl: "templates/game_detail.html",
-		//			controller: 'Games_DetailCtrl'
-		//		}
-		//	}
-		//})
 		.state('app.newGame', {
 		  url: "/newGame",
 		  views: {
@@ -257,7 +248,7 @@ app.directive('dateTime', function() {
 		  }
 		})
 		.state('app.Finance', {
-		  url: "/Finanance",
+		  url: "/Finance",
 		  views: {
 			'menuContent': {
 			  templateUrl: "templates/Finance.html",
@@ -271,6 +262,15 @@ app.directive('dateTime', function() {
 			'menuContent': {
 			  templateUrl: "templates/newCredit.html",
 			  controller: 'CreditsCtrl'
+			}
+		  }
+		})
+		.state('app.Duties', {
+		  url: "/Duties",
+		  views: {
+			'menuContent': {
+			  templateUrl: "templates/Duties.html",
+			  controller: 'DutiesCtrl'
 			}
 		  }
 		})

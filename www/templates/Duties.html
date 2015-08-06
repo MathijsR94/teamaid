@@ -1,0 +1,10 @@
+<ion-view view-title="Spelers">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="player in players">
+            {{player.firstName}} {{player.insertion}} {{player.lastName}}
+      </ion-item>
+    </ion-list>
+	<button class="button button-block button-positive" ng-click="UpdateDuties()">Update Corvee</button>
+  </ion-content>
+</ion-view>

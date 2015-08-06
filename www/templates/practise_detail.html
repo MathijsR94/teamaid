@@ -1,8 +1,37 @@
 <ion-view view-title="Wedstrijden">
     <ion-content>
-        <ion-item>
-            PractiseID = {{practise.$id}} tijd = {{practise.time}} datum = {{practise.date}} locatie = {{practise.location}}
-        </ion-item>
+        <div class="row">
+            <div class="col">
+                <h1>Training</h1>
+                <span>{{ practiseDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian></span>
+				<span>{{practise.location}}</span>
+                <div class="button-bar">
+                    <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }" ng-click="changeAttendance('present');">aanwezig</a>
+                    <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }" ng-click="changeAttendance('absent');">afwezig</a>
+                    <a ng-class="{ 'button button-royal' : unknown , 'button button-stable' : !unknown}">onbekend</a>
+                </div>
+                <div class="row responsive-sm">
+                    <div class="col"><span>aanwezig</span>
+						<ion-item ng-repeat="(id,value) in practise.Present">
+                                   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+                        </ion-item>
+                    </div>
+                    <div class="col"><span>afwezig</span>
+						<ion-item ng-repeat="(id,value) in practise.Absent">
+                                   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+                        </ion-item>
+                    </div>
+                    <div class="col"><span>onbekend</span>
+						<ion-list>
+						   <ion-item ng-repeat="player in unknownPlayers">
+							   {{player.firstName}} {{player.insertion}} {{player.lastName}}
+						   </ion-item>
+						</ion-list>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+		
     </ion-content>
 </ion-view>
