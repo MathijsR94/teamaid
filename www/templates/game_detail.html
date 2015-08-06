@@ -11,17 +11,21 @@
                 </div>
                 <div class="row responsive-sm">
                     <div class="col"><span>aanwezig</span>
-
+						<ion-item ng-repeat="player in game.Present">
+                                   {{player}}
+                        </ion-item>
                     </div>
                     <div class="col"><span>afwezig</span>
-
+						<ion-item ng-repeat="player in game.Absent">
+                                   {{player}}
+                        </ion-item>
                     </div>
                     <div class="col"><span>onbekend</span>
-                           <ion-list>
-                               <ion-item ng-repeat="player in unknownPlayers">
-                                   {{player.firstName}} {{player.insertion}} {{player.lastName}}
-                               </ion-item>
-                           </ion-list>
+						<ion-list>
+						   <ion-item ng-repeat="player in unknownPlayers">
+							   {{player.firstName}} {{player.insertion}} {{player.lastName}}
+						   </ion-item>
+						</ion-list>
                     </div>
                 </div>
             </div>
