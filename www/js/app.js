@@ -274,6 +274,15 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
+		.state('app.Settings', {
+		  url: "/Settings",
+		  views: {
+			'menuContent': {
+			  templateUrl: "templates/Settings.html",
+			  controller: 'SettingsCtrl'
+			}
+		  }
+		})
 		.state('app.invite', {
 		  url: "/invite/:teamId",
 		  views: {

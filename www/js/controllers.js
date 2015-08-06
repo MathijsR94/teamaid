@@ -183,7 +183,7 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory,fireBaseData, Utility, $stateParams) {
+	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory, Utility, $stateParams) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
 
@@ -556,11 +556,12 @@ angular.module('starter.controllers', [])
     })
 	
 	.controller('CreditsCtrl', function ($scope, Teams, User, Finance, $state,$ionicHistory) {
-        $scope.getTeam = User.getTeam().then(function(data) {
+        
+		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			$scope.nbsp = " "; // whitespace
-			Teams.getPlayers($scope.teamId).then(function(data){
-				$scope.players = data;
+			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
+				$scope.players = teamPlayers;
 			});
         });
 		
@@ -571,8 +572,66 @@ angular.module('starter.controllers', [])
 		}
     })
 	
-	.controller('DutiesCtrl', function ($scope, Teams, User, Finance, $state,$ionicHistory) {
-        
+	.controller('DutiesCtrl', function ($scope, Teams, Games,Practises, Settings, User, Duties, $state,$ionicHistory) {
+		$scope.currentDate = new Date();
+		$scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			$scope.duties = Duties.getDuties($scope.teamId);
+		});
+		
+		$scope.updateDuties = function($scope.teamId){
+			// create al required occurences ( we take a year by default)
+			$scope.dutyOccurrences ={};
+			var firstDate = new Date($scope.currentDate.getYear(), $scope.currentDate.getMonth(), $scope.currentDate.getDay()-7 );
+			var lastDate = new Date($scope.currentDate.getYear()+1, $scope.currentDate.getMonth(), $scope.currentDate.getDay()+7); 
+			
+			while( firstDate < lastDate){
+				var beginOfWeek = firstDate;
+				var endOfWeek = firstDate.setDate(firstDate.getDate() +7);
+				
+				dutyOccurrences.push({
+					start : beginOfWeek,
+					end	: endOfWeek
+				});
+			
+			}
+			
+			
+			//get Games
+			$scope.games = Games.getGames($scope.teamId);	
+			// get Practices
+			$scope.practises = Practises.getPractises($scope.teamId);
+			// get Events
+			//$scope.events = ;
+			
+			$scope.dutyOccurrences.forEach(function(occurence){
+				if($scope.currentDate < new Date(occurence.date)){ // we only need to do the dates that are in the future	
+					if(typeof occurence.Duty === "undefined"){ // there is no duty in this item, lets create it
+						
+					}		
+				}
+			});
+			});
+			
+		}
+		
+		
+    })
+	
+	.controller('SettingsCtrl', function ($scope, User, Settings,  $state) {
+	
+		$scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			Settings.getSettings($scope.teamId).then(function(teamSettings){
+				$scope.settings = teamSettings;
+			})
+		});
+		
+		$scope.changeSetting = function(key , value){
+			console.log(key, value);
+			Settings.updateSetting(key, value, $scope.teamId);
+		}
+		
     })
 
 	.filter('orderObjectBy', function() {

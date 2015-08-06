@@ -366,7 +366,7 @@ angular.module('starter.services', [])
 		}	
 	})
 
-.factory('Mail', function($http){
+	.factory('Mail', function($http){
 		return {
 		mailInvite: function(tomail, teamId, teamName){
 			var data = {
@@ -390,7 +390,35 @@ angular.module('starter.services', [])
 		}
 		};
 	})
-
+	
+	.factory('Settings', function(firebaseRef,$firebaseObject, $q){
+		var ref = firebaseRef.ref();
+		return {
+			getSettings: function(teamId){
+				var deferred = $q.defer();
+					var settings = $firebaseObject(ref.child("Teams").child(teamId).child("Settings"));
+					settings.$loaded(function () {
+						deferred.resolve(settings);
+					});
+					return deferred.promise;
+			},
+			updateSetting: function(key,value,teamId){
+				var setting = {};
+				setting[key] = value;
+				ref.child("Teams").child(teamId).child("Settings").update(setting);
+			}
+		};
+	})
+	
+	.factory('Duties', function(firebaseRef,$firebaseObject, $q){
+		var ref = firebaseRef.ref();
+		return {
+			getDuties: function(teamId) {
+				return $firebaseArray(ref.child("Duties".child(teamId));
+			}
+		};
+	})
+	
     .factory('Utility', function () {
         return {
             deleteItem: function (array, item, strippedItem) {

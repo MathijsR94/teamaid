@@ -22,7 +22,7 @@ $teamnaam = $params['teamName'];
 
 // try {
     // $nextYear = time() + (60*60*24*365);
-    // $generator = new TokenGenerator('onRdN22bDZ3622PLt6KKGHyHe3caLFNOaRfWEkPm'); //This Firebase secret isn't valid anymore
+    // $generator = new TokenGenerator('xxxxxxxxxxxxxxsecret'); //This Firebase secret isn't valid anymore
        // $token = $generator
        // ->setOption('expires', $nextYear)
        // ->setData(array('uid' => $teamId))
