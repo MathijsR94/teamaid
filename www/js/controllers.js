@@ -242,57 +242,58 @@ angular.module('starter.controllers', [])
 
 	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, $stateParams) {
 		$scope.gameId = $stateParams.gameId;
-		$scope.present = false;
-		$scope.absent = false;
-		$scope.unknown = true;
 		
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
 				$scope.gameDate = new Date(game.date);
 				$scope.game = game;
+				//update buttons
+				$scope.present = Games.checkAttendance($scope.game.Present,User.getUID());
+				$scope.absent = Games.checkAttendance($scope.game.Absent,User.getUID());
+				$scope.unknown = (!$scope.present && !$scope.absent);
+			}).then(function(){
+				$scope.getPlayers = Teams.getPlayers($scope.teamId).then(function(players){
+					$scope.players = players;
+					$scope.unknownPlayers = Games.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
+					//console.log($scope.unknownPlayers);
+				});
 			});
-		}).then(function(){
-            $scope.getPlayers = Teams.getPlayers($scope.teamId).then(function(players){
-                $scope.players = players;
-                Games.checkUnknown()
-            });
-        })
+		})
+		
 		
 		$scope.changeAttendance = function(type){
-			switch(type){
 			
-			case "present": 
-				$scope.present = true;
-				$scope.absent = false;
-				$scope.unknown = false;
-				if(Games.checkAttendance("present",User.getUID(),$scope.gameId,$scope.teamId) === true ){
+			switch(type){
+			case "present":
+				
+				if($scope.present === true ){
 					// already logged, no change needed
-				} else{
-					Games.addAttendance("present",User.getUID(),$scope.gameId);
 				}else{
-					Games.addAttendance("present",User.getUID(),$scope.gameId,$scope.teamId);
 					//insert it in the Present Array
+					$scope.present = Games.addAttendance("present",User.getUID(),$scope.gameId,$scope.teamId,$scope.game.Absent);
+					$scope.absent = false;					
 				}
 			break;
 			case "absent": 
-				$scope.absent = true;
-				$scope.present = false;
-				$scope.unknown = false;
+				if($scope.absent === true ){
+					// already logged, no change needed
+				}else{
+					$scope.absent = Games.addAttendance("absent",User.getUID(),$scope.gameId,$scope.teamId,$scope.game.Present);
+					$scope.present = false;
+					//insert it in the Present Array
+				}
 			break;
 			default:
-				$scope.absent = false;
-				$scope.present = false;
-				$scope.unknown = true;
+				//nothing yet
 			break;
 			}
 			
-			
-			
-		
+			//update buttons
+			$scope.unknown = (!$scope.present && !$scope.absent);
+			// update unknown
+			$scope.unknownPlayers = Games.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players)
 		}
-
-
 	})
 
 	.controller('Games_EditCtrl', function ($scope, Games, User, $stateParams,$ionicHistory) {
@@ -373,27 +374,19 @@ angular.module('starter.controllers', [])
 		$scope.isAdmin = false;
 
 		$scope.getTeam = User.getTeam().then(function(data) {
-			//console.log('start getTeam');
 			$scope.teamId = data;
 
 			//check if current user is Admin for this team
 			$scope.practises = Practises.getPractises($scope.teamId);
 			$scope.practisesRef = Practises.getPractisesRef($scope.teamId);
-			//console.log($scope.gamesRef);
-			//console.log('eind getTeam');
 		}).then(function(){
-			//console.log('after getTeam');
 			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
-				//console.log('start admin');
-				//console.log(admins);
+
 				admins.forEach(function(admin){
-					//console.log('foreach');
 					if(admin.$id === User.getUID()){
-						//console.log('if Admin');
 						$scope.isAdmin = true;
 						console.log('isAdmin?: ' + $scope.isAdmin);
 					}
-					//console.log($scope.isAdmin);
 				});
 			});
 		});
