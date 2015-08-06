@@ -200,52 +200,59 @@ angular.module('starter.services', [])
 				selectedGame = gameId;
 			},
             checkUnknown: function(present, absent, players) {
+				var unknown = new Array();
+				var dummy = [{"id": " "}];
+				if(typeof present === "undefined")
+					present = dummy;
+				if(typeof absent === "undefined")
+					absent = dummy;	
+					
                 players.forEach(function(player) {
-                    if(!(player.$id in present) || !(player.$id in absent)) {
-                        players.push(player);
+					//console.log(present);
+                    if(!(player.$id in present) && !(player.$id in absent)) {
+                        unknown.push(player);
                     }
                 });
-                return players;
+                return unknown;
             },
-			checkAttendance: function(type , uid, gameId, teamId ) {
+			checkAttendance: function(attendanceArray , uid) {
+				if(typeof attendanceArray === "undefined"){
+					return false; // no defined array found
+				}else{
+					//console.log(attendanceArray);
+					//console.log(attendancePresent);
+					return(uid in attendanceArray);
+				}
+			},
+			addAttendance: function(type , uid, gameId, teamId, removalArray ) {
                 switch(type){
 				case "present": 
-					var attendancePresent = $firebaseObject(gamesRef.child(teamId).child(gameId).child("Present"));
-					return(uid in attendancePresent);
+					var player= {};
+					player[uid] = true;
+					if(this.checkAttendance(removalArray, uid)){
+						// remove from absent, because it is still listed there
+						delete removalArray[uid];
+						gamesRef.child(teamId).child(gameId).child("Absent").set(removalArray);	
+					}
+					gamesRef.child(teamId).child(gameId).child("Present").update(player);
+					return true;
 				break;
 				case "absent": 
-					var attendanceAbsent = $firebaseObject(gamesRef.child(teamId).child(gameId).child("Absent"));
-					return(uid in attendanceAbsent);
+					var player= {};
+					player[uid] = true;
+					if(this.checkAttendance(removalArray, uid)){
+						// remove from present, because it is still listed there
+						delete removalArray[uid]
+						gamesRef.child(teamId).child(gameId).child("Present").set(removalArray);	
+					}
+					gamesRef.child(teamId).child(gameId).child("Absent").update(player);
+					return true;
 				break;
 				default:
 					return 0;
 				break;
 				}
 			},
-			addAttendance: function(type , uid, gameId, teamId ) {
-                switch(type){
-				case "present": 
-					var player= {};
-					player[uid] = true;
-					if(checkAttendance("absent" , uid, gameId, teamId)){
-						// remove  from absent 
-					}
-					gamesRef.child(teamId).child(gameId).child("Present").update(player);
-					
-				break;
-				case "absent": 
-					var player= {};
-					player[uid] = true;
-					if(checkAttendance("present" , uid, gameId, teamId)){
-						// remove  from present 
-					}
-					gamesRef.child(teamId).child(gameId).child("Absent").update(player);
-				break;
-				default:
-					return 0;
-				break;
-				}
-			}
 		}
 		
     })
@@ -394,4 +401,3 @@ angular.module('starter.services', [])
             }
         }
     })
-		
