@@ -1,10 +1,13 @@
-<ion-view view-title="Wedstrijden">
+<ion-view view-title="Trainingen">
     <ion-content>
         <div class="row">
             <div class="col">
                 <h1>Training</h1>
                 <span>{{ practiseDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian></span>
 				<span>{{practise.location}}</span>
+				<div ng-if="settings.dutyPractises === true">
+					<span ng-repeat="(id,value) in practise.Duty">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+				</div>
                 <div class="button-bar">
                     <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }" ng-click="changeAttendance('present');">aanwezig</a>
                     <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }" ng-click="changeAttendance('absent');">afwezig</a>
@@ -12,14 +15,18 @@
                 </div>
                 <div class="row responsive-sm">
                     <div class="col"><span>aanwezig</span>
+					<ion-list>
 						<ion-item ng-repeat="(id,value) in practise.Present">
                                    {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
                         </ion-item>
+					</ion-list>
                     </div>
                     <div class="col"><span>afwezig</span>
+					<ion-list>
 						<ion-item ng-repeat="(id,value) in practise.Absent">
                                    {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
                         </ion-item>
+					</ion-list>
                     </div>
                     <div class="col"><span>onbekend</span>
 						<ion-list>

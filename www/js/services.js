@@ -166,6 +166,9 @@ angular.module('starter.services', [])
 			getGames: function(teamId) {
 				return $firebaseObject(gamesRef.child(teamId));
 			},
+			getGamesArray: function(teamId) {
+				return $firebaseArray(gamesRef.child(teamId));
+			},
             getGame: function(teamId) {
                 var deferred = $q.defer();
                 var games = $firebaseArray(gamesRef.child(teamId));
@@ -201,7 +204,7 @@ angular.module('starter.services', [])
 		}
 		
     })
-	.factory('Practises', function ($firebaseArray, firebaseRef, $q) {
+	.factory('Practises', function ($firebaseArray,$firebaseObject, firebaseRef, $q) {
 		var ref = firebaseRef.ref();
 		var practisesRef = ref.child("Practises");
 		var selectedPractise = localStorage.getItem("selectedPractise");
@@ -211,11 +214,14 @@ angular.module('starter.services', [])
 				return practisesRef.child(teamId);
 			},
 			getPractises: function(teamId) {
+				return $firebaseObject(practisesRef.child(teamId));
+			},
+			getPractisesArray: function(teamId) {
 				return $firebaseArray(practisesRef.child(teamId));
 			},
-			getPractise: function(practiseId) {
+			getPractise: function(teamId) {
 				var deferred = $q.defer();
-				var practises = $firebaseArray(practisesRef.child(practiseId));
+				var practises = $firebaseArray(practisesRef.child(teamId));
                 practises.$loaded(function(){
 					deferred.resolve(practises.$getRecord(selectedPractise));
 				});
@@ -226,7 +232,7 @@ angular.module('starter.services', [])
 				selectedPractise = practiseId;
 			},
 			createPractise: function(teamId, date, time, location, repeat){
-				var teamPractiseRef = practiseRef.child(teamId);
+				var teamPractiseRef = practisesRef.child(teamId);
 				var practises = $firebaseArray(teamPractiseRef);
 				for (var i = 0; i < repeat; i++) {
 					practises.$add({
@@ -240,8 +246,8 @@ angular.module('starter.services', [])
 			},
 			updatePractise: function(teamId, practiseId, date, time, location){
                 console.log(teamId);
-				var practiseRef = practisesRef.child(teamId).child(practiseId);
-				practiseRef.update({
+				var practisesRef = practisesRef.child(teamId).child(practiseId);
+				practisesRef.update({
 					date : date.toString(),
 					time : time,
 					location : location
@@ -394,12 +400,7 @@ angular.module('starter.services', [])
 		var ref = firebaseRef.ref();
 		return {
 			getSettings: function(teamId){
-				var deferred = $q.defer();
-					var settings = $firebaseObject(ref.child("Teams").child(teamId).child("Settings"));
-					settings.$loaded(function () {
-						deferred.resolve(settings);
-					});
-					return deferred.promise;
+				return $firebaseObject(ref.child("Teams").child(teamId).child("Settings"));
 			},
 			updateSetting: function(key,value,teamId){
 				var setting = {};
@@ -429,7 +430,75 @@ angular.module('starter.services', [])
 				dutyRef.child(teamId).child(key).child("Duty").set(dutyObj);
 				//console.log("update Duty");
 			},
+			removeDuty: function(teamId, key) {
+				
+				dutyRef.child(teamId).child(key).remove();
+				//console.log("update Duty");
+			},
+			linkEvents: function(teamId, events, duty){
+				Object.keys(events).forEach(function(type){
+					//onsole.log(type);
+					var typeRef = ref.child(type).child(teamId);
+					//console.log(typeRef);
+					switch(type){
+					case "Games":
+						//console.log(events.Games);
+						Object.keys(events.Games).forEach(function(event){
+							typeRef.child(event).child("Duty").set(duty);
+						});
+					break;
+					case "Practises":
+						Object.keys(events.Practises).forEach(function(event){
+							typeRef.child(event).child("Duty").set(duty);
+						});
+					break;
+					case "Events":
+						Object.keys(events.Events).forEach(function(event){
+							typeRef.child(event).child("Duty").set(duty);
+						});
+					break;
+					}
+					
+				});
 			
+			},
+			unlinkEvents: function(teamId, events){
+				Object.keys(events).forEach(function(type){
+					//console.log(events);
+					var typeRef = ref.child(type).child(teamId);
+					switch(type){
+					case "Games":
+						//console.log(events.Games);
+						Object.keys(events.Games).forEach(function(event){
+							typeRef.child(event).child("Duty").remove();
+						});
+					break;
+					case "Practices":
+						Object.keys(events.Practises).forEach(function(event){
+							typeRef.child(event).child("Duty").remove();
+						});
+					break;
+					case "Events":
+						Object.keys(events.Events).forEach(function(event){
+							typeRef.child(event).child("Duty").remove();
+						});
+					break;
+					}
+					
+				});
+			
+			},
+			checkForEvents: function(teamEvents,occurence){
+				var result = {};
+				teamEvents.forEach(function(event,id){
+					var eventDate = new Date(event.date);
+					if( eventDate > occurence.start && eventDate <= occurence.end){
+						result[id] = true;
+					}
+				});
+				//console.log(result);
+				return result;
+			}
 		};
 	})
 	
@@ -442,6 +511,14 @@ angular.module('starter.services', [])
                 if (confirm('Weet je zeker dat je dit item wilt verwijderen?')) {
                     array.$remove(item);
                     return array;
+                }
+
+            },
+			deleteItemObj: function (object, item) {
+				var mainObject = object
+                if (confirm('Weet je zeker dat je dit item wilt verwijderen?')) {
+                    delete mainObject[item];
+                    return mainObject;
                 }
 
             },

@@ -4,6 +4,9 @@
             <div class="col">
                 <h1>{{game.home}} vs {{game.away}}</h1>
                 <span>{{ gameDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='game.time'></standard-time-no-meridian></span>
+				<div ng-if="settings.dutyGames === true">
+					<span ng-repeat="(id,value) in game.Duty">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+				</div>
                 <div class="button-bar">
                     <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }" ng-click="changeAttendance('present');">aanwezig</a>
                     <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }" ng-click="changeAttendance('absent');">afwezig</a>

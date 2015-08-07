@@ -78,7 +78,7 @@ app.directive('dateTime', function() {
 			} 
 			else{
 				var newDate = new Date(val);
-				console.log(newDate);
+				//console.log(newDate);
 				if (format === 'MM-DD-YYYY') {
 				
 				return (newDate.getDate() + "-" + (newDate.getMonth()+1) + "-" + newDate.getFullYear());
@@ -89,7 +89,7 @@ app.directive('dateTime', function() {
 						return (newDate.getFullYear() + "-" + newDate.getDate() + "-" +(newDate.getMonth()+1));
 					}
 					else{ //(format === 'MM-DD-YYYY') 
-						console.log(newDate);
+						//console.log(newDate);
 						return ( newDate.getDate() + "-" + (newDate.getMonth()+1) + "-" + newDate.getFullYear());
 					}
 				}
@@ -234,7 +234,7 @@ app.directive('dateTime', function() {
 		  views: {
 			'menuContent': {
 			  templateUrl: "templates/newPractise.html",
-			  controller: 'PractisesCtrl'
+			  controller: 'newPractisesCtrl'
 			}
 		  }
 		})

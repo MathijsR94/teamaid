@@ -192,7 +192,7 @@ angular.module('starter.controllers', [])
 			$scope.teamId = data;
 
 			//check if current user is Admin for this team
-			$scope.games = Games.getGames($scope.teamId);
+			$scope.games = Games.getGamesArray($scope.teamId);
 			$scope.gamesRef = Games.getGamesRef($scope.teamId);
 			//console.log($scope.gamesRef);
 			//console.log('eind getTeam');
@@ -240,7 +240,7 @@ angular.module('starter.controllers', [])
 		console.log($scope.isAdmin);
     })
 
-	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, $stateParams) {
+	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, $stateParams) {
 		$scope.gameId = $stateParams.gameId;
 		
 		$scope.getTeam = User.getTeam().then(function(data) {
@@ -248,6 +248,7 @@ angular.module('starter.controllers', [])
 			$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
 				$scope.gameDate = new Date(game.date);
 				$scope.game = game;
+				$scope.settings = Settings.getSettings($scope.teamId);
 				//update buttons
 				$scope.present = Attendance.checkAttendance($scope.game.Present,User.getUID());
 				$scope.absent = Attendance.checkAttendance($scope.game.Absent,User.getUID());
@@ -369,12 +370,12 @@ angular.module('starter.controllers', [])
 	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
-
+		
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 
 			//check if current user is Admin for this team
-			$scope.practises = Practises.getPractises($scope.teamId);
+			$scope.practises = Practises.getPractisesArray($scope.teamId);
 			$scope.practisesRef = Practises.getPractisesRef($scope.teamId);
 		}).then(function(){
 			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
@@ -414,6 +415,7 @@ angular.module('starter.controllers', [])
 
         $scope.getDetail = function(practise) {
             console.log('detail');
+			console.log(practise);
             Practises.setPractise(practise);
             $state.go('app.practise', { practiseId: practise });
         }
@@ -443,14 +445,17 @@ angular.module('starter.controllers', [])
 		
     })
 
-    .controller('Practises_DetailCtrl', function ($scope, Practises, User, Teams, Attendance, $stateParams) {
+    .controller('Practises_DetailCtrl', function ($scope, Practises, User, Teams, Attendance, Settings, $stateParams) {
 		$scope.practiseId = $stateParams.practiseId;
 		
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
-			$scope.getPractise = Practises.getPractise($scope.teamId).then(function(practise) {
+			console.log(data);
+			$scope.getPractise = Practises.getPractise($scope.teamId).then(function(practise){
+				console.log(practise);
 				$scope.practiseDate = new Date(practise.date);
 				$scope.practise = practise;
+				$scope.settings = Settings.getSettings($scope.teamId);
 				//update buttons
 				$scope.present = Attendance.checkAttendance($scope.practise.Present,User.getUID());
 				$scope.absent = Attendance.checkAttendance($scope.practise.Absent,User.getUID());
@@ -530,6 +535,44 @@ angular.module('starter.controllers', [])
         }
     })
 
+	.controller('newPractisesCtrl', function($scope, User, Practises, $ionicHistory) {
+		$scope.getTeam = User.getTeam().then(function(data) {
+			$scope.teamId = data;
+			$scope.practiseDate = new Date();
+			$scope.title = "Selecteer datum";
+			$scope.practiseTime = 72000;
+			$scope.weeks = 1;
+		});
+		
+		$scope.datePickerCallback = function (val) {
+			if (typeof(val) === 'undefined') {
+				console.log('Date not selected');
+			} else {
+				console.log('Selected date is : ', val);
+				$scope.practiseDate = val;
+			}
+		};
+
+		$scope.timePickerCallback = function (val) {
+			if (typeof (val) === 'undefined') {
+				console.log('Time not selected');
+			} else {
+				console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+				$scope.practiseTime = val;
+			}
+		};
+
+		$scope.newPractise = function(location,repeatValue){
+			if (typeof ($scope.practiseDate) === 'undefined' || typeof ($scope.practiseTime) === 'undefined'|| typeof (repeatValue) === 'undefined') {
+				
+			} else {		
+				Practises.createPractise($scope.teamId, $scope.practiseDate, $scope.practiseTime, location, repeatValue);
+				//return to previous page
+				$ionicHistory.goBack();
+			}	
+		}
+	})
+	
 	.controller('FinanceCtrl', function ($scope, User, Finance, $state) {
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
@@ -579,7 +622,17 @@ angular.module('starter.controllers', [])
 		
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
+			
+			$scope.settings = Settings.getSettings($scope.teamId);
+			
 			$scope.duties = Duties.getDuties($scope.teamId);
+			//get Games
+			$scope.games = Games.getGames($scope.teamId);	
+			// get Practices
+			$scope.practises = Practises.getPractises($scope.teamId);
+			// get Events
+			//$scope.events = ;
+
 			console.log($scope.duties);
 			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
 			
@@ -601,7 +654,7 @@ angular.module('starter.controllers', [])
 			// correct to start at day 0 so it always starts at the same day of the week!
 			firstDate.setDate(firstDate.getDate() + (7 - $scope.currentDate.getDay()));
 			var backTrackDate = new Date(firstDate);
-			var lastDate = new Date(firstDate.getFullYear(), firstDate.getMonth()+1, firstDate.getDate()); 
+			var lastDate = new Date(firstDate.getFullYear()+1, firstDate.getMonth(), firstDate.getDate()); 
 			
 			while( firstDate < lastDate){
 				$scope.dutyOccurrences.push({
@@ -609,12 +662,6 @@ angular.module('starter.controllers', [])
 					end : new Date(firstDate.setDate(firstDate.getDate() + (7)))
 				});
 			}		
-			//get Games
-			$scope.games = Games.getGames($scope.teamId);	
-			// get Practices
-			$scope.practises = Practises.getPractises($scope.teamId);
-			// get Events
-			//$scope.events = ;
 			
 			// backtrack our Duty schedule to initialize the loopPlayers array. this  will make sure we do give players double duty
 			//backtrack for  no of  players times
@@ -643,48 +690,71 @@ angular.module('starter.controllers', [])
 				var occurenceKey = occurence.start.getFullYear() + "" + occurence.start.getMonth()  + "" + occurence.start.getDate();
 				
 				//check if there are any events planned in this occurence
-				console.log($scope.games);
-				$scope.games.forEach(function(localGame){
-					console.log(localGame);
-				});
-				
-				//
-				//TODO!
-				// 
-				
-				
-				// return array of the  events within this occurence (gameId, practiseId is needed to update datebase )
-				var duty={}
-				duty[loopPlayers[0]] = true;
-				loopPlayers.splice(0,1);;
-				if(loopPlayers.length <= 1){
-					loopPlayers = dutyPlayers.slice(); // reset to the original full array
+				var occurenceEvents = {};
+				var retVal = {};
+				if($scope.settings.dutyGames === true){
+					retVal = Duties.checkForEvents($scope.games,occurence);
+					if(Object.keys(retVal).length > 0)
+						occurenceEvents["Games"] = retVal;
 				}
-				//console.log(duty);
-				//duty[loopPlayers.lastChild]= true
-				if(typeof $scope.duties[occurenceKey] === "undefined"){
-					// this Duty item does not yet exist lets create it
-					Duties.addDuty($scope.teamId,occurenceKey,occurence.start, occurence.end,duty);
+				if($scope.settings.dutyPractises === true){
+					retVal = Duties.checkForEvents($scope.practises,occurence);
+					if(Object.keys(retVal).length > 0)
+						occurenceEvents["Practises"] = retVal;
+				}
+				if($scope.settings.dutyEvents === true){
+					retVal = Duties.checkForEvents($scope.events,occurence);
+					if(Object.keys(retVal).length > 0)
+						occurenceEvents["Events"] = retVal;
+				}
+				//var occurenceEvents = Duties.checkForEvents($scope.games,occurence); // return array of the  events within this occurence (gameId, practiseId is needed to update datebase )
+				console.log(occurenceEvents);
+				//check if there are any events in this  returned array
+				if(Object.keys(occurenceEvents).length > 0){
+					
+					var duty={}
+					duty[loopPlayers[0]] = true;
+					loopPlayers.splice(0,1);;
+					if(loopPlayers.length <= 1){
+						loopPlayers = dutyPlayers.slice(); // reset to the original full array
+					}
+					if(typeof $scope.duties[occurenceKey] === "undefined"){
+						// this Duty item does not yet exist lets create it
+						Duties.addDuty($scope.teamId,occurenceKey,occurence.start, occurence.end,duty);
+					}
+					else{
+						// pre existing duty overwrite the Duty players
+						Duties.updateDuty($scope.teamId,occurenceKey,duty);
+					}
+					//update the linked Events
+					Duties.linkEvents($scope.teamId, occurenceEvents, duty);
+					
 				}
 				else{
-					// pre existing duty overwrite the Duty players
-					Duties.updateDuty($scope.teamId,occurenceKey,duty);
+					// remove the  duty instance if  it already exists
+					if(typeof $scope.duties[occurenceKey] === "undefined"){
+					// this Duty item does not yet exist. thats good!
+					}
+					else{
+						// pre existing duty, it is no longer valid, lets remove it!
+
+						// it needs to be removed since it has no linked events
+						Duties.removeDuty($scope.teamId,occurenceKey);
+					}
 				}
+				
 				
 			});
 			
 		}
-		
-		
+			
     })
 	
 	.controller('SettingsCtrl', function ($scope, User, Settings,  $state) {
 	
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
-			Settings.getSettings($scope.teamId).then(function(teamSettings){
-				$scope.settings = teamSettings;
-			})
+			$scope.settings =Settings.getSettings($scope.teamId);
 		});
 		
 		$scope.changeSetting = function(key , value){
