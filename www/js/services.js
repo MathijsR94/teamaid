@@ -164,7 +164,7 @@ angular.module('starter.services', [])
 				return gamesRef.child(teamId);
 			},
 			getGames: function(teamId) {
-				return $firebaseArray(gamesRef.child(teamId));
+				return $firebaseObject(gamesRef.child(teamId));
 			},
             getGame: function(teamId) {
                 var deferred = $q.defer();
@@ -172,7 +172,6 @@ angular.module('starter.services', [])
                 games.$loaded(function(){
                     deferred.resolve(games.$getRecord(selectedGame));
                 });
-
                 return deferred.promise;
             },
 			createGame: function(teamId, gameDate, gameTime, home, away){
@@ -412,10 +411,25 @@ angular.module('starter.services', [])
 	
 	.factory('Duties', function(firebaseRef,$firebaseObject, $q){
 		var ref = firebaseRef.ref();
+		var dutyRef = ref.child("Duties");
 		return {
 			getDuties: function(teamId) {
-				return $firebaseArray(ref.child("Duties".child(teamId));
-			}
+				return $firebaseObject(dutyRef.child(teamId));
+			},
+			addDuty: function(teamId, key,startValue,endValue,dutyObj) {
+				dutyRef.child(teamId).child(key).set({
+					start : startValue.toString(),
+					end : endValue.toString(),
+					Duty : dutyObj
+				});
+				//console.log("add Duty");
+			},
+			updateDuty: function(teamId, key,dutyObj) {
+				
+				dutyRef.child(teamId).child(key).child("Duty").set(dutyObj);
+				//console.log("update Duty");
+			},
+			
 		};
 	})
 	

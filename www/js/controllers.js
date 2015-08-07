@@ -573,30 +573,42 @@ angular.module('starter.controllers', [])
     })
 	
 	.controller('DutiesCtrl', function ($scope, Teams, Games,Practises, Settings, User, Duties, $state,$ionicHistory) {
+		
 		$scope.currentDate = new Date();
+		console.log($scope.currentDate);
+		
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			$scope.duties = Duties.getDuties($scope.teamId);
-		});
+			console.log($scope.duties);
+			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
+			
+				$scope.players = teamPlayers;
+			});
+		})
 		
-		$scope.updateDuties = function($scope.teamId){
+		$scope.updateDuties = function(){
+		
+			var dutyPlayers = new Array();
+			$scope.players.forEach(function(value,playerId){
+				dutyPlayers.push(playerId);
+			});
+			var loopPlayers = dutyPlayers.slice();
+			
 			// create al required occurences ( we take a year by default)
-			$scope.dutyOccurrences ={};
-			var firstDate = new Date($scope.currentDate.getYear(), $scope.currentDate.getMonth(), $scope.currentDate.getDay()-7 );
-			var lastDate = new Date($scope.currentDate.getYear()+1, $scope.currentDate.getMonth(), $scope.currentDate.getDay()+7); 
+			$scope.dutyOccurrences =new Array();
+			var firstDate = new Date($scope.currentDate.getFullYear(),$scope.currentDate.getMonth(),$scope.currentDate.getDate());
+			// correct to start at day 0 so it always starts at the same day of the week!
+			firstDate.setDate(firstDate.getDate() + (7 - $scope.currentDate.getDay()));
+			var backTrackDate = new Date(firstDate);
+			var lastDate = new Date(firstDate.getFullYear(), firstDate.getMonth()+1, firstDate.getDate()); 
 			
 			while( firstDate < lastDate){
-				var beginOfWeek = firstDate;
-				var endOfWeek = firstDate.setDate(firstDate.getDate() +7);
-				
-				dutyOccurrences.push({
-					start : beginOfWeek,
-					end	: endOfWeek
+				$scope.dutyOccurrences.push({
+					start : new Date(firstDate),
+					end : new Date(firstDate.setDate(firstDate.getDate() + (7)))
 				});
-			
-			}
-			
-			
+			}		
 			//get Games
 			$scope.games = Games.getGames($scope.teamId);	
 			// get Practices
@@ -604,13 +616,61 @@ angular.module('starter.controllers', [])
 			// get Events
 			//$scope.events = ;
 			
-			$scope.dutyOccurrences.forEach(function(occurence){
-				if($scope.currentDate < new Date(occurence.date)){ // we only need to do the dates that are in the future	
-					if(typeof occurence.Duty === "undefined"){ // there is no duty in this item, lets create it
-						
-					}		
+			// backtrack our Duty schedule to initialize the loopPlayers array. this  will make sure we do give players double duty
+			//backtrack for  no of  players times
+			for(var i = 0; i < dutyPlayers.length;i++){
+				//actually make the backtrack go back
+				backTrackDate.setDate(backTrackDate.getDate() -7);
+				var backTrackKey = backTrackDate.getFullYear() + "" + backTrackDate.getMonth()  + "" + backTrackDate.getDate();
+				if(typeof $scope.duties[backTrackKey] === "undefined"){
+					// no Duty here or this date does not exist
+					//console.log("no duty exists");
+				}else{
+					// there is a duty record here, lets see who is listed
+					//console.log("find history player");
+					var foundDuties = Object.keys($scope.duties[backTrackKey].Duty);
+					//remove from loopPlayers
+					foundDuties.forEach(function(key){
+						var index =loopPlayers.indexOf(key);
+						if(index != -1)
+							loopPlayers.splice(loopPlayers.indexOf(key),1);
+					});
 				}
-			});
+			}
+			
+			//fill future Occurences
+			$scope.dutyOccurrences.forEach(function(occurence){
+				var occurenceKey = occurence.start.getFullYear() + "" + occurence.start.getMonth()  + "" + occurence.start.getDate();
+				
+				//check if there are any events planned in this occurence
+				console.log($scope.games);
+				$scope.games.forEach(function(localGame){
+					console.log(localGame);
+				});
+				
+				//
+				//TODO!
+				// 
+				
+				
+				// return array of the  events within this occurence (gameId, practiseId is needed to update datebase )
+				var duty={}
+				duty[loopPlayers[0]] = true;
+				loopPlayers.splice(0,1);;
+				if(loopPlayers.length <= 1){
+					loopPlayers = dutyPlayers.slice(); // reset to the original full array
+				}
+				//console.log(duty);
+				//duty[loopPlayers.lastChild]= true
+				if(typeof $scope.duties[occurenceKey] === "undefined"){
+					// this Duty item does not yet exist lets create it
+					Duties.addDuty($scope.teamId,occurenceKey,occurence.start, occurence.end,duty);
+				}
+				else{
+					// pre existing duty overwrite the Duty players
+					Duties.updateDuty($scope.teamId,occurenceKey,duty);
+				}
+				
 			});
 			
 		}
