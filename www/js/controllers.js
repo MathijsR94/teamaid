@@ -188,27 +188,18 @@ angular.module('starter.controllers', [])
 		$scope.isAdmin = false;
 
 		$scope.getTeam = User.getTeam().then(function(data) {
-			//console.log('start getTeam');
 			$scope.teamId = data;
 
 			//check if current user is Admin for this team
 			$scope.games = Games.getGamesArray($scope.teamId);
 			$scope.gamesRef = Games.getGamesRef($scope.teamId);
-			//console.log($scope.gamesRef);
-			//console.log('eind getTeam');
         }).then(function(){
-			//console.log('after getTeam');
 			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
-				//console.log('start admin');
-				//console.log(admins);
 				admins.forEach(function(admin){
-					//console.log('foreach');
 					if(admin.$id === User.getUID()){
-						//console.log('if Admin');
 						$scope.isAdmin = true;
 						console.log('isAdmin?: ' + $scope.isAdmin);
 					}
-					//console.log($scope.isAdmin);
 				});
 			});
 		})
@@ -236,6 +227,10 @@ angular.module('starter.controllers', [])
 		$scope.editGame = function(game) {
 			Games.setGame(game.$id);
 			$state.go('app.game_edit', { gameId: game.$id});
+		}
+		$scope.statsGame = function(game) {
+			Games.setGame(game.$id);
+			$state.go('app.game_stats', { gameId: game.$id});
 		}
 		console.log($scope.isAdmin);
     })
@@ -366,6 +361,26 @@ angular.module('starter.controllers', [])
 				}
 			}
 		})
+	})
+	
+	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Attendance, $stateParams,$ionicHistory) {
+		$scope.gameId = $stateParams.gameId;
+		$scope.typeStats = ["wissel","goal voor","goal tegen", "gele kaart", "rode kaart"]
+		
+		$scope.getTeam = User.getTeam().then(function (data) {
+			$scope.teamId = data;
+			$scope.nbsp = " "; // whitespace
+			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
+				$scope.players = teamPlayers;
+			});
+			$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
+				$scope.gameDate = new Date(game.date);
+				$scope.title = "Selecteer datum";
+				$scope.gameTime = game.time;
+				$scope.game = game;
+			})
+		})
+		
 	})
 	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility) {
 		$scope.ShowDelete = false;
@@ -603,7 +618,7 @@ angular.module('starter.controllers', [])
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			$scope.nbsp = " "; // whitespace
-			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
+			Teams.getPlayersArray($scope.teamId).then(function(teamPlayers){
 				$scope.players = teamPlayers;
 			});
         });

@@ -1,0 +1,47 @@
+<ion-view view-title="Statistieken Wedstrijd">
+    <ion-content>
+        <h1>{{game.home}} vs {{game.away}}</h1>
+	
+	<div>
+	Eerste helft:
+	<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+    </ionic-timepicker>
+	tot 
+	<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+        </ionic-timepicker>
+	</div>
+	<br>
+	<div>
+	Tweede helft:
+	<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+    </ionic-timepicker>
+	tot 
+	<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+        </ionic-timepicker>
+	</div>
+	
+	<div>
+	geef een gebeurtenis door:
+	<label class="item item-input item-select">
+		<span class="input-label">Type</span>
+		<select ng-model="selectedType" ng-options="type as type for type in typeStats"></select>
+	</label>
+	
+	<label class="item item-input item-select">
+		<span class="input-label">Speler</span>
+		<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	</div>
+	<div>
+	basis elftal:
+	</div>
+	
+	
+	
+	
+    </ion-content>
+</ion-view>

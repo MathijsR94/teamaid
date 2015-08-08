@@ -129,17 +129,23 @@ angular.module('starter.services', [])
                     deferred.resolve(players);
                 });
                 return deferred.promise;
+            },
+			getPlayersArray: function(teamId) {
+				var deferred = $q.defer();
+                var players = $firebaseArray(teamsRef.child(teamId).child("Players"));
+                players.$loaded(function () {
+                    deferred.resolve(players);
+                });
+                return deferred.promise;
             }
         }
     })
-	
 	.factory('Admins', function ($firebaseArray, firebaseRef, $q) {
         var ref = firebaseRef.ref();
         var adminsRef = ref.child("Admins");
 		
         var admins = $firebaseArray(ref.child("Admins"));
-		
-
+	
         return {
             ref: function() {
                 return adminsRef;

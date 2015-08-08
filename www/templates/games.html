@@ -18,6 +18,7 @@
 							   ng-click="onItemDelete(game)">
 			</ion-delete-button>
 			<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); editGame(game)">Edit</ion-option-button>
+			<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); statsGame(game)">Stats</ion-option-button>
 	  </ion-item>
     </ion-list>
       

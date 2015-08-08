@@ -202,6 +202,15 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
+		.state('app.game_stats', {
+		  url: "/game/:gameId/stats",
+		  views: {
+			'menuContent': {
+			  templateUrl: "templates/game_stats.html",
+			  controller: 'Games_StatsCtrl'
+			}
+		  }
+		})
 		.state('app.practises', {
 		  url: "/practises",
 		  views: {
