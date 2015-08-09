@@ -1,8 +1,14 @@
-<ion-view view-title="Wedstrijden" has-subheader>
+<ion-view view-title="Instellingen">
   <ion-content>
-		<h4> Corvee Settings </h4>
-		<ion-toggle ng-model="settings.dutyGames" ng-change="changeSetting('dutyGames',settings.dutyGames)">Wedstrijden</ion-toggle>
-		<ion-toggle ng-model="settings.dutyPractises" ng-change="changeSetting('dutyPractises',settings.dutyPractises)">Trainingen</ion-toggle>
-		<ion-toggle ng-model="settings.dutyEvents" ng-change="changeSetting('dutyEvents',settings.dutyEvents)">Evenementen</ion-toggle>
+	  <div class="row">
+		  <div class="col">
+			  <h4> Corvee Settings </h4>
+		  </div>
+
+	  </div>
+	  <ion-toggle ng-model="settings.dutyGames" ng-change="changeSetting('dutyGames',settings.dutyGames)">Wedstrijden</ion-toggle>
+	  <ion-toggle ng-model="settings.dutyPractises" ng-change="changeSetting('dutyPractises',settings.dutyPractises)">Trainingen</ion-toggle>
+	  <ion-toggle ng-model="settings.dutyEvents" ng-change="changeSetting('dutyEvents',settings.dutyEvents)">Evenementen</ion-toggle>
+
   </ion-content>
 </ion-view>

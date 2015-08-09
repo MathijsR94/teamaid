@@ -1,14 +1,14 @@
 <ion-view view-title="Teampot">
   <ion-content>
-    <ion-list ng-repeat="player in credits"">
+    <ion-list ng-repeat="player in credits">
        <ion-item class="item-stable" ng-click="toggleGroup(player.$id)" ng-class="{active: isGroupShown(player.$id)}">
 			<i class="icon" ng-class="isGroupShown(player.$id) ? 'ion-minus' : 'ion-plus'"></i>
-            €{{player.balance}} , {{player.$id}} 
+            €{{player.balance}} , {{player.$id}}
 		</ion-item>
 		<ion-item class="item-accordion" ng-repeat="credit in player.credits" ng-show="isGroupShown(player.$id)">
             <date-Time sdate='credit.timestamp'></date-Time>  €{{credit.value}}  , {{credit.comment}}
         </ion-item>
     </ion-list>
-	<button class="button button-block button-positive" ng-click="addCredit()">Add Credit</button>
+	<button class="button button-block button-stable" ng-click="addCredit()">Add Credit</button>
   </ion-content>
 </ion-view>
