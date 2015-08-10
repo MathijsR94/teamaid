@@ -11,7 +11,7 @@
     <ion-content>
         <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
             <ion-item ng-repeat="practise in practises | orderBy:'date'" ng-click="getDetail(practise.$id)">
-                <date-Time sdate='practise.date'></date-Time> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{game.location}}
+                <date-Time sdate='practise.date'></date-Time> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
                 <ion-delete-button class="ion-minus-circled"
                                    ng-click="onItemDelete(practise)">
                 </ion-delete-button>

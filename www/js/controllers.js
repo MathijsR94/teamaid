@@ -363,25 +363,63 @@ angular.module('starter.controllers', [])
 		})
 	})
 	
-	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Attendance, $stateParams,$ionicHistory) {
+	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $stateParams,$ionicHistory) {
 		$scope.gameId = $stateParams.gameId;
-		$scope.typeStats = ["wissel","goal voor","goal tegen", "gele kaart", "rode kaart"]
+		$scope.selectedType = "";
+
+		$scope.typeStats = ["wissel","positie wissel", "goal voor","goal tegen", "gele kaart", "rode kaart"]
 		
 		$scope.getTeam = User.getTeam().then(function (data) {
 			$scope.teamId = data;
 			$scope.nbsp = " "; // whitespace
+			$scope.title = "Selecteer datum";
+			
 			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
 				$scope.players = teamPlayers;
 			});
 			$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
-				$scope.gameDate = new Date(game.date);
-				$scope.title = "Selecteer datum";
-				$scope.gameTime = game.time;
-				$scope.game = game;
+				$scope.game = game
+				// get current statistics and  fill them in !
+				console.log(game);
+				Statistics.getStatistics($scope.teamId,$scope.game.$id).then(function (stats) {
+					if(typeof stats === 'undefined'){
+						$scope.firstHalfStart = game.time;
+						$scope.firstHalfEnd = $scope.firstHalfStart + (45*60);
+						$scope.secondHalfStart = $scope.firstHalfEnd + (15*60);
+						$scope.secondHalfEnd = $scope.secondHalfStart + (45*60);
+					}
+					else{
+						$scope.firstHalfStart = stats.firstHalfStart;
+						$scope.firstHalfEnd =  stats.firstHalfEnd;
+						$scope.secondHalfStart =  stats.secondHalfStart;
+						$scope.secondHalfEnd =  stats.secondHalfEnd;
+					}
+					// parse the current filled in stats for basic team and statType "wissels"
+					$scope.basis = stats.basis;
+				})
 			})
 		})
 		
+		
+		$scope.datePickerCallback = function (val) {
+			if (typeof(val) === 'undefined') {
+				console.log('Date not selected');
+			} else {
+				console.log('Selected date is : ', val);
+				//$scope.gameDate = val;
+			}
+		};
+
+		$scope.timePickerCallback = function (val) {
+			if (typeof (val) === 'undefined') {
+				console.log('Time not selected');
+			} else {
+				console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+				//$scope.gameTime = val;
+			}
+		};
 	})
+	
 	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
@@ -641,6 +679,7 @@ angular.module('starter.controllers', [])
 			$scope.settings = Settings.getSettings($scope.teamId);
 			
 			$scope.duties = Duties.getDuties($scope.teamId);
+			console.log($scope.duties);
 			//get Games
 			$scope.games = Games.getGames($scope.teamId);	
 			// get Practices

@@ -415,7 +415,19 @@ angular.module('starter.services', [])
 			}
 		};
 	})
-	
+	.factory('Statistics', function(firebaseRef,$firebaseObject, $q){
+		var statsRef = firebaseRef.ref().child("Statistics");
+		return {
+			getStatistics: function(teamId, gameId){
+			var deferred = $q.defer();
+				var stats = $firebaseObject(statsRef.child(teamId).child(gameId));
+				stats.$loaded(function () {
+					deferred.resolve(stats);
+				});
+				return deferred.promise;
+			}
+		};
+	})
 	.factory('Duties', function(firebaseRef,$firebaseObject, $q){
 		var ref = firebaseRef.ref();
 		var dutyRef = ref.child("Duties");

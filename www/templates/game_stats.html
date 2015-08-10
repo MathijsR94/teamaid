@@ -4,23 +4,23 @@
 	
 	<div>
 	Eerste helft:
-	<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+	<ionic-timepicker etime="firstHalfStart" format="24" step="1" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='firstHalfStart'></standard-time-no-meridian></button>
     </ionic-timepicker>
 	tot 
-	<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+	<ionic-timepicker etime="firstHalfEnd" format="24" step="1" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='firstHalfEnd'></standard-time-no-meridian></button>
         </ionic-timepicker>
 	</div>
 	<br>
 	<div>
 	Tweede helft:
-	<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+	<ionic-timepicker etime="secondHalfStart" format="24" step="1" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='secondHalfStart'></standard-time-no-meridian></button>
     </ionic-timepicker>
 	tot 
-	<ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+	<ionic-timepicker etime="secondHalfEnd" format="24" step="1" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='secondHalfEnd'></standard-time-no-meridian></button>
         </ionic-timepicker>
 	</div>
 	
@@ -28,13 +28,51 @@
 	geef een gebeurtenis door:
 	<label class="item item-input item-select">
 		<span class="input-label">Type</span>
-		<select ng-model="selectedType" ng-options="type as type for type in typeStats"></select>
+		<select ng-model="selectedType" ng-options="type as type for type in typeStats">
+			<option> type </option>
+		</select>
 	</label>
-	
-	<label class="item item-input item-select">
-		<span class="input-label">Speler</span>
-		<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
+	</div>
+	<div ng-if="selectedType === 'wissel'"> <!-- this  is  the div  voor wissel-->
+		<label class="item item-input item-select">
+			<span class="input-label">Speler Uit</span>
+			<select ng-model="selectedPlayerIn" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+		</label>
+		<label class="item item-input item-select">
+			<span class="input-label">Speler In</span>
+			<select ng-model="selectedPlayerOut" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+		</label>
+		<ionic-timepicker etime="gameTime" format="24" step="1" callback="timePickerCallback">
+            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+		</ionic-timepicker>
+		<label class="item-input">
+            <span class="input-label">commentaar</span>
+            <input type="text" ng-model="comment"/>
+        </label>
+	</div>
+	<div ng-if="selectedType === 'positie wissel'"> <!-- this is the div voor positie wissel-->
+		<label class="item item-input item-select">
+			<span class="input-label">Speler Uit</span>
+			<select ng-model="selectedPlayer1" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+		</label>
+		<label class="item item-input item-select">
+			<span class="input-label">Speler In</span>
+			<select ng-model="selectedPlayer2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+		</label>
+		<label class="item-input">
+            <span class="input-label">commentaar</span>
+            <input type="text" ng-model="comment"/>
+        </label>
+	</div>
+	<div ng-if="selectedType === 'goal voor'"> <!-- this is the div voor goals voor-->
+		<label class="item item-input item-select">
+			<span class="input-label">Speler Uit</span>
+			<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+		</label>
+		<label class="item-input">
+            <span class="input-label">commentaar</span>
+            <input type="text" ng-model="comment"/>
+        </label>
 	</div>
 	<div>
 	basis elftal:
