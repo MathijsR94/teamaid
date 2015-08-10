@@ -36,11 +36,11 @@
 	<div ng-if="selectedType === 'wissel'"> <!-- this  is  the div  voor wissel-->
 		<label class="item item-input item-select">
 			<span class="input-label">Speler Uit</span>
-			<select ng-model="selectedPlayerIn" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+			<select ng-model="selectedPlayerIn" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
 		</label>
 		<label class="item item-input item-select">
 			<span class="input-label">Speler In</span>
-			<select ng-model="selectedPlayerOut" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+			<select ng-model="selectedPlayerOut" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in changes"></select>
 		</label>
 		<ionic-timepicker etime="gameTime" format="24" step="1" callback="timePickerCallback">
             <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
@@ -53,11 +53,11 @@
 	<div ng-if="selectedType === 'positie wissel'"> <!-- this is the div voor positie wissel-->
 		<label class="item item-input item-select">
 			<span class="input-label">Speler Uit</span>
-			<select ng-model="selectedPlayer1" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+			<select ng-model="selectedPlayer1" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
 		</label>
 		<label class="item item-input item-select">
 			<span class="input-label">Speler In</span>
-			<select ng-model="selectedPlayer2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+			<select ng-model="selectedPlayer2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
 		</label>
 		<label class="item-input">
             <span class="input-label">commentaar</span>
@@ -76,10 +76,53 @@
 	</div>
 	<div>
 	basis elftal:
+	<label class="item item-input item-select">
+			<span class="input-label">1:</span>
+			<select ng-model="basis[0]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">2:</span>
+			<select ng-model="basis2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">3:</span>
+			<select ng-model="basis3" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">4:</span>
+			<select ng-model="basis4" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">5:</span>
+			<select ng-model="basis5" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">6:</span>
+			<select ng-model="basis6" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">7:</span>
+			<select ng-model="basis7" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">8:</span>
+			<select ng-model="basis8" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">9:</span>
+			<select ng-model="basis9" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">10:</span>
+			<select ng-model="basis10" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
+	<label class="item item-input item-select">
+			<span class="input-label">11:</span>
+			<select ng-model="basis11" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+	</label>
 	</div>
-	
-	
-	
-	
+	<div class="buttons">
+		<button class="button button-bq" ng-click="storeBasis()">store basis</button>
+    </div>
     </ion-content>
 </ion-view>

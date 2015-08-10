@@ -425,6 +425,16 @@ angular.module('starter.services', [])
 					deferred.resolve(stats);
 				});
 				return deferred.promise;
+			},
+			initialize: function(teamId,gameId,gameTime){
+				var stats = {
+					firstHalfStart : gameTime,
+					firstHalfEnd : gameTime + (45*60),
+					secondHalfStart : gameTime + (60*60),
+					secondHalfEnd : gameTime + (105*60)
+				};
+				statsRef.child(teamId).child(gameId).set(stats);
+				return stats;
 			}
 		};
 	})

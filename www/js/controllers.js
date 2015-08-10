@@ -382,41 +382,57 @@ angular.module('starter.controllers', [])
 				// get current statistics and  fill them in !
 				console.log(game);
 				Statistics.getStatistics($scope.teamId,$scope.game.$id).then(function (stats) {
-					if(typeof stats === 'undefined'){
-						$scope.firstHalfStart = game.time;
-						$scope.firstHalfEnd = $scope.firstHalfStart + (45*60);
-						$scope.secondHalfStart = $scope.firstHalfEnd + (15*60);
-						$scope.secondHalfEnd = $scope.secondHalfStart + (45*60);
+				
+					if(stats.$value === null){
+						var init = Statistics.initialize($scope.teamId,$scope.game.$id,game.time);
+						$scope.firstHalfStart = init.firstHalfStart;
+						$scope.firstHalfEnd = init.firstHalfEnd;
+						$scope.secondHalfStart = init.secondHalfStart;
+						$scope.secondHalfEnd = init.secondHalfEnd;
+						
+						$scope.basis = {};
+						$scope.actualPlayers = {};
+						$scope.changes = {};
 					}
-					else{
+					else{					
 						$scope.firstHalfStart = stats.firstHalfStart;
 						$scope.firstHalfEnd =  stats.firstHalfEnd;
 						$scope.secondHalfStart =  stats.secondHalfStart;
 						$scope.secondHalfEnd =  stats.secondHalfEnd;
+						
+						// parse the current filled in stats for basic team and statType "wissels"
+						$scope.basis = stats.basis;
+						$scope.actualPlayers = $scope.basis;
+						$scope.changes = game.Present;
+						
+						if(typeof stats.basis !== 'undefined'){
+							stats.basis.forEach(function(player,id){
+								delete $changes[id];
+							});
+						}
+						
+						if(typeof stats.Changes !== 'undefined'){
+							stats.Changes.forEach(function(change){
+								delete $actualPlayers[change.playerOut];
+								$actualPlayers[change.playerIn] = true;
+								// he is already changed so he cannot be changed again
+								delete $changes[change.playerIn];
+							});
+						}
 					}
-					// parse the current filled in stats for basic team and statType "wissels"
-					$scope.basis = stats.basis;
+
 				})
 			})
 		})
 		
-		
 		$scope.datePickerCallback = function (val) {
-			if (typeof(val) === 'undefined') {
-				console.log('Date not selected');
-			} else {
-				console.log('Selected date is : ', val);
-				//$scope.gameDate = val;
-			}
 		};
 
 		$scope.timePickerCallback = function (val) {
-			if (typeof (val) === 'undefined') {
-				console.log('Time not selected');
-			} else {
-				console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-				//$scope.gameTime = val;
-			}
+		};
+		
+		$scope.storeBasis = function(){
+			console.log($scope.basis);
 		};
 	})
 	
