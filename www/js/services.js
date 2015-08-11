@@ -415,7 +415,7 @@ angular.module('starter.services', [])
 			}
 		};
 	})
-	.factory('Statistics', function(firebaseRef,$firebaseObject, $q){
+	.factory('Statistics', function(firebaseRef,$firebaseObject, $firebaseArray, $q){
 		var statsRef = firebaseRef.ref().child("Statistics");
 		return {
 			getStatistics: function(teamId, gameId){
@@ -435,6 +435,70 @@ angular.module('starter.services', [])
 				};
 				statsRef.child(teamId).child(gameId).set(stats);
 				return stats;
+			},
+			updateActualTeam: function(actualPlayers){
+				var newActual= {};
+				for(key in actualPlayers){
+					newActual[actualPlayers[key]] = key;
+				};
+				return newActual;
+
+			},
+			updateBasis: function(teamId,gameId,basisTeam,tactic){
+				statsRef.child(teamId).child(gameId).update({ 
+					Basis : basisTeam,
+					tactic : tactic
+				});
+				
+			},
+			newChange: function(teamId, gameId, playerIn, playerOut, pos, time, comment){
+				var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("Changes"));
+				changes.$add({
+					playerIn : playerIn,
+					playerOut : playerOut,
+					position : pos,
+					time : time,
+					comment : comment
+				});
+			},
+			newPosChange: function(teamId, gameId, player1, player2, pos1, pos2, time, comment){
+				var posChanges = $firebaseArray(statsRef.child(teamId).child(gameId).child("PosChanges"));
+				posChanges.$add({
+					player1 : player1,
+					player2 : player2,
+					position1 : pos1,
+					position2 : pos2,
+					time : time,
+					comment : comment
+				});
+			},
+			newGoal: function(teamId, gameId, ours, player, time, comment){
+				if(ours === true){
+					var ourGoals = $firebaseArray(statsRef.child(teamId).child(gameId).child("OurGoals"));
+					ourGoals.$add({
+						player : player,
+						time : time,
+						comment : comment
+					});
+				}
+				else{
+					var theirGoals = $firebaseArray(statsRef.child(teamId).child(gameId).child("TheirGoals"));
+					theirGoals.$add({
+						time : time,
+						comment : comment
+					});
+				}
+			},
+			newCard: function(teamId, gameId, type, player, time, comment){
+			
+				var cards = $firebaseArray(statsRef.child(teamId).child(gameId).child("Cards"));
+				cards.$add({
+					type : type,
+					player : player,
+					time : time,
+					comment : comment
+				});
+
 			}
 		};
 	})

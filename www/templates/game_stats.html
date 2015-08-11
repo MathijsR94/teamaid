@@ -1,128 +1,250 @@
 <ion-view view-title="Statistieken Wedstrijd">
     <ion-content>
-        <h1>{{game.home}} vs {{game.away}}</h1>
+    <h1>{{game.home}} vs {{game.away}}</h1>
+	<h3> {{homeScore}} - {{awayScore}}</h3>
 	
-	<div>
-	Eerste helft:
-	<ionic-timepicker etime="firstHalfStart" format="24" step="1" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='firstHalfStart'></standard-time-no-meridian></button>
-    </ionic-timepicker>
-	tot 
-	<ionic-timepicker etime="firstHalfEnd" format="24" step="1" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='firstHalfEnd'></standard-time-no-meridian></button>
-        </ionic-timepicker>
-	</div>
-	<br>
-	<div>
-	Tweede helft:
-	<ionic-timepicker etime="secondHalfStart" format="24" step="1" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='secondHalfStart'></standard-time-no-meridian></button>
-    </ionic-timepicker>
-	tot 
-	<ionic-timepicker etime="secondHalfEnd" format="24" step="1" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='secondHalfEnd'></standard-time-no-meridian></button>
-        </ionic-timepicker>
-	</div>
-	
-	<div>
-	geef een gebeurtenis door:
-	<label class="item item-input item-select">
-		<span class="input-label">Type</span>
-		<select ng-model="selectedType" ng-options="type as type for type in typeStats">
-			<option> type </option>
-		</select>
-	</label>
-	</div>
-	<div ng-if="selectedType === 'wissel'"> <!-- this  is  the div  voor wissel-->
-		<label class="item item-input item-select">
-			<span class="input-label">Speler Uit</span>
-			<select ng-model="selectedPlayerIn" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
-		</label>
-		<label class="item item-input item-select">
-			<span class="input-label">Speler In</span>
-			<select ng-model="selectedPlayerOut" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in changes"></select>
-		</label>
-		<ionic-timepicker etime="gameTime" format="24" step="1" callback="timePickerCallback">
-            <button class="button button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
-		</ionic-timepicker>
-		<label class="item-input">
-            <span class="input-label">commentaar</span>
-            <input type="text" ng-model="comment"/>
-        </label>
-	</div>
-	<div ng-if="selectedType === 'positie wissel'"> <!-- this is the div voor positie wissel-->
-		<label class="item item-input item-select">
-			<span class="input-label">Speler Uit</span>
-			<select ng-model="selectedPlayer1" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
-		</label>
-		<label class="item item-input item-select">
-			<span class="input-label">Speler In</span>
-			<select ng-model="selectedPlayer2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
-		</label>
-		<label class="item-input">
-            <span class="input-label">commentaar</span>
-            <input type="text" ng-model="comment"/>
-        </label>
-	</div>
-	<div ng-if="selectedType === 'goal voor'"> <!-- this is the div voor goals voor-->
-		<label class="item item-input item-select">
-			<span class="input-label">Speler Uit</span>
-			<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-		</label>
-		<label class="item-input">
-            <span class="input-label">commentaar</span>
-            <input type="text" ng-model="comment"/>
-        </label>
-	</div>
-	<div>
-	basis elftal:
-	<label class="item item-input item-select">
-			<span class="input-label">1:</span>
-			<select ng-model="basis[0]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">2:</span>
-			<select ng-model="basis2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">3:</span>
-			<select ng-model="basis3" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">4:</span>
-			<select ng-model="basis4" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">5:</span>
-			<select ng-model="basis5" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">6:</span>
-			<select ng-model="basis6" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">7:</span>
-			<select ng-model="basis7" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">8:</span>
-			<select ng-model="basis8" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">9:</span>
-			<select ng-model="basis9" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">10:</span>
-			<select ng-model="basis10" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	<label class="item item-input item-select">
-			<span class="input-label">11:</span>
-			<select ng-model="basis11" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
-	</label>
-	</div>
-	<div class="buttons">
-		<button class="button button-bq" ng-click="storeBasis()">store basis</button>
-    </div>
+	<ion-list>
+		<ion-item class="item-stable" ng-click="toggleGroup('gameTimes')" ng-class="{active: isGroupShown('gameTimes')}">
+			  <i class="icon" ng-class="isGroupShown('gameTimes') ? 'ion-minus' : 'ion-plus'"></i>
+			&nbsp;
+			wedstrijd tijden
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('gameTimes')">
+			Eerste helft:
+			<ionic-timepicker etime="firstHalfStart" format="24" step="1" callback="timePickerCallback">
+					<button class="button button-positive"> <standard-time-no-meridian etime='firstHalfStart'></standard-time-no-meridian></button>
+			</ionic-timepicker>
+			tot 
+			<ionic-timepicker etime="firstHalfEnd" format="24" step="1" callback="timePickerCallback">
+					<button class="button button-positive"> <standard-time-no-meridian etime='firstHalfEnd'></standard-time-no-meridian></button>
+			</ionic-timepicker>
+			<br>
+			Tweede helft:
+			<ionic-timepicker etime="secondHalfStart" format="24" step="1" callback="timePickerCallback">
+					<button class="button button-positive"> <standard-time-no-meridian etime='secondHalfStart'></standard-time-no-meridian></button>
+			</ionic-timepicker>
+			tot 
+			<ionic-timepicker etime="secondHalfEnd" format="24" step="1" callback="timePickerCallback">
+					<button class="button button-positive"> <standard-time-no-meridian etime='secondHalfEnd'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+		</ion-item>
+		
+		<ion-item class="item-stable" ng-click="toggleGroup('newStat')" ng-class="{active: isGroupShown('newStat')}">
+			  <i class="icon" ng-class="isGroupShown('newStat') ? 'ion-minus' : 'ion-plus'"></i>
+			&nbsp;
+			gebeurtenis
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('newStat')">
+			geef een gebeurtenis door:
+			<label class="item item-input item-select">
+				<span class="input-label">Type</span>
+				<select ng-model="selectedType" ng-options="type as type for type in typeStats" ng-change="updateEventTime()">
+					<option> type </option>
+				</select>
+			</label>
+			<div ng-if="selectedType === 'wissel'"> <!-- this  is  the div  voor wissel-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler Uit</span>
+					<select ng-model="selectedPlayerOut" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+				</label>
+				<label class="item item-input item-select">
+					<span class="input-label">Speler In</span>
+					<select ng-model="selectedPlayerIn" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in changes"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveChange(selectedPlayerIn,selectedPlayerOut,eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'positie wissel'"> <!-- this is the div voor positie wissel-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer1" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+				</label>
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="savePosChange(selectedPlayer1,selectedPlayer2,eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'goal voor'"> <!-- this is the div voor goals voor-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveOurGoal(selectedPlayer,eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'goal tegen'"> <!-- this is the div voor goals tegen-->
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveTheirGoal(eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'gele kaart'"> <!-- this is the div voor gele kaart-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveCard(selectedPlayer,'yellow',eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'rode kaart'"> <!-- this is the div voor rode kaart-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveCard(selectedPlayer,'red',eventTime,comment)">save</button>
+				</div>
+			</div>
+		</ion-item>
+		<ion-item class="item-stable" ng-click="toggleGroup('basisTeam')" ng-class="{active: isGroupShown('basisTeam')}">
+			  <i class="icon" ng-class="isGroupShown('basisTeam') ? 'ion-minus' : 'ion-plus'"></i>
+			&nbsp;
+			Basis elftal
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('basisTeam')">
+			basis elftal:
+			<label class="item item-input item-select">
+				<span class="input-label">Opstelling</span>
+				<select ng-model="tactic">
+					<option value="4-4-2">4-4-2</option>
+					<option value="4-3-3">4-3-3</option>
+				</select>
+			</label>		
+			<!-- 4-4-2 -->
+			<div ng-if="tactic !== 0 && tactic !== undefined ">
+				<div name="goalkeeper" class="row">
+				  <div class="col-33"></div>
+				  <div class="col"><select class="button button-block" ng-model="positions[1]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select></div>
+				  <div class="col-33"></div>
+				</div>
+				<div name="defense" class="row">
+					<div class="col"><select class="button button-block" ng-model="positions[2]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select></div>
+					<div class="col"><select class="button button-block" ng-model="positions[3]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+									 <select class="button button-block" ng-model="positions[4]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+					</div>
+					<div class="col"><select class="button button-block" ng-model="positions[5]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select></div>
+				</div>
+				<div name="midfield" class="row">
+					<div class="col"><select class="button button-block" ng-model="positions[6]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select></div>
+					<div class="col"><select class="button button-block" ng-model="positions[7]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+									 <select ng-if="tactic === '4-4-2'" class="button button-block"ng-model="positions[10]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+					</div>
+					<div class="col"><select class="button button-block" ng-model="positions[8]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select></div>
+				</div>
+				<div name="attack" class="row">
+					<div class="col-10" ng-if="tactic === '4-4-2'"></div>
+					<div class="col"><select class="button button-block" ng-model="positions[9]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select></div>
+					<div class="col" ng-if="tactic === '4-3-3'">
+						<select class="button button-block" ng-model="positions[10]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select>
+					</div>
+					<div class="col"><select class="button button-block" ng-model="positions[11]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in game.Present"></select></div>
+					<div class="col-10" ng-if="tactic === '4-4-2'"></div>
+				</div>
+				<div class="buttons">
+					<button class="button button-block" ng-click="storeBasis(tactic)">save</button>
+				</div>
+			</div>
+			
+		</ion-item>
+		<ion-item class="item-stable" ng-click="toggleGroup('currentTeam')" ng-class="{active: isGroupShown('currentTeam')}">
+			  <i class="icon" ng-class="isGroupShown('currentTeam') ? 'ion-minus' : 'ion-plus'"></i>
+			&nbsp;
+			actuele opstelling
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('currentTeam')">	
+		
+		<!-- 4-4-2 -->
+		<div ng-if="tactic !== 0 && tactic !== undefined">
+			<div name="goalkeeper" class="row">
+			  <div class="col-33"></div>
+			  <div class="col"><button class="button button-block">{{players[actualPositions[1]].firstName}} {{players[actualPositions[1]].insertion}} {{players[actualPositions[1]].lastName}}</button></div>
+			  <div class="col-33"></div>
+			</div>
+			<div name="defense" class="row">
+				<div class="col"><button class="button button-block">{{players[actualPositions[2]].firstName}} {{players[actualPositions[2]].insertion}} {{players[actualPositions[2]].lastName}}</button></div>
+				<div class="col"><button class="button button-block">{{players[actualPositions[3]].firstName}} {{players[actualPositions[3]].insertion}} {{players[actualPositions[3]].lastName}}</button>
+								 <button class="button button-block">{{players[actualPositions[4]].firstName}} {{players[actualPositions[4]].insertion}} {{players[actualPositions[4]].lastName}}</button>
+				</div>
+				<div class="col"><button class="button button-block">{{players[actualPositions[5]].firstName}} {{players[actualPositions[5]].insertion}} {{players[actualPositions[5]].lastName}}</button></div>
+			</div>
+			<div name="midfield" class="row">
+				<div class="col"><button class="button button-block">{{players[actualPositions[6]].firstName}} {{players[actualPositions[6]].insertion}} {{players[actualPositions[6]].lastName}}</button></div>
+				<div class="col"><button class="button button-block">{{players[actualPositions[7]].firstName}} {{players[actualPositions[7]].insertion}} {{players[actualPositions[7]].lastName}}</button>
+								 <button ng-if="tactic === '4-4-2'" class="button button-block">{{players[actualPositions[10]].firstName}} {{players[actualPositions[10]].insertion}} {{players[actualPositions[10]].lastName}}</button>
+				</div>
+				<div class="col"><button class="button button-block">{{players[actualPositions[8]].firstName}} {{players[actualPositions[8]].insertion}} {{players[actualPositions[8]].lastName}}</button></div>
+			</div>
+			<div name="attack" class="row">
+				<div class="col-10" ng-if="tactic === '4-4-2'"></div>
+				<div class="col"><button class="button button-block">{{players[actualPositions[9]].firstName}} {{players[actualPositions[9]].insertion}} {{players[actualPositions[9]].lastName}}</button></div>
+				<div class="col" ng-if="tactic === '4-3-3'">
+					<button class="button button-block">{{players[actualPositions[10]].firstName}} {{players[actualPositions[10]].insertion}} {{players[actualPositions[10]].lastName}}</button>
+				</div>
+				<div class="col"><button class="button button-block">{{players[actualPositions[11]].firstName}} {{players[actualPositions[11]].insertion}} {{players[actualPositions[11]].lastName}}</button></div>
+				<div class="col-10" ng-if="tactic === '4-4-2'"></div>
+			</div>
+		</div>
+
+		</ion-item>
+	</ion-list>
     </ion-content>
 </ion-view>
