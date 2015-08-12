@@ -263,6 +263,55 @@ angular.module('starter.services', [])
 		}
 		
     })
+	.factory('Events', function ($firebaseArray,$firebaseObject, firebaseRef, $q) {
+		var ref = firebaseRef.ref();
+		var eventsRef = ref.child("Events");
+		var selectedEvent = localStorage.getItem("selectedEvent");
+
+		return {
+			getEventsRef: function(teamId) {
+				return eventsRef.child(teamId);
+			},
+			getEvents: function(teamId) {
+				return $firebaseObject(eventsRef.child(teamId));
+			},
+			getEventsArray: function(teamId) {
+				return $firebaseArray(eventsRef.child(teamId));
+			},
+			getEvent: function(teamId) {
+				var deferred = $q.defer();
+				var events = $firebaseArray(eventsRef.child(teamId));
+                events.$loaded(function(){
+					deferred.resolve(events.$getRecord(selectedEvent));
+				});
+				return deferred.promise;
+			},
+			setEvent: function(eventId) {
+				localStorage.setItem("selectedEvent", eventId);
+				selectedEvent = eventId;
+			},
+			createEvent: function(teamId, date, time, location){
+				var teamEventRef = eventsRef.child(teamId);
+				var events = $firebaseArray(teamEventRef);
+				events.$add({
+					date : date.toString(),
+					time : time,
+					location : location
+				});							
+			},
+			updateEvent: function(teamId, eventId, date, time, location){
+                console.log(teamId);
+				var eventsRef = eventsRef.child(teamId).child(eventId);
+				eventsRef.update({
+					date : date.toString(),
+					time : time,
+					location : location
+				});
+            }
+			
+		}
+		
+    })
 	.factory('Finance', function ($firebaseArray, firebaseRef, $q) {
 		var financeRef = firebaseRef.ref().child("Finance");
 		
@@ -444,10 +493,11 @@ angular.module('starter.services', [])
 				return newActual;
 
 			},
-			updateBasis: function(teamId,gameId,basisTeam,tactic){
+			updateBasis: function(teamId,gameId,basisTeam,tactic,externals){
 				statsRef.child(teamId).child(gameId).update({ 
 					Basis : basisTeam,
-					tactic : tactic
+					tactic : tactic,
+					externalPlayers : externals
 				});
 				
 			},

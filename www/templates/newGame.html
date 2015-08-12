@@ -16,18 +16,19 @@
 							<button class="button button-block button-stable"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
 						</ionic-timepicker>
                             </span>
+						<ion-toggle ng-model="homeAway">
+							<span class="input-label" ng-if="homeAway !== true">Uit</span>
+							<span class="input-label" ng-if="homeAway === true">Thuis</span>
+						</ion-toggle>
+
                         <label class="item item-input">
-                            <span class="input-label">Thuis</span>
-                            <input type="text" ng-model="home" required/>
-                        </label>
-                        <label class="item item-input">
-                            <span class="input-label">Uit</span>
-                            <input type="text" ng-model="away" required/>
+                            <span class="input-label">Tegenstander</span>
+                            <input type="text" ng-model="opponent" required/>
                         </label>
                     </div>
 					
                     <div>
-                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="newGame(home,away, time, date)">
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="newGame(homeAway, opponent)">
                             Toevoegen
                         </button>
                     </div>

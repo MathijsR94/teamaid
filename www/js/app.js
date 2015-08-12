@@ -203,6 +203,7 @@ app.directive('dateTime', function() {
 		  }
 		})
 		.state('app.game_stats', {
+		  cache: false,
 		  url: "/game/:gameId/stats",
 		  views: {
 			'menuContent': {
@@ -247,12 +248,39 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
-		.state('app.events', {
+				.state('app.events', {
 		  url: "/events",
 		  views: {
 			'menuContent': {
 			  templateUrl: "templates/events.html",
 			  controller: 'EventsCtrl'
+			}
+		  }
+		})
+		.state('app.event', {
+			url: "/events/:eventId",
+			views: {
+				'menuContent': {
+					templateUrl: "templates/event_detail.html",
+					controller: 'Events_DetailCtrl'
+				}
+			}
+		})
+        .state('app.event_edit', {
+            url: "/events/:eventId/edit",
+            views: {
+                'menuContent': {
+                    templateUrl: "templates/event_edit.html",
+                    controller: 'Events_EditCtrl'
+                }
+            }
+        })
+		.state('app.newEvent', {
+		  url: "/newEvent",
+		  views: {
+			'menuContent': {
+			  templateUrl: "templates/newEvent.html",
+			  controller: 'newEventsCtrl'
 			}
 		  }
 		})
