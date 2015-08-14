@@ -4,10 +4,10 @@
             <div class="col col-center">
                 <form name="registerForm" novalidate>
 					
-                    <ion-toggle ng-model="nieuwTeam.checked" ng-change="pushNotificationChange()">
+                    <!-- <ion-toggle ng-model="nieuwTeam.checked" ng-change="pushNotificationChange()">
 					<span class="input-label" ng-if="nieuwTeam.checked != true">Bestaand Team</span>
 					<span class="input-label" ng-if="nieuwTeam.checked == true">Nieuw Team</span>
-					</ion-toggle>
+					</ion-toggle> -->
 						<h3 ng-if="nieuwTeam.checked == true">Nieuw Team</h3>
 						<h3 ng-if="nieuwTeam.checked != true">Bestaand Team</h3>
 							<label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
