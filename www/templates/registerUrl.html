@@ -1,22 +1,14 @@
 <ion-view title="Registreren">
     <ion-content>
-        <div class="row row-center" ng-if="spinner !== true">
+        <div class="row row-center">
             <div class="col col-center">
                 <form name="registerForm" novalidate>
-					
-                    <!-- <ion-toggle ng-model="nieuwTeam.checked" ng-change="pushNotificationChange()">
-					<span class="input-label" ng-if="nieuwTeam.checked != true">Bestaand Team</span>
-					<span class="input-label" ng-if="nieuwTeam.checked == true">Nieuw Team</span>
-					</ion-toggle> -->
-						<h3 ng-if="nieuwTeam.checked == true">Nieuw Team</h3>
-						<h3 ng-if="nieuwTeam.checked != true">Bestaand Team</h3>
+						<h3>Bestaand Team</h3>
 							<label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
-								<span class="input-label" ng-if="nieuwTeam.checked == true">Teamnaam</span>
-								<span class="input-label" ng-if="nieuwTeam.checked != true">Team Referentie</span>
+								<span class="input-label">Team Referentie</span>
 								<input type="text" ng-model="teamName" name="teamName"/>
 							</label>
-						<h3 ng-if="nieuwTeam.checked == true">Beheerder</h3>
-						<h3 ng-if="nieuwTeam.checked != true">Speler</h3>
+						<h3>Speler</h3>
                     <div class="list">
                         <!--Voornaam + validatie-->
                         <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
@@ -49,7 +41,7 @@
                         </label>
                     </div>
                     <div>
-                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="createTeam(teamName,nieuwTeam.checked, fn, ln, in, em, pwd)">
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="createTeam(teamName,false, fn, ln, in, em, pwd)">
                             Registreren
                         </button>
 						<img ng-if="spinner === true" id="spinner" ng-src="img/spinner.gif">
@@ -61,8 +53,5 @@
                 </button>
             </div>
         </div>
-		<div ng-if="spinner === true">
-				<img id="spinner" ng-src="img/spinner.gif">
-		</div>
     </ion-content>
 </ion-view>
