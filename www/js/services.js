@@ -699,12 +699,38 @@ angular.module('starter.services', [])
 
     .factory('localStorage', function () {
         return {
-            setTeamId: function(teamId) {
-                localStorage.setItem('teamId', teamId);
+            setTeams: function(teams) {
+                localStorage.setItem('teams', JSON.stringify(teams));
             },
             setPlayers: function(players) {
-                console.log(players);
                 localStorage.setItem('players', JSON.stringify(players));
+            },
+            setSettings: function(settings) {
+                localStorage.setItem('settings', JSON.stringify(settings));
+            },
+            setAdmin: function(admins, uid) {
+                for(var key in admins) {
+                    console.log(uid);
+                    if(key === uid)
+                        localStorage.setItem('admin', true);
+                    else
+                        localStorage.setItem('admin', false);
+                }
+            },
+
+            getTeamId: function() {
+                var test = JSON.parse(localStorage.getItem('teams'));
+                for(var key in test)
+                    return key;
+            },
+            getPlayers: function() {
+                return JSON.parse(localStorage.getItem('players'));
+            },
+            getSettings: function() {
+                return localStorage.getItem('settings');
+            },
+            getAdmin: function() {
+                return localStorage.getItem('admin');
             }
 
         }

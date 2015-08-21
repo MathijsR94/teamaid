@@ -10,10 +10,6 @@ angular.module('starter.controllers', [])
         //});
 
     })
-
-    .controller('HomeCtrl', function ($scope) {
-    })
-
     .controller('ForgotPasswordCtrl', function ($scope, fireBaseData) {
         //wachtwoord vergeten
         $scope.forgot = function (em, emailValid) {
@@ -180,54 +176,39 @@ angular.module('starter.controllers', [])
     })
 
     .controller('HomeCtrl', function ($scope, User, Teams, localStorage, firebaseRef) {
-        $scope.getTeam = User.getTeam().then(function(teamId) {
+        var ref = firebaseRef.ref();
 
-            localStorage.setTeamId(teamId);
+        var uid = User.getUID();
+        var teamId;
+        ref.child('Users').child(uid).child('Teams').once('value', function(teams) {
+            localStorage.setTeams(teams.val());
 
-            Teams.getPlayers(teamId).then(function(players){
-                //var playersObj = {};
-                //var test = angular.copy(players, playersObj);
-                console.log(players);
-                //localStorage.setPlayers(players);
-                //firebaseRef.ref().child('Teams').child(teamId).child('Players')(
-                //    test
-                //)
-            });
-            $scope.admin = User.isAdmin(teamId).then(function(admins) {
-                admins.forEach(function(admin){
-                    if(admin.$id === User.getUID()){
-                        $scope.isAdmin = true;
-                        console.log('isAdmin?: ' + $scope.isAdmin);
-                    }
-                });
-            });
+            var teamId = localStorage.getTeamId();
+
+            ref.child('Teams').child(teamId).once('value', function(teamData) {
+                localStorage.setPlayers(teamData.val().Players);
+                localStorage.setSettings(teamData.val().Settings);
+            })
+
+            ref.child('Admins').child(teamId).once('value', function(admin) {
+                localStorage.setAdmin(admin.val(), uid);
+            })
         })
+
+
+
+
+
     })
 	
-    .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams) {
+    .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams, localStorage) {
 		
-		$scope.isAdmin = false;
-		
-        $scope.getTeam = User.getTeam().then(function(data) {
-			
-			$scope.teamId = data;
-			
-			
-			Teams.getPlayers($scope.teamId).then(function(data){
-				$scope.players = data;
-			});
-        }).then(function(){
-			//check if current user is Admin for this team
-			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
-				admins.forEach(function(admin){
-					if(admin.$id === User.getUID()){
-						$scope.isAdmin = true;
-						console.log('isAdmin?: ' + $scope.isAdmin);
-					}
-				});
-			});
-		});
-		
+		$scope.isAdmin = localStorage.getAdmin();
+        $scope.teamId = localStorage.getTeamId();
+
+        $scope.players = localStorage.getPlayers();
+
+        console.log($scope.players);
 		$scope.invitePlayer = function() {
 			$state.go('app.invite', { teamId: $scope.teamId});
 		}

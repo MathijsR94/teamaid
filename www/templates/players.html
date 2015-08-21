@@ -5,6 +5,6 @@
             {{player.firstName}} {{player.insertion}} {{player.lastName}}
       </ion-item>
     </ion-list>
-	<button ng-if="isAdmin === true" class="button button-block button-stable" ng-click="invitePlayer()">Invite player</button>
+	<button ng-if="isAdmin" class="button button-block button-stable" ng-click="invitePlayer()">Invite player</button>
   </ion-content>
 </ion-view>
