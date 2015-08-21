@@ -16,8 +16,10 @@ angular.module('starter.controllers', [])
 
     .controller('ForgotPasswordCtrl', function ($scope, fireBaseData) {
         //wachtwoord vergeten
-        $scope.forgot = function (em) {
-            fireBaseData.resetPassword(em);
+        $scope.forgot = function (em, emailValid) {
+			if(emailValid === true){
+				fireBaseData.resetPassword(em);
+			}
         }
     })
     .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams, Admins) {
@@ -183,6 +185,8 @@ angular.module('starter.controllers', [])
 	
     .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams) {
 		
+		$scope.isAdmin = false;
+		
         $scope.getTeam = User.getTeam().then(function(data) {
 			
 			$scope.teamId = data;
@@ -191,7 +195,17 @@ angular.module('starter.controllers', [])
 			Teams.getPlayers($scope.teamId).then(function(data){
 				$scope.players = data;
 			});
-        });
+        }).then(function(){
+			//check if current user is Admin for this team
+			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
+				admins.forEach(function(admin){
+					if(admin.$id === User.getUID()){
+						$scope.isAdmin = true;
+						console.log('isAdmin?: ' + $scope.isAdmin);
+					}
+				});
+			});
+		});
 		
 		$scope.invitePlayer = function() {
 			$state.go('app.invite', { teamId: $scope.teamId});
@@ -433,7 +447,7 @@ angular.module('starter.controllers', [])
 					$scope.presentPlayers = {};
 				}
 				// get current statistics and  fill them in !
-				//console.log(game);
+				// console.log(game);
 				Statistics.getStatistics($scope.teamId,$scope.game.$id).then(function (stats) {
 				
 					if(stats.$value === null){
@@ -1066,6 +1080,8 @@ angular.module('starter.controllers', [])
 	})
 	
 	.controller('FinanceCtrl', function ($scope, User, Teams, Finance, $state) {
+		$scope.isAdmin = false;
+		
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
@@ -1075,7 +1091,17 @@ angular.module('starter.controllers', [])
 				$scope.credits = data;
 				console.log($scope.credits);
 			});
-        });
+        }).then(function(){
+			//check if current user is Admin for this team
+			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
+				admins.forEach(function(admin){
+					if(admin.$id === User.getUID()){
+						$scope.isAdmin = true;
+						console.log('isAdmin?: ' + $scope.isAdmin);
+					}
+				});
+			});
+		});
 		$scope.toggleGroup = function(group) {
 			if ($scope.isGroupShown(group)) {
 			  $scope.shownGroup = null;

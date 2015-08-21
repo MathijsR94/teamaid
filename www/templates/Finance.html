@@ -9,6 +9,6 @@
             <date-Time sdate='credit.timestamp'></date-Time>  €{{credit.value}}  , {{credit.comment}}
         </ion-item>
     </ion-list>
-	<button class="button button-block button-stable" ng-click="addCredit()">Add Credit</button>
+	<button ng-if="isAdmin == true" class="button button-block button-stable" ng-click="addCredit()">Add Credit</button>
   </ion-content>
 </ion-view>
