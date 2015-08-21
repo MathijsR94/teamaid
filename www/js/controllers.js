@@ -179,8 +179,29 @@ angular.module('starter.controllers', [])
         }
     })
 
-    .controller('HomeCtrl', function ($scope, User) {
+    .controller('HomeCtrl', function ($scope, User, Teams, localStorage, firebaseRef) {
+        $scope.getTeam = User.getTeam().then(function(teamId) {
 
+            localStorage.setTeamId(teamId);
+
+            Teams.getPlayers(teamId).then(function(players){
+                //var playersObj = {};
+                //var test = angular.copy(players, playersObj);
+                console.log(players);
+                //localStorage.setPlayers(players);
+                //firebaseRef.ref().child('Teams').child(teamId).child('Players')(
+                //    test
+                //)
+            });
+            $scope.admin = User.isAdmin(teamId).then(function(admins) {
+                admins.forEach(function(admin){
+                    if(admin.$id === User.getUID()){
+                        $scope.isAdmin = true;
+                        console.log('isAdmin?: ' + $scope.isAdmin);
+                    }
+                });
+            });
+        })
     })
 	
     .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams) {
