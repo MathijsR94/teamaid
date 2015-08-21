@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
     .factory('firebaseRef', function () {
-        var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
+        var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db 
 		//var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
         return {
             ref: function () {
