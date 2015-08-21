@@ -1,14 +1,39 @@
 <ion-view view-title="Instellingen">
   <ion-content>
-	  <div class="row">
-		  <div class="col">
-			  <h4> Corvee Settings </h4>
-		  </div>
-
-	  </div>
-	  <ion-toggle ng-model="settings.dutyGames" ng-change="changeSetting('dutyGames',settings.dutyGames)">Wedstrijden</ion-toggle>
-	  <ion-toggle ng-model="settings.dutyPractises" ng-change="changeSetting('dutyPractises',settings.dutyPractises)">Trainingen</ion-toggle>
-	  <ion-toggle ng-model="settings.dutyEvents" ng-change="changeSetting('dutyEvents',settings.dutyEvents)">Evenementen</ion-toggle>
-
+  
+	<ion-list>
+		<ion-item class="item-stable" ng-click="toggleGroup('corvee')" ng-class="{active: isGroupShown('corvee')}" ng-if="isAdmin === true">
+			  <i class="icon" ng-class="isGroupShown('corvee') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			Corvee Settings
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('corvee')">
+			<ion-toggle ng-model="settings.dutyGames" ng-change="changeSetting('dutyGames',settings.dutyGames)">Wedstrijden</ion-toggle>
+			<ion-toggle ng-model="settings.dutyPractises" ng-change="changeSetting('dutyPractises',settings.dutyPractises)">Trainingen</ion-toggle>
+			<ion-toggle ng-model="settings.dutyEvents" ng-change="changeSetting('dutyEvents',settings.dutyEvents)">Evenementen</ion-toggle>
+		</ion-item>
+		<ion-item class="item-stable" ng-click="toggleGroup('changePW')" ng-class="{active: isGroupShown('changePW')}">
+			  <i class="icon" ng-class="isGroupShown('changePW') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			Wijzig password
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('changePW')">
+			<label class="item item-input">
+				<span class="input-label">old Password</span>
+				<input type="password" ng-model="oldPwd" required/>
+			</label>
+			<label class="item item-input">
+				<span class="input-label">new Password</span>
+				<input type="password" ng-model="newPwd" required/>
+			</label>
+			<label class="item item-input">
+				<span class="input-label">confim new Password</span>
+				<input type="password" ng-model="cnfPwd" required/>
+			</label>
+			<button class="button button-block button-greenbricks waves-light waves-effect" ng-click="changePassword(oldPwd,newPwd,cnfPwd)">
+                            Wijzigen
+			</button>
+		</ion-item>
+	 </ion-list>
   </ion-content>
 </ion-view>

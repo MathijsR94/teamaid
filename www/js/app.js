@@ -131,7 +131,6 @@ app.directive('dateTime', function() {
 			  }
 		  }
 		})
-
 		.state('tab.register', {
 		  url: '/registreren',
 		  views: {

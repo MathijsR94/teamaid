@@ -16,24 +16,46 @@ angular.module('starter.controllers', [])
 
     .controller('ForgotPasswordCtrl', function ($scope, fireBaseData) {
         //wachtwoord vergeten
-        $scope.forgot = function (em) {
-            fireBaseData.resetPassword(em);
+        $scope.forgot = function (em, emailValid) {
+			if(emailValid === true){
+				fireBaseData.resetPassword(em);
+			}
         }
     })
     .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams, Admins) {
+		$scope.spinner = false;
+		
+		// get passed variables from URL
+		$scope.URL = window.location.href;
+		var teamRefPos = $scope.URL.indexOf("TeamRef=");
+		if(teamRefPos !== -1){
+			$scope.teamName = $scope.URL.substr(teamRefPos+8,20);
+			if($scope.teamName.indexOf("&") !== -1)
+				$scope.teamName = $scope.teamName.substr(0, $scope.teamName.indexOf("&"))	
+		}
+		var emailPos = $scope.URL.indexOf("Email=");
+		if(emailPos !== -1){
+			$scope.em = $scope.URL.substr(emailPos+6);
+			if($scope.em.indexOf("&") !== -1)
+				$scope.em = $scope.em.substr(0, $scope.em.indexOf("&"))		
+		}
+		
+		
         //Create user methode
         $scope.createTeam = function (teamName, newTeam, firstName, lastName, insertion, em, pwd) {
+			$scope.spinner = true;
 			if(newTeam === true){
 				// teams can be added  allways
-				createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
+				$scope.createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
 			}
 			else{
 				// teamRef must be a key in the DB
 				fireBaseData.ref().child("Teams").once('value', function(snapshot) {
 					if (snapshot.hasChild(teamName)) {
-						createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
+						$scope.createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
 					}
 					else {
+						$scope.spinner = false;
 						alert("That team does not exist");
 						return;
 					}
@@ -41,22 +63,25 @@ angular.module('starter.controllers', [])
 			}
 		}
 		
-		function createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd) {
+		$scope.createNewUser = function (teamName, newTeam, firstName, lastName, insertion, em, pwd) {
             if (firstName != null && lastName != null && em != null && pwd != null) {
                 fireBaseData.ref().createUser({
                     email: em,
                     password: pwd
                 }, function (error) {
                     if (error) {
+						$scope.spinner = false;
                         switch (error.code) {
                             case "EMAIL_TAKEN":
-                                alert("The new user account cannot be created because the email is already in use.");
+								alert("The new user account cannot be created because the email is already in use.");
                                 break;
                             case "INVALID_EMAIL":
                                 alert("The specified email is not a valid email.");
                                 break;
                             default:
+							
                                 alert("Error creating user:", error);
+								$state.go($state.current, {}, {reload: true});								
                         }
                     } else {
                         fireBaseData.ref().authWithPassword({
@@ -110,16 +135,23 @@ angular.module('starter.controllers', [])
 									$state.go('app.home');	
 								}
 								
-                            } else alert("Er ging wat mis:", error);
+                            } 
+							else{
+								$scope.spinner = false;
+								alert("Er ging wat mis:", error);
+							}
                         });
                     }
                 });
 
             }
-            else alert('Vul alle gegevens in!');
-
+            else{
+				$scope.spinner = false;
+				alert('Vul alle gegevens in!');
+			}
         }
     })
+	
     .controller('LoginCtrl', function ($scope, firebaseRef, $state) {
         //Login method
         $scope.login = function (em, pwd, isValid) {
@@ -151,8 +183,9 @@ angular.module('starter.controllers', [])
 
     })
 	
-	
     .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams) {
+		
+		$scope.isAdmin = false;
 		
         $scope.getTeam = User.getTeam().then(function(data) {
 			
@@ -162,7 +195,17 @@ angular.module('starter.controllers', [])
 			Teams.getPlayers($scope.teamId).then(function(data){
 				$scope.players = data;
 			});
-        });
+        }).then(function(){
+			//check if current user is Admin for this team
+			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
+				admins.forEach(function(admin){
+					if(admin.$id === User.getUID()){
+						$scope.isAdmin = true;
+						console.log('isAdmin?: ' + $scope.isAdmin);
+					}
+				});
+			});
+		});
 		
 		$scope.invitePlayer = function() {
 			$state.go('app.invite', { teamId: $scope.teamId});
@@ -190,10 +233,11 @@ angular.module('starter.controllers', [])
 		$scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
 
-			//check if current user is Admin for this team
+			
 			$scope.games = Games.getGamesArray($scope.teamId);
 			$scope.gamesRef = Games.getGamesRef($scope.teamId);
         }).then(function(){
+			//check if current user is Admin for this team
 			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
 				admins.forEach(function(admin){
 					if(admin.$id === User.getUID()){
@@ -403,7 +447,7 @@ angular.module('starter.controllers', [])
 					$scope.presentPlayers = {};
 				}
 				// get current statistics and  fill them in !
-				//console.log(game);
+				// console.log(game);
 				Statistics.getStatistics($scope.teamId,$scope.game.$id).then(function (stats) {
 				
 					if(stats.$value === null){
@@ -454,22 +498,27 @@ angular.module('starter.controllers', [])
 								delete $scope.changes[key];
 							};
 						}
+						
 						if(typeof stats.Changes !== 'undefined'){
 							for(key in stats.Changes){
-								$scope.actualPlayers[stats.Changes[key].playerIn] = $scope.actualPlayers[stats.Changes[key].playerOut]; // transfer position
-								delete $scope.actualPlayers[stats.Changes[key].playerOut];
-								// he is already changed so he cannot be changed again
-								delete $scope.changes[stats.Changes[key].playerIn];
+								switch(stats.Changes[key].type){ //change type, in/out or  position
+									case "In/Out":
+										$scope.actualPlayers[stats.Changes[key].playerIn] = $scope.actualPlayers[stats.Changes[key].playerOut]; // transfer position
+										delete $scope.actualPlayers[stats.Changes[key].playerOut];
+										// he is already changed so he cannot be changed again
+										delete $scope.changes[stats.Changes[key].playerIn];
+									break;
+									
+									case "Position":
+										var pos1 = $scope.actualPlayers[stats.Changes[key].player1]; // position of player1
+										var pos2 = $scope.actualPlayers[stats.Changes[key].player2]; // position of player2
+										$scope.actualPlayers[stats.Changes[key].player1] = pos2; // transfer position
+										$scope.actualPlayers[stats.Changes[key].player2] = pos1; // transfer position
+									break;
+								}
 							};
 						}
-						if(typeof stats.PosChanges !== 'undefined'){
-							for(key in stats.PosChanges){
-								var pos1 = $scope.actualPlayers[stats.PosChanges[key].player1]; // position of player1
-								var pos2 = $scope.actualPlayers[stats.PosChanges[key].player2]; // position of player2
-								$scope.actualPlayers[stats.PosChanges[key].player1] = pos2; // transfer position
-								$scope.actualPlayers[stats.PosChanges[key].player2] = pos1; // transfer position
-							};
-						}
+						
 						if(typeof stats.Cards !== 'undefined'){
 							for(key in stats.Cards){
 								if(stats.Cards[key].type === 'red'){
@@ -555,6 +604,8 @@ angular.module('starter.controllers', [])
 			}	
 			Statistics.newChange($scope.teamId,$scope.game.$id,playerIn, playerOut,pos, time, comment);
 			$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+			$scope.selectedType = "";
+			$scope.toggleGroup(null);
 		};
 		$scope.savePosChange = function(player1, player2, time, comment) {
 			var pos1 = $scope.actualPlayers[player1]; // position of player1
@@ -567,6 +618,8 @@ angular.module('starter.controllers', [])
 			}	
 			Statistics.newPosChange($scope.teamId,$scope.game.$id,player1, player2,pos1, pos2, time, comment);
 			$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+			$scope.selectedType = "";
+			$scope.toggleGroup(null);
 		};
 		$scope.saveOurGoal = function(player, time, comment) {
 			// update Scoreboard
@@ -580,6 +633,8 @@ angular.module('starter.controllers', [])
 				comment = " ";
 			}			
 			Statistics.newGoal($scope.teamId,$scope.game.$id, true, player, time, comment);
+						$scope.selectedType = "";
+			$scope.toggleGroup(null);
 		};
 		$scope.saveTheirGoal = function(time, comment) {
 			if($scope.game.home !== $scope.teamname){
@@ -590,14 +645,24 @@ angular.module('starter.controllers', [])
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}
-			Statistics.newGoal($scope.teamId,$scope.game.$id, false, 'undefined', time, comment);	
+			Statistics.newGoal($scope.teamId,$scope.game.$id, false, 'undefined', time, comment);
+			$scope.selectedType = "";
+			$scope.toggleGroup(null);			
 		};
 		$scope.saveCard = function(player, type, time, comment) {
 			Statistics.newCard($scope.teamId,$scope.game.$id, type, player, time, comment);
 			if(type === 'red'){
 				delete $scope.actualPlayers[player]; // remove from actual players
+				$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 			}
-			$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+			else{ // yellow
+				if (confirm('tweede gele kaart?')) {
+					delete $scope.actualPlayers[player]; // remove from actual players
+					$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+				}
+			}
+			$scope.selectedType = "";
+			$scope.toggleGroup(null);
 		};
 
 	})
@@ -1014,15 +1079,29 @@ angular.module('starter.controllers', [])
 		}
 	})
 	
-	.controller('FinanceCtrl', function ($scope, User, Finance, $state) {
+	.controller('FinanceCtrl', function ($scope, User, Teams, Finance, $state) {
+		$scope.isAdmin = false;
+		
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
-			
+			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
+				$scope.players = teamPlayers;
+			});
 			$scope.getCredits = Finance.getCredits($scope.teamId).then(function(data){
 				$scope.credits = data;
 				console.log($scope.credits);
 			});
-        });
+        }).then(function(){
+			//check if current user is Admin for this team
+			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
+				admins.forEach(function(admin){
+					if(admin.$id === User.getUID()){
+						$scope.isAdmin = true;
+						console.log('isAdmin?: ' + $scope.isAdmin);
+					}
+				});
+			});
+		});
 		$scope.toggleGroup = function(group) {
 			if ($scope.isGroupShown(group)) {
 			  $scope.shownGroup = null;
@@ -1192,17 +1271,48 @@ angular.module('starter.controllers', [])
 			
     })
 	
-	.controller('SettingsCtrl', function ($scope, User, Settings,  $state) {
+	.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings,  $state) {
 	
-		$scope.getTeam = User.getTeam().then(function(data) {
+		User.getTeam().then(function(data) {
 			$scope.teamId = data;
 			$scope.settings =Settings.getSettings($scope.teamId);
+		}).then(function(){
+			//check if current user is Admin for this team
+			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
+				admins.forEach(function(admin){
+					if(admin.$id === User.getUID()){
+						$scope.isAdmin = true;
+						console.log('isAdmin?: ' + $scope.isAdmin);
+					}
+				});
+			});
 		});
+	
+		$scope.toggleGroup = function(group) {
+			if ($scope.isGroupShown(group)) {
+			  $scope.shownGroup = null;
+			} else {
+			  $scope.shownGroup = group;
+			}
+		};
+		$scope.isGroupShown = function(group) {
+			return $scope.shownGroup === group;
+		};
+		
+		
 		
 		$scope.changeSetting = function(key , value){
 			console.log(key, value);
 			Settings.updateSetting(key, value, $scope.teamId);
-		}
+		};
+		$scope.changePassword = function(oldPW, newPW,cnfPwd){
+			if(newPW === cnfPwd){
+				fireBaseData.changePassword(User.getEmail(),oldPW,newPW);
+			}
+			else{
+				alert("wachtwoorden zijn niet gelijk");
+			}
+		};
 		
     })
 
@@ -1219,6 +1329,18 @@ angular.module('starter.controllers', [])
 			return filtered;
 		};
 	});
+	
+	function dynamicSort(property) {
+		var sortOrder = 1;
+		if(property[0] === "-") {
+			sortOrder = -1;
+			property = property.substr(1);
+		}
+		return function (a,b) {
+			var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+			return result * sortOrder;
+		}
+	};
 	
 	function removeSpecials(str) {
 			var lower = str.toLowerCase();

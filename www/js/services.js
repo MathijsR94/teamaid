@@ -1,6 +1,7 @@
 angular.module('starter.services', [])
     .factory('firebaseRef', function () {
-        var ref = new Firebase("https://teamaid.firebaseio.com/");
+        var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db 
+		//var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
         return {
             ref: function () {
                 return ref;
@@ -37,7 +38,32 @@ angular.module('starter.services', [])
                         alert("Password reset email sent successfully!");
                     }
                 });
-            }
+            },
+			changePassword: function(email, oldPW,newPW){
+				ref.changePassword({
+				email: email,
+				oldPassword: oldPW,
+				newPassword: newPW
+				}, function(error) {
+						if (error) {
+							switch (error.code) {
+							  case "INVALID_PASSWORD":
+								console.log("The specified user account password is incorrect.");
+								break;
+							  case "INVALID_USER":
+								console.log("The specified user account does not exist.");
+								break;
+							  default:
+								console.log("Error changing password:", error);
+							}
+						}
+						else{
+							alert("succes!");
+							console.log("User password changed successfully!");
+						}
+					}
+				)
+			}
         }
     })
 
@@ -53,6 +79,9 @@ angular.module('starter.services', [])
 			getUID: function () {
                 return user.uid;
             },
+			getEmail: function () {
+                return accountData.email;
+            },
             getTeam: function() {
                 var teamId = $firebaseArray(userTeamsRef);
                 var deferred = $q.defer();
@@ -64,11 +93,7 @@ angular.module('starter.services', [])
 
 			isAdmin: function(teamId){
 				
-				var admins = $firebaseArray(ref.child("Admins").child(teamId));
-				//ref.child("Admins").child(teamId).once("value",function(snap){
-				//	var admins = snap;
-				//});
-				
+				var admins = $firebaseArray(ref.child("Admins").child(teamId));				
 				var deferred = $q.defer();
 				
 				admins.$loaded(function () {
@@ -504,21 +529,23 @@ angular.module('starter.services', [])
 			newChange: function(teamId, gameId, playerIn, playerOut, pos, time, comment){
 				var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("Changes"));
 				changes.$add({
+					time : time,
+					type : "In/Out",
 					playerIn : playerIn,
 					playerOut : playerOut,
 					position : pos,
-					time : time,
 					comment : comment
 				});
 			},
 			newPosChange: function(teamId, gameId, player1, player2, pos1, pos2, time, comment){
-				var posChanges = $firebaseArray(statsRef.child(teamId).child(gameId).child("PosChanges"));
+				var posChanges = $firebaseArray(statsRef.child(teamId).child(gameId).child("Changes"));
 				posChanges.$add({
+					time : time,
+					type : "Position",
 					player1 : player1,
 					player2 : player2,
 					position1 : pos1,
 					position2 : pos2,
-					time : time,
 					comment : comment
 				});
 			},
