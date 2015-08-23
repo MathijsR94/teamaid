@@ -1150,13 +1150,13 @@ angular.module('starter.controllers', [])
 
 
         $scope.players = localStorageFactory.getPlayers();
-		
 		$scope.updateDuties = function(){
 		
 			var dutyPlayers = new Array();
-			$scope.players.forEach(function(value,playerId){
-				dutyPlayers.push(playerId);
-			});
+
+            for(var key in $scope.players) {
+                dutyPlayers.push(key);
+            }
 			var loopPlayers = dutyPlayers.slice();
 			
 			// create al required occurences ( we take a year by default)
@@ -1266,6 +1266,7 @@ angular.module('starter.controllers', [])
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.settings = Settings.getSettings($scope.teamId);
         $scope.isAdmin = localStorageFactory.getAdmin();
+
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
                 $scope.shownGroup = null;
