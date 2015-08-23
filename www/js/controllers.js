@@ -1119,48 +1119,37 @@ angular.module('starter.controllers', [])
 		}
     })
 	
-	.controller('CreditsCtrl', function ($scope, Teams, User, Finance, $state,$ionicHistory) {
-        
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
+	.controller('CreditsCtrl', function ($scope, Teams, localStorageFactory, User, Finance, $state,$ionicHistory) {
+
+			$scope.teamId = localStorageFactory.getTeamId();
 			$scope.nbsp = " "; // whitespace
-			Teams.getPlayersArray($scope.teamId).then(function(teamPlayers){
-				$scope.players = teamPlayers;
-			});
-        });
+            $scope.players = localStorageFactory.getPlayers($scope.teamId);
 		
-		$scope.newCredit = function(uid, value, comment){
-			console.log(uid);
+		    $scope.newCredit = function(uid, value, comment){
 			Finance.newCredit($scope.teamId, uid, value, comment);
 			$ionicHistory.goBack();
 		}
     })
 	
-	.controller('DutiesCtrl', function ($scope, Teams, Games,Practises, Settings, User, Duties, $state,$ionicHistory) {
-		
-		$scope.currentDate = new Date();
-		console.log($scope.currentDate);
-		
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			
-			$scope.settings = Settings.getSettings($scope.teamId);
-			
-			$scope.duties = Duties.getDuties($scope.teamId);
-			console.log($scope.duties);
-			//get Games
-			$scope.games = Games.getGames($scope.teamId);	
-			// get Practices
-			$scope.practises = Practises.getPractises($scope.teamId);
-			// get Events
-			//$scope.events = ;
+	.controller('DutiesCtrl', function ($scope, Teams, Games,Practises, Settings, User, Duties, localStorageFactory) {
 
-			console.log($scope.duties);
-			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
-			
-				$scope.players = teamPlayers;
-			});
-		})
+        $scope.currentDate = new Date();
+        console.log($scope.currentDate);
+
+        $scope.teamId = localStorageFactory.getTeamId();
+
+        $scope.settings = Settings.getSettings($scope.teamId);
+
+        $scope.duties = Duties.getDuties($scope.teamId);
+        //get Games
+        $scope.games = Games.getGames($scope.teamId);
+        // get Practices
+        $scope.practises = Practises.getPractises($scope.teamId);
+        // get Events
+        //$scope.events = ;
+
+
+        $scope.players = localStorageFactory.getPlayers();
 		
 		$scope.updateDuties = function(){
 		
@@ -1272,48 +1261,35 @@ angular.module('starter.controllers', [])
 			
     })
 	
-	.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings,  $state) {
-	
-		User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			$scope.settings =Settings.getSettings($scope.teamId);
-		}).then(function(){
-			//check if current user is Admin for this team
-			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
-				admins.forEach(function(admin){
-					if(admin.$id === User.getUID()){
-						$scope.isAdmin = true;
-						console.log('isAdmin?: ' + $scope.isAdmin);
-					}
-				});
-			});
-		});
-	
-		$scope.toggleGroup = function(group) {
-			if ($scope.isGroupShown(group)) {
-			  $scope.shownGroup = null;
-			} else {
-			  $scope.shownGroup = group;
-			}
-		};
-		$scope.isGroupShown = function(group) {
-			return $scope.shownGroup === group;
-		};
-		
-		
-		
-		$scope.changeSetting = function(key , value){
-			console.log(key, value);
-			Settings.updateSetting(key, value, $scope.teamId);
-		};
-		$scope.changePassword = function(oldPW, newPW,cnfPwd){
-			if(newPW === cnfPwd){
-				fireBaseData.changePassword(User.getEmail(),oldPW,newPW);
-			}
-			else{
-				alert("wachtwoorden zijn niet gelijk");
-			}
-		};
+	.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, localStorageFactory) {
+
+        $scope.teamId = localStorageFactory.getTeamId();
+        $scope.settings = Settings.getSettings($scope.teamId);
+        $scope.isAdmin = localStorageFactory.getAdmin();
+        $scope.toggleGroup = function (group) {
+            if ($scope.isGroupShown(group)) {
+                $scope.shownGroup = null;
+            } else {
+                $scope.shownGroup = group;
+            }
+        };
+        $scope.isGroupShown = function (group) {
+            return $scope.shownGroup === group;
+        };
+
+
+        $scope.changeSetting = function (key, value) {
+            console.log(key, value);
+            Settings.updateSetting(key, value, $scope.teamId);
+        };
+        $scope.changePassword = function (oldPW, newPW, cnfPwd) {
+            if (newPW === cnfPwd) {
+                fireBaseData.changePassword(User.getEmail(), oldPW, newPW);
+            }
+            else {
+                alert("wachtwoorden zijn niet gelijk");
+            }
+        };
 		
     })
 
