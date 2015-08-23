@@ -210,9 +210,9 @@ angular.module('starter.services', [])
 			},
             getGame: function(teamId) {
                 var deferred = $q.defer();
-                var games = $firebaseArray(gamesRef.child(teamId));
-                games.$loaded(function(){
-                    deferred.resolve(games.$getRecord(selectedGame));
+                var game = $firebaseObject(gamesRef.child(teamId).child(selectedGame));
+                game.$loaded(function(){
+                    deferred.resolve(game);
                 });
                 return deferred.promise;
             },
@@ -751,6 +751,9 @@ angular.module('starter.services', [])
             },
 			getTeamName: function() {
                 return localStorage.getItem('teamName');
+            },
+			getSelectedGame: function() {
+                return localStorage.getItem('selectedGame');
             }
 
         }

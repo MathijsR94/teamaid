@@ -425,11 +425,11 @@ angular.module('starter.controllers', [])
 	
 	})
 	
-	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics,$state, $stateParams, localStorage, $ionicHistory) {
+	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics,$state, $stateParams,firebaseRef, localStorage, $ionicHistory) {
 		$scope.gameId = $stateParams.gameId;
 		$scope.selectedType = "";
 		$scope.typeStats = ["wissel","positie wissel", "goal voor","goal tegen", "gele kaart", "rode kaart"]
-		
+		$scope.game ={}; // empty game object
 		
 		$scope.teamId = localStorage.getTeamId(); // get TeamId from local storage
 		$scope.nbsp = " "; // whitespace
@@ -441,28 +441,25 @@ angular.module('starter.controllers', [])
 		$scope.awayScore = 0;
 		
 		$scope.teamName = localStorage.getTeamName();
-		console.log($scope.teamName);
-		// Teams.getTeamName($scope.teamId).then(function(teamName){
-			// $scope.teamName = teamName;
-		// });
 		$scope.players = localStorage.getPlayers();
-		// Teams.getPlayers($scope.teamId).then(function(teamPlayers){
-			// $scope.players = teamPlayers;
-		// });
-		$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
-			$scope.game = game
-			if(typeof game.Present !== 'undefined'){
-				$scope.presentPlayers = angular.copy(game.Present);
+		console.log($scope.players);
+		//$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
+		var gamesRef = firebaseRef.ref().child("Games").child($scope.teamId);
+		gamesRef.child(localStorage.getSelectedGame()).on('value',function(game){
+			$scope.game = game.val();
+			//console.log(game);
+			if(typeof $scope.game.Present !== 'undefined'){
+				$scope.presentPlayers = angular.copy($scope.game.Present);
 			}
 			else{
 				$scope.presentPlayers = {};
 			}
 			// get current statistics and  fill them in !
 			// console.log(game);
-			Statistics.getStatistics($scope.teamId,$scope.game.$id).then(function (stats) {
+			Statistics.getStatistics($scope.teamId,localStorage.getSelectedGame()).then(function (stats) {
 			
 				if(stats.$value === null){ // no statistics 
-					var init = Statistics.initialize($scope.teamId,$scope.game.$id,game.time);
+					var init = Statistics.initialize($scope.teamId,$scope.game.$id,$scope.game.time);
 					$scope.firstHalfStart = init.firstHalfStart;
 					$scope.firstHalfEnd = init.firstHalfEnd;
 					$scope.secondHalfStart = init.secondHalfStart;
@@ -560,8 +557,7 @@ angular.module('starter.controllers', [])
 					}
 				}
 			})
-		})
-		
+		})		
 		$scope.datePickerCallback = function (val) {
 		};
 

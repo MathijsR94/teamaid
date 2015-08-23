@@ -28,12 +28,6 @@
 					<button class="button button-positive"> <standard-time-no-meridian etime='secondHalfEnd'></standard-time-no-meridian></button>
 				</ionic-timepicker>
 		</ion-item>
-		
-		<ion-item class="item-stable" ng-click="toggleGroup('newStat')" ng-class="{active: isGroupShown('newStat')}">
-			  <i class="icon" ng-class="isGroupShown('newStat') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-			&nbsp;
-			gebeurtenis
-		</ion-item>
 		<ion-item class="item-stable" ng-click="toggleGroup('basisTeam')" ng-class="{active: isGroupShown('basisTeam')}">
 			  <i class="icon" ng-class="isGroupShown('basisTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 			&nbsp;
@@ -99,6 +93,11 @@
 				</div>
 			</div>
 			
+		</ion-item>
+		<ion-item class="item-stable" ng-click="toggleGroup('newStat')" ng-class="{active: isGroupShown('newStat')}">
+			  <i class="icon" ng-class="isGroupShown('newStat') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			gebeurtenis
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('newStat')">
 			geef een gebeurtenis door:
