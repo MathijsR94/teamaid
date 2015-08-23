@@ -505,14 +505,6 @@ angular.module('starter.services', [])
 	.factory('Statistics', function(firebaseRef,$firebaseObject, $firebaseArray, $q){
 		var statsRef = firebaseRef.ref().child("Statistics");
 		return {
-			getStatistics: function(teamId, gameId){
-			var deferred = $q.defer();
-				var stats = $firebaseObject(statsRef.child(teamId).child(gameId));
-				stats.$loaded(function () {
-					deferred.resolve(stats);
-				});
-				return deferred.promise;
-			},
 			initialize: function(teamId,gameId,gameTime){
 				var stats = {
 					firstHalfStart : gameTime,

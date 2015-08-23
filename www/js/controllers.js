@@ -445,9 +445,10 @@ angular.module('starter.controllers', [])
 		console.log($scope.players);
 		//$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 		var gamesRef = firebaseRef.ref().child("Games").child($scope.teamId);
-		gamesRef.child(localStorageFactory.getSelectedGame()).on('value',function(game){
-			$scope.game = game.val();
-			//console.log(game);
+		gamesRef.child(localStorageFactory.getSelectedGame()).on('value',function(gameSnap){
+			
+			$scope.game = gameSnap.val();
+			console.log($scope.game);
 			if(typeof $scope.game.Present !== 'undefined'){
 				$scope.presentPlayers = angular.copy($scope.game.Present);
 			}
@@ -456,10 +457,12 @@ angular.module('starter.controllers', [])
 			}
 			// get current statistics and  fill them in !
 			// console.log(game);
-			Statistics.getStatistics($scope.teamId,localStorageFactory.getSelectedGame()).then(function (stats) {
-			
-				if(stats.$value === null){ // no statistics 
-					var init = Statistics.initialize($scope.teamId,$scope.game.$id,$scope.game.time);
+			var statsRef = firebaseRef.ref().child("Statistics").child($scope.teamId);
+			statsRef.child(localStorageFactory.getSelectedGame()).on('value',function(statsSnap){
+				console.log(statsSnap.val());
+				var stats = statsSnap.val();
+				if(stats === null){ // no statistics 
+					var init = Statistics.initialize($scope.teamId,localStorageFactory.getSelectedGame(),$scope.game.time);
 					$scope.firstHalfStart = init.firstHalfStart;
 					$scope.firstHalfEnd = init.firstHalfEnd;
 					$scope.secondHalfStart = init.secondHalfStart;
@@ -513,7 +516,7 @@ angular.module('starter.controllers', [])
 								case "In/Out":
 									$scope.actualPlayers[stats.Changes[key].playerIn] = $scope.actualPlayers[stats.Changes[key].playerOut]; // transfer position
 									delete $scope.actualPlayers[stats.Changes[key].playerOut];
-									// he is already changed so he cannot be changed again
+									// he is already changed so he cannot be changed in again
 									delete $scope.changes[stats.Changes[key].playerIn];
 								break;
 								
