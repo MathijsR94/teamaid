@@ -175,23 +175,23 @@ angular.module('starter.controllers', [])
         }
     })
 
-    .controller('HomeCtrl', function ($scope, User, Teams, localStorage, firebaseRef) {
+    .controller('HomeCtrl', function ($scope, User, Teams, localStorageFactory, firebaseRef) {
         var ref = firebaseRef.ref();
 
         var uid = User.getUID();
         ref.child('Users').child(uid).child('Teams').once('value', function(teams) {
-            localStorage.setTeams(teams.val());
+            localStorageFactory.setTeams(teams.val());
 
-            var teamId = localStorage.getTeamId();
+            var teamId = localStorageFactory.getTeamId();
 
             ref.child('Teams').child(teamId).once('value', function(teamData) {
-                localStorage.setPlayers(teamData.val().Players);
-                localStorage.setSettings(teamData.val().Settings);
-                localStorage.setTeamName(teamData.val());
+                localStorageFactory.setPlayers(teamData.val().Players);
+                localStorageFactory.setSettings(teamData.val().Settings);
+                localStorageFactory.setTeamName(teamData.val());
             })
 
             ref.child('Admins').child(teamId).once('value', function(admin) {
-                localStorage.setAdmin(admin.val(), uid);
+                localStorageFactory.setAdmin(admin.val(), uid);
             })
 
         })
@@ -202,12 +202,12 @@ angular.module('starter.controllers', [])
 
     })
 	
-    .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams, localStorage) {
+    .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams, localStorageFactory) {
 		
-		$scope.isAdmin = localStorage.getAdmin();
-        $scope.teamId = localStorage.getTeamId();
+		$scope.isAdmin = localStorageFactory.getAdmin();
+        $scope.teamId = localStorageFactory.getTeamId();
 
-        $scope.players = localStorage.getPlayers();
+        $scope.players = localStorageFactory.getPlayers();
 
         console.log($scope.players);
 		$scope.invitePlayer = function() {
@@ -229,23 +229,23 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory, Utility, localStorage, firebaseRef) {
+	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
 		$scope.ShowDelete = false;
 
 
-        $scope.isAdmin = localStorage.getAdmin();
-        $scope.teamId = localStorage.getTeamId();
+        $scope.isAdmin = localStorageFactory.getAdmin();
+        $scope.teamId = localStorageFactory.getTeamId();
 
-        $scope.players = localStorage.getPlayers();
+        $scope.players = localStorageFactory.getPlayers();
 
         $scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
             if(snap.val() === true) {
                 $scope.getGames = Games.getGamesArray($scope.teamId).then(function(games) {
                    $scope.games = games;
-                    localStorage.setGames(games);
+                    localStorageFactory.setGames(games);
                 });
             } else {
-                $scope.games = localStorage.getGames($scope.teamId);
+                $scope.games = localStorageFactory.getGames($scope.teamId);
             }
         });
 
@@ -425,13 +425,13 @@ angular.module('starter.controllers', [])
 	
 	})
 	
-	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics,$state, $stateParams,firebaseRef, localStorage, $ionicHistory) {
+	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics,$state, $stateParams,firebaseRef, localStorageFactory, $ionicHistory) {
 		$scope.gameId = $stateParams.gameId;
 		$scope.selectedType = "";
 		$scope.typeStats = ["wissel","positie wissel", "goal voor","goal tegen", "gele kaart", "rode kaart"]
 		$scope.game ={}; // empty game object
 		
-		$scope.teamId = localStorage.getTeamId(); // get TeamId from local storage
+		$scope.teamId = localStorageFactory.getTeamId(); // get TeamId from local storage
 		$scope.nbsp = " "; // whitespace
 		$scope.title = "Selecteer datum";
 		$scope.tactic = 0;
@@ -440,12 +440,12 @@ angular.module('starter.controllers', [])
 		$scope.homeScore = 0;
 		$scope.awayScore = 0;
 		
-		$scope.teamName = localStorage.getTeamName();
-		$scope.players = localStorage.getPlayers();
+		$scope.teamName = localStorageFactory.getTeamName();
+		$scope.players = localStorageFactory.getPlayers();
 		console.log($scope.players);
 		//$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 		var gamesRef = firebaseRef.ref().child("Games").child($scope.teamId);
-		gamesRef.child(localStorage.getSelectedGame()).on('value',function(game){
+		gamesRef.child(localStorageFactory.getSelectedGame()).on('value',function(game){
 			$scope.game = game.val();
 			//console.log(game);
 			if(typeof $scope.game.Present !== 'undefined'){
@@ -456,7 +456,7 @@ angular.module('starter.controllers', [])
 			}
 			// get current statistics and  fill them in !
 			// console.log(game);
-			Statistics.getStatistics($scope.teamId,localStorage.getSelectedGame()).then(function (stats) {
+			Statistics.getStatistics($scope.teamId,localStorageFactory.getSelectedGame()).then(function (stats) {
 			
 				if(stats.$value === null){ // no statistics 
 					var init = Statistics.initialize($scope.teamId,$scope.game.$id,$scope.game.time);
@@ -673,10 +673,10 @@ angular.module('starter.controllers', [])
 
 	})
 	
-	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility, localStorage) {
+	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
-        $scope.teamId = localStorage.getTeamId();
+        $scope.teamId = localStorageFactory.getTeamId();
         $scope.practises = Practises.getPractisesArray($scope.teamId);
         $scope.practisesRef = Practises.getPractisesRef($scope.teamId);
 
@@ -685,6 +685,16 @@ angular.module('starter.controllers', [])
 			$scope.ShowDelete = !$scope.ShowDelete;
 		};
 
+        $scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
+            if(snap.val() === true) {
+                $scope.getPractises = Practises.getPractisesArray($scope.teamId).then(function(practises) {
+                    $scope.practises = practises;
+                    localStorageFactory.setPractises(practises);
+                });
+            } else {
+                $scope.practises = localStorageFactory.getPractises($scope.teamId);
+            }
+        });
 
 		$scope.datePickerCallback = function(val) {
 			if(typeof(val)==='undefined'){      

@@ -256,8 +256,12 @@ angular.module('starter.services', [])
 				return $firebaseObject(practisesRef.child(teamId));
 			},
 			getPractisesArray: function(teamId) {
-                localStorage.setItem('practices', JSON.stringify($firebaseArray(practisesRef.child(teamId))));
-				return $firebaseArray(practisesRef.child(teamId));
+                var deferred = $q.defer();
+                var practises = $firebaseArray(practisesRef.child(teamId));
+                practises.$loaded(function () {
+                    deferred.resolve(practises);
+                });
+                return deferred.promise;
 			},
 			getPractise: function(teamId) {
 				var deferred = $q.defer();
@@ -706,7 +710,7 @@ angular.module('starter.services', [])
         }
     })
 
-    .factory('localStorage', function () {
+    .factory('localStorageFactory', function () {
         return {
             setTeams: function(teams) {
                 localStorage.setItem('teams', JSON.stringify(teams));
@@ -732,6 +736,9 @@ angular.module('starter.services', [])
             setTeamName: function(team) {
                 localStorage.setItem('teamName', JSON.stringify(team.teamName));
             },
+            setPractises: function(practises) {
+                localStorage.setItem('practises', JSON.stringify(practises));
+            },
             getTeamId: function() {
                 var test = JSON.parse(localStorage.getItem('teams'));
                 for(var key in test)
@@ -754,6 +761,9 @@ angular.module('starter.services', [])
             },
 			getSelectedGame: function() {
                 return localStorage.getItem('selectedGame');
+            },
+            getPractises: function() {
+                return localStorage.getItem('practises');
             }
 
         }
