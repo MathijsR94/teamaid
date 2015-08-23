@@ -425,137 +425,137 @@ angular.module('starter.controllers', [])
 	
 	})
 	
-	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics,$state, $stateParams,$ionicHistory) {
+	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics,$state, $stateParams, localStorage, $ionicHistory) {
 		$scope.gameId = $stateParams.gameId;
 		$scope.selectedType = "";
 		$scope.typeStats = ["wissel","positie wissel", "goal voor","goal tegen", "gele kaart", "rode kaart"]
 		
-		$scope.getTeam = User.getTeam().then(function (data) {
-			$scope.teamId = data;
-			$scope.nbsp = " "; // whitespace
-			$scope.title = "Selecteer datum";
-			$scope.tactic = 0;
-			$scope.positions = [];
-			$scope.actualPositions = [];
-			$scope.homeScore = 0;
-			$scope.awayScore = 0;
-			Teams.getTeamName($scope.teamId).then(function(teamName){
-				$scope.teamName = teamName;
-			});
-			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
-				$scope.players = teamPlayers;
-			});
-			$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
-				$scope.game = game
-				if(typeof game.Present !== 'undefined'){
-					$scope.presentPlayers = angular.copy(game.Present);
+		
+		$scope.teamId = localStorage.getTeamId(); // get TeamId from local storage
+		$scope.nbsp = " "; // whitespace
+		$scope.title = "Selecteer datum";
+		$scope.tactic = 0;
+		$scope.positions = [];
+		$scope.actualPositions = [];
+		$scope.homeScore = 0;
+		$scope.awayScore = 0;
+		Teams.getTeamName($scope.teamId).then(function(teamName){
+			$scope.teamName = teamName;
+		});
+		$scope.players = localStorage.getPlayers();
+		// Teams.getPlayers($scope.teamId).then(function(teamPlayers){
+			// $scope.players = teamPlayers;
+		// });
+		$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
+			$scope.game = game
+			if(typeof game.Present !== 'undefined'){
+				$scope.presentPlayers = angular.copy(game.Present);
+			}
+			else{
+				$scope.presentPlayers = {};
+			}
+			// get current statistics and  fill them in !
+			// console.log(game);
+			Statistics.getStatistics($scope.teamId,$scope.game.$id).then(function (stats) {
+			
+				if(stats.$value === null){ // no statistics 
+					var init = Statistics.initialize($scope.teamId,$scope.game.$id,game.time);
+					$scope.firstHalfStart = init.firstHalfStart;
+					$scope.firstHalfEnd = init.firstHalfEnd;
+					$scope.secondHalfStart = init.secondHalfStart;
+					$scope.secondHalfEnd = init.secondHalfEnd;
+					$scope.tactic = 0;
+					$scope.externalPlayers = 0;
+					$scope.actualPlayers = {};
+					$scope.changes = {};
 				}
 				else{
-					$scope.presentPlayers = {};
-				}
-				// get current statistics and  fill them in !
-				// console.log(game);
-				Statistics.getStatistics($scope.teamId,$scope.game.$id).then(function (stats) {
-				
-					if(stats.$value === null){
-						var init = Statistics.initialize($scope.teamId,$scope.game.$id,game.time);
-						$scope.firstHalfStart = init.firstHalfStart;
-						$scope.firstHalfEnd = init.firstHalfEnd;
-						$scope.secondHalfStart = init.secondHalfStart;
-						$scope.secondHalfEnd = init.secondHalfEnd;
-						$scope.tactic = 0;
-						$scope.externalPlayers = 0;
-						$scope.actualPlayers = {};
-						$scope.changes = {};
+					$scope.tactic = stats.tactic;
+					$scope.externalPlayers = stats.externalPlayers;						
+					$scope.firstHalfStart = stats.firstHalfStart;
+					$scope.firstHalfEnd =  stats.firstHalfEnd;
+					$scope.secondHalfStart =  stats.secondHalfStart;
+					$scope.secondHalfEnd =  stats.secondHalfEnd;
+					
+					//external players must be added to the present List
+					if(typeof $scope.externalPlayers !== 'undefined'){
+						for(var i = 1;i <= $scope.externalPlayers;i++){
+							//add external player to the Present List
+							$scope.presentPlayers["external"+i]=true;
+							$scope.players["external"+i] = {firstName : "external", insertion: "", lastName: ""+i};
+						};
 					}
 					else{
-						$scope.tactic = stats.tactic;
-						$scope.externalPlayers = stats.externalPlayers;						
-						$scope.firstHalfStart = stats.firstHalfStart;
-						$scope.firstHalfEnd =  stats.firstHalfEnd;
-						$scope.secondHalfStart =  stats.secondHalfStart;
-						$scope.secondHalfEnd =  stats.secondHalfEnd;
-						
-						//external players must be added to the present List
-						if(typeof $scope.externalPlayers !== 'undefined'){
-							for(var i = 1;i <= $scope.externalPlayers;i++){
-								//add external player to the Present List
-								$scope.presentPlayers["external"+i]=true;
-								$scope.players["external"+i] = {firstName : "external", insertion: "", lastName: ""+i};
-							};
-						}
-						else{
-							$scope.externalPlayers = 0;
-						}
-						
-						// parse the current filled in stats for basic team and statType "wissels"
-						//read this back to the input fields!
-						if(typeof stats.Basis !== 'undefined'){
-							for(key in stats.Basis){
-								$scope.positions[stats.Basis[key]] = key;
-							};
-						}
-						
-						$scope.actualPlayers = angular.copy(stats.Basis);
-						$scope.changes = angular.copy($scope.presentPlayers);
-						
-						if(typeof stats.Basis !== 'undefined'){
-							for(key in stats.Basis){
-								//console.log(key);
-								delete $scope.changes[key];
-							};
-						}
-						
-						if(typeof stats.Changes !== 'undefined'){
-							for(key in stats.Changes){
-								switch(stats.Changes[key].type){ //change type, in/out or  position
-									case "In/Out":
-										$scope.actualPlayers[stats.Changes[key].playerIn] = $scope.actualPlayers[stats.Changes[key].playerOut]; // transfer position
-										delete $scope.actualPlayers[stats.Changes[key].playerOut];
-										// he is already changed so he cannot be changed again
-										delete $scope.changes[stats.Changes[key].playerIn];
-									break;
-									
-									case "Position":
-										var pos1 = $scope.actualPlayers[stats.Changes[key].player1]; // position of player1
-										var pos2 = $scope.actualPlayers[stats.Changes[key].player2]; // position of player2
-										$scope.actualPlayers[stats.Changes[key].player1] = pos2; // transfer position
-										$scope.actualPlayers[stats.Changes[key].player2] = pos1; // transfer position
-									break;
-								}
-							};
-						}
-						
-						if(typeof stats.Cards !== 'undefined'){
-							for(key in stats.Cards){
-								if(stats.Cards[key].type === 'red'){
-									delete $scope.actualPlayers[stats.Cards[key].player]; // remove from actual players
-								}
-							};
-						}
-						// make actual positions
-						$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
-						
-						// scoreboard Our Goals
-						if(typeof stats.OurGoals !== 'undefined'){
-							for(key in stats.OurGoals){
-								if($scope.game.home === $scope.teamName)
-									$scope.homeScore++;
-								else
-									$scope.awayScore++;
-							};
-						}
-						// scoreboard Their Goals
-						if(typeof stats.TheirGoals !== 'undefined'){
-							for(key in stats.TheirGoals){
-								if($scope.game.home !== $scope.teamName)
-									$scope.homeScore++;
-								else
-									$scope.awayScore++;
-							};
-						}
+						$scope.externalPlayers = 0;
 					}
-				})
+					
+					// parse the current filled in stats for basic team and statType "wissels"
+					//read this back to the input fields!
+					if(typeof stats.Basis !== 'undefined'){
+						for(key in stats.Basis){
+							$scope.positions[stats.Basis[key]] = key;
+						};
+					}
+					
+					$scope.actualPlayers = angular.copy(stats.Basis);
+					$scope.changes = angular.copy($scope.presentPlayers);
+					
+					if(typeof stats.Basis !== 'undefined'){
+						for(key in stats.Basis){
+							//console.log(key);
+							delete $scope.changes[key];
+						};
+					}
+					
+					if(typeof stats.Changes !== 'undefined'){
+						for(key in stats.Changes){
+							switch(stats.Changes[key].type){ //change type, in/out or  position
+								case "In/Out":
+									$scope.actualPlayers[stats.Changes[key].playerIn] = $scope.actualPlayers[stats.Changes[key].playerOut]; // transfer position
+									delete $scope.actualPlayers[stats.Changes[key].playerOut];
+									// he is already changed so he cannot be changed again
+									delete $scope.changes[stats.Changes[key].playerIn];
+								break;
+								
+								case "Position":
+									var pos1 = $scope.actualPlayers[stats.Changes[key].player1]; // position of player1
+									var pos2 = $scope.actualPlayers[stats.Changes[key].player2]; // position of player2
+									$scope.actualPlayers[stats.Changes[key].player1] = pos2; // transfer position
+									$scope.actualPlayers[stats.Changes[key].player2] = pos1; // transfer position
+								break;
+							}
+						};
+					}
+					
+					if(typeof stats.Cards !== 'undefined'){
+						for(key in stats.Cards){
+							if(stats.Cards[key].type === 'red'){
+								delete $scope.actualPlayers[stats.Cards[key].player]; // remove from actual players
+							}
+						};
+					}
+					// make actual positions
+					$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+					
+					// scoreboard Our Goals
+					if(typeof stats.OurGoals !== 'undefined'){
+						for(key in stats.OurGoals){
+							if($scope.game.home === $scope.teamName)
+								$scope.homeScore++;
+							else
+								$scope.awayScore++;
+						};
+					}
+					// scoreboard Their Goals
+					if(typeof stats.TheirGoals !== 'undefined'){
+						for(key in stats.TheirGoals){
+							if($scope.game.home !== $scope.teamName)
+								$scope.homeScore++;
+							else
+								$scope.awayScore++;
+						};
+					}
+				}
 			})
 		})
 		
