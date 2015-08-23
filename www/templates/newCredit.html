@@ -4,11 +4,11 @@
             <div class="col col-center">
                 <form name="registerForm"
                       ng-submit="newCredit(selectedPlayer,value,comment)" novalidate>
-                    <h3>Wedstrijd</h3>
+                    <h3>Boete</h3>
                     <div class="list">
 						<label class="item item-input item-select">
                             <span class="input-label">Speler</span>
-                            <select ng-model="selectedPlayer" ng-options="player.$id as (player.firstName +nbsp+ player.insertion +nbsp+ player.lastName) for player in players"></select>
+                            <select ng-model="selectedPlayer" ng-options="key as (player.firstName +nbsp+ player.insertion +nbsp+ player.lastName) for (key,player) in players"></select>
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Credit</span>

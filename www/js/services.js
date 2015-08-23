@@ -743,7 +743,8 @@ angular.module('starter.services', [])
                 return JSON.parse(localStorage.getItem('settings'));
             },
             getAdmin: function() {
-                return localStorage.getItem('admin');
+				var admin = localStorage.getItem('admin');
+				return (admin === "true"); // cast string to bool
             },
             getGames: function() {
                 return JSON.parse(localStorage.getItem('games'));
@@ -755,7 +756,7 @@ angular.module('starter.services', [])
                 return localStorage.getItem('selectedGame');
             },
             getPractises: function() {
-                return localStorage.getItem('practises');
+                return JSON.parse(localStorage.getItem('practises'));
             }
 
         }

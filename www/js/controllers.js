@@ -193,13 +193,7 @@ angular.module('starter.controllers', [])
             ref.child('Admins').child(teamId).once('value', function(admin) {
                 localStorageFactory.setAdmin(admin.val(), uid);
             })
-
         })
-
-
-
-
-
     })
 	
     .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams, localStorageFactory) {
@@ -231,11 +225,9 @@ angular.module('starter.controllers', [])
 
 	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
 		$scope.ShowDelete = false;
-
-
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
-
+        $scope.games = localStorageFactory.getGames($scope.teamId);
         $scope.players = localStorageFactory.getPlayers();
 
         $scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
@@ -244,17 +236,10 @@ angular.module('starter.controllers', [])
                    $scope.games = games;
                     localStorageFactory.setGames(games);
                 });
-            } else {
-                $scope.games = localStorageFactory.getGames($scope.teamId);
             }
         });
 
-
-
-
-
 		$scope.gamesRef = Games.getGamesRef($scope.teamId);
-
 
 		$scope.showDelete = function() {
 			console.log('showdelete:' + $scope.ShowDelete);
@@ -286,28 +271,22 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, $stateParams) {
+	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, localStorageFactory, $stateParams) {
 		$scope.gameId = $stateParams.gameId;
 		
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
-				$scope.gameDate = new Date(game.date);
-				$scope.game = game;
-				$scope.settings = Settings.getSettings($scope.teamId);
-				//update buttons
-				$scope.present = Attendance.checkAttendance($scope.game.Present,User.getUID());
-				$scope.absent = Attendance.checkAttendance($scope.game.Absent,User.getUID());
-				
-				$scope.unknown = (!$scope.present && !$scope.absent);
-			}).then(function(){
-				$scope.getPlayers = Teams.getPlayers($scope.teamId).then(function(players){
-					//console.log(players);
-					$scope.players = players;
-					$scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
-					//console.log($scope.unknownPlayers);
-				});
-			});
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
+			$scope.gameDate = new Date(game.date);
+			$scope.game = game;
+			$scope.settings = Settings.getSettings($scope.teamId);
+			//update buttons
+			$scope.present = Attendance.checkAttendance($scope.game.Present,User.getUID());
+			$scope.absent = Attendance.checkAttendance($scope.game.Absent,User.getUID());
+			
+			$scope.unknown = (!$scope.present && !$scope.absent);
+			
+			$scope.players = localStorageFactory.getPlayers();
+			$scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
 		})
 		
 		$scope.changeAttendance = function(type){
@@ -340,19 +319,17 @@ angular.module('starter.controllers', [])
 		}
 	})
 
-	.controller('Games_EditCtrl', function ($scope, Games, User, $stateParams,$ionicHistory) {
+	.controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory) {
 		$scope.gameId = $stateParams.gameId;
 		
-		$scope.getTeam = User.getTeam().then(function (data) {
-			$scope.teamId = data;
-			$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
-				$scope.gameDate = new Date(game.date);
-				$scope.title = "Selecteer datum";
-				$scope.gameTime = game.time;
-				$scope.game = game;
-				$scope.home = game.home;
-				$scope.away = game.away;
-			})
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
+			$scope.gameDate = new Date(game.date);
+			$scope.title = "Selecteer datum";
+			$scope.gameTime = game.time;
+			$scope.game = game;
+			$scope.home = game.home;
+			$scope.away = game.away;
 		})
 		$scope.datePickerCallback = function (val) {
 			if (typeof(val) === 'undefined') {
@@ -378,16 +355,13 @@ angular.module('starter.controllers', [])
 		}
 	})
 	
-	.controller('newGamesCtrl', function($scope, User, Games, Teams, $ionicHistory) {
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			Teams.getTeamName($scope.teamId).then(function(teamName){
-				$scope.teamName = teamName;
-			});
-			$scope.gameDate = new Date();
-			$scope.title = "Selecteer datum";
-			$scope.gameTime = 52200;
-		});
+	.controller('newGamesCtrl', function($scope, User, Games, Teams,localStorageFactory, $ionicHistory) {
+		
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.teamName = localStorageFactory.getTeamName();
+		$scope.gameDate = new Date();
+		$scope.title = "Selecteer datum";
+		$scope.gameTime = 52200;
 		
 		$scope.datePickerCallback = function (val) {
 			if (typeof(val) === 'undefined') {
@@ -678,11 +652,10 @@ angular.module('starter.controllers', [])
 	
 	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
 		$scope.ShowDelete = false;
-		$scope.isAdmin = false;
+		$scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
-        $scope.practises = Practises.getPractisesArray($scope.teamId);
+        $scope.practises = localStorageFactory.getPractises();
         $scope.practisesRef = Practises.getPractisesRef($scope.teamId);
-
 		$scope.showDelete = function() {
 			console.log('showdelete:' + $scope.ShowDelete);
 			$scope.ShowDelete = !$scope.ShowDelete;
@@ -694,8 +667,6 @@ angular.module('starter.controllers', [])
                     $scope.practises = practises;
                     localStorageFactory.setPractises(practises);
                 });
-            } else {
-                $scope.practises = localStorageFactory.getPractises($scope.teamId);
             }
         });
 
@@ -749,28 +720,23 @@ angular.module('starter.controllers', [])
 		
     })
 
-    .controller('Practises_DetailCtrl', function ($scope, Practises, User, Teams, Attendance, Settings, $stateParams) {
+    .controller('Practises_DetailCtrl', function ($scope, Practises, User, Teams, Attendance, Settings,localStorageFactory, $stateParams) {
 		$scope.practiseId = $stateParams.practiseId;
 		
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			console.log(data);
-			$scope.getPractise = Practises.getPractise($scope.teamId).then(function(practise){
-				console.log(practise);
-				$scope.practiseDate = new Date(practise.date);
-				$scope.practise = practise;
-				$scope.settings = Settings.getSettings($scope.teamId);
-				//update buttons
-				$scope.present = Attendance.checkAttendance($scope.practise.Present,User.getUID());
-				$scope.absent = Attendance.checkAttendance($scope.practise.Absent,User.getUID());
-				$scope.unknown = (!$scope.present && !$scope.absent);
-			}).then(function(){
-				$scope.getPlayers = Teams.getPlayers($scope.teamId).then(function(players){
-					$scope.players = players;
-					$scope.unknownPlayers = Attendance.checkUnknown($scope.practise.Present, $scope.practise.Absent, $scope.players);
-				});
-			});
-		})
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.getPractise = Practises.getPractise($scope.teamId).then(function(practise){
+			console.log(practise);
+			$scope.practiseDate = new Date(practise.date);
+			$scope.practise = practise;
+			$scope.settings = Settings.getSettings($scope.teamId);
+			//update buttons
+			$scope.present = Attendance.checkAttendance($scope.practise.Present,User.getUID());
+			$scope.absent = Attendance.checkAttendance($scope.practise.Absent,User.getUID());
+			$scope.unknown = (!$scope.present && !$scope.absent);
+			
+			$scope.players = localStorageFactory.getPlayers();
+			$scope.unknownPlayers = Attendance.checkUnknown($scope.practise.Present, $scope.practise.Absent, $scope.players);
+		});
 		
 		$scope.changeAttendance = function(type){
 			switch(type){
@@ -802,19 +768,18 @@ angular.module('starter.controllers', [])
 		}
     })
 
-    .controller('Practises_EditCtrl', function ($scope, Practises, User, $stateParams,$ionicHistory) {
+    .controller('Practises_EditCtrl', function ($scope, Practises, User, $stateParams,localStorageFactory, $ionicHistory) {
         $scope.practiseId = $stateParams.practiseId;
 
-        $scope.getTeam = User.getTeam().then(function (data) {
-            $scope.teamId = data;
-            $scope.getPractise = Practises.getPractise($scope.teamId).then(function (practise) {
-                $scope.practiseDate = new Date(practise.date);
-                $scope.title = "Selecteer datum";
-                $scope.practiseTime = practise.time;
-                $scope.practise = practise;
-                $scope.location = practise.location;
-            })
-        })
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.getPractise = Practises.getPractise($scope.teamId).then(function (practise) {
+			$scope.practiseDate = new Date(practise.date);
+			$scope.title = "Selecteer datum";
+			$scope.practiseTime = practise.time;
+			$scope.practise = practise;
+			$scope.location = practise.location;
+		})
+
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
                 console.log('Date not selected');
@@ -839,14 +804,12 @@ angular.module('starter.controllers', [])
         }
     })
 
-	.controller('newPractisesCtrl', function($scope, User, Practises, $ionicHistory) {
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			$scope.practiseDate = new Date();
-			$scope.title = "Selecteer datum";
-			$scope.practiseTime = 72000;
-			$scope.weeks = 1;
-		});
+	.controller('newPractisesCtrl', function($scope, User, Practises, localStorageFactory, $ionicHistory) {
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.practiseDate = new Date();
+		$scope.title = "Selecteer datum";
+		$scope.practiseTime = 72000;
+		$scope.weeks = 1;
 		
 		$scope.datePickerCallback = function (val) {
 			if (typeof(val) === 'undefined') {
@@ -877,7 +840,16 @@ angular.module('starter.controllers', [])
 		}
 	})
 	
-	.controller('EventsCtrl', function ($scope, Events, User, $state, $ionicHistory, Utility) {
+	.controller('EventsCtrl', function ($scope, Events, User, $state, $ionicHistory, localStorageFactory, Utility) {
+		// contyroller must be  made equal to GAMES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		
+		
+		//
+		
+		
+		//
+		
+		//
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
 		
@@ -1083,8 +1055,8 @@ angular.module('starter.controllers', [])
 		}
 	})
 	
-	.controller('FinanceCtrl', function ($scope, User, Teams, Finance, $state) {
-		$scope.isAdmin = false;
+	.controller('FinanceCtrl', function ($scope, User, Teams, Finance, localStorageFactory, $state) {
+		$scope.isAdmin = localStorageFactory.getAdmin();
 		
         $scope.getTeam = User.getTeam().then(function(data) {
 			$scope.teamId = data;
@@ -1095,17 +1067,8 @@ angular.module('starter.controllers', [])
 				$scope.credits = data;
 				console.log($scope.credits);
 			});
-        }).then(function(){
-			//check if current user is Admin for this team
-			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
-				admins.forEach(function(admin){
-					if(admin.$id === User.getUID()){
-						$scope.isAdmin = true;
-						console.log('isAdmin?: ' + $scope.isAdmin);
-					}
-				});
-			});
-		});
+        });
+		
 		$scope.toggleGroup = function(group) {
 			if ($scope.isGroupShown(group)) {
 			  $scope.shownGroup = null;
@@ -1126,8 +1089,8 @@ angular.module('starter.controllers', [])
 
 			$scope.teamId = localStorageFactory.getTeamId();
 			$scope.nbsp = " "; // whitespace
-            $scope.players = localStorageFactory.getPlayers($scope.teamId);
-		
+            $scope.players = localStorageFactory.getPlayers();
+				console.log( $scope.players );
 		    $scope.newCredit = function(uid, value, comment){
 			Finance.newCredit($scope.teamId, uid, value, comment);
 			$ionicHistory.goBack();
@@ -1140,9 +1103,7 @@ angular.module('starter.controllers', [])
         console.log($scope.currentDate);
 
         $scope.teamId = localStorageFactory.getTeamId();
-
         $scope.settings = Settings.getSettings($scope.teamId);
-
         $scope.duties = Duties.getDuties($scope.teamId);
         //get Games
         $scope.games = Games.getGames($scope.teamId);
@@ -1267,9 +1228,9 @@ angular.module('starter.controllers', [])
 	.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, localStorageFactory) {
 
         $scope.teamId = localStorageFactory.getTeamId();
-        $scope.settings = Settings.getSettings($scope.teamId);
+        $scope.settings = Settings.getSettings();
         $scope.isAdmin = localStorageFactory.getAdmin();
-
+		
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
                 $scope.shownGroup = null;
@@ -1293,8 +1254,7 @@ angular.module('starter.controllers', [])
             else {
                 alert("wachtwoorden zijn niet gelijk");
             }
-        };
-		
+        };	
     })
 
 	.filter('orderObjectBy', function() {

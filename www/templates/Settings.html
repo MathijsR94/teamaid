@@ -2,16 +2,18 @@
   <ion-content>
   
 	<ion-list>
-		<ion-item class="item-stable" ng-click="toggleGroup('corvee')" ng-class="{active: isGroupShown('corvee')}" ng-if="isAdmin === true">
-			  <i class="icon" ng-class="isGroupShown('corvee') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-			&nbsp;
-			Corvee Settings
-		</ion-item>
-		<ion-item class="item-accordion" ng-show="isGroupShown('corvee')">
-			<ion-toggle ng-model="settings.dutyGames" ng-change="changeSetting('dutyGames',settings.dutyGames)">Wedstrijden</ion-toggle>
-			<ion-toggle ng-model="settings.dutyPractises" ng-change="changeSetting('dutyPractises',settings.dutyPractises)">Trainingen</ion-toggle>
-			<ion-toggle ng-model="settings.dutyEvents" ng-change="changeSetting('dutyEvents',settings.dutyEvents)">Evenementen</ion-toggle>
-		</ion-item>
+		<div ng-if="isAdmin == true">
+			<ion-item class="item-stable" ng-click="toggleGroup('corvee')" ng-class="{active: isGroupShown('corvee')}">
+				  <i class="icon" ng-class="isGroupShown('corvee') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+				&nbsp;
+				Corvee Settings
+			</ion-item>
+			<ion-item class="item-accordion" ng-show="isGroupShown('corvee')">
+				<ion-toggle ng-model="settings.dutyGames" ng-change="changeSetting('dutyGames',settings.dutyGames)">Wedstrijden</ion-toggle>
+				<ion-toggle ng-model="settings.dutyPractises" ng-change="changeSetting('dutyPractises',settings.dutyPractises)">Trainingen</ion-toggle>
+				<ion-toggle ng-model="settings.dutyEvents" ng-change="changeSetting('dutyEvents',settings.dutyEvents)">Evenementen</ion-toggle>
+			</ion-item>
+		</div>
 		<ion-item class="item-stable" ng-click="toggleGroup('changePW')" ng-class="{active: isGroupShown('changePW')}">
 			  <i class="icon" ng-class="isGroupShown('changePW') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 			&nbsp;
