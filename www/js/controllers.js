@@ -179,7 +179,6 @@ angular.module('starter.controllers', [])
         var ref = firebaseRef.ref();
 
         var uid = User.getUID();
-        var teamId;
         ref.child('Users').child(uid).child('Teams').once('value', function(teams) {
             localStorage.setTeams(teams.val());
 
@@ -188,6 +187,7 @@ angular.module('starter.controllers', [])
             ref.child('Teams').child(teamId).once('value', function(teamData) {
                 localStorage.setPlayers(teamData.val().Players);
                 localStorage.setSettings(teamData.val().Settings);
+                localStorage.setTeamName(teamData.val());
             })
 
             ref.child('Admins').child(teamId).once('value', function(admin) {
@@ -674,27 +674,12 @@ angular.module('starter.controllers', [])
 
 	})
 	
-	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility) {
+	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility, localStorage) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = false;
-		
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-
-			//check if current user is Admin for this team
-			$scope.practises = Practises.getPractisesArray($scope.teamId);
-			$scope.practisesRef = Practises.getPractisesRef($scope.teamId);
-		}).then(function(){
-			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
-
-				admins.forEach(function(admin){
-					if(admin.$id === User.getUID()){
-						$scope.isAdmin = true;
-						console.log('isAdmin?: ' + $scope.isAdmin);
-					}
-				});
-			});
-		});
+        $scope.teamId = localStorage.getTeamId();
+        $scope.practises = Practises.getPractisesArray($scope.teamId);
+        $scope.practisesRef = Practises.getPractisesRef($scope.teamId);
 
 		$scope.showDelete = function() {
 			console.log('showdelete:' + $scope.ShowDelete);

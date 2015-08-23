@@ -129,7 +129,6 @@ angular.module('starter.services', [])
                 var team = $firebaseObject(teamsRef.child(teamId));
                 team.$loaded(function () {
                     deferred.resolve(team.teamName);
-					//console.log(team);
                 });
                 return deferred.promise;
             },
@@ -257,6 +256,7 @@ angular.module('starter.services', [])
 				return $firebaseObject(practisesRef.child(teamId));
 			},
 			getPractisesArray: function(teamId) {
+                localStorage.setItem('practices', JSON.stringify($firebaseArray(practisesRef.child(teamId))));
 				return $firebaseArray(practisesRef.child(teamId));
 			},
 			getPractise: function(teamId) {
@@ -728,6 +728,9 @@ angular.module('starter.services', [])
             },
             setGames: function(games) {
                 localStorage.setItem('games', JSON.stringify(games));
+            },
+            setTeamName: function(team) {
+                localStorage.setItem('teamName', JSON.stringify(team.teamName));
             },
             getTeamId: function() {
                 var test = JSON.parse(localStorage.getItem('teams'));
