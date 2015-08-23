@@ -2,9 +2,13 @@ angular.module('starter.services', [])
     .factory('firebaseRef', function () {
         //var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
 		var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
+        var connectedRef = new Firebase("https://amber-torch-2058.firebaseio.com/.info/connected");
         return {
             ref: function () {
                 return ref;
+            },
+            connectedRef: function () {
+                return connectedRef;
             }
         }
     })
@@ -198,7 +202,12 @@ angular.module('starter.services', [])
 				return $firebaseObject(gamesRef.child(teamId));
 			},
 			getGamesArray: function(teamId) {
-				return $firebaseArray(gamesRef.child(teamId));
+                var deferred = $q.defer();
+                var games = $firebaseArray(gamesRef.child(teamId));
+                games.$loaded(function () {
+                    deferred.resolve(games);
+                });
+                return deferred.promise;
 			},
             getGame: function(teamId) {
                 var deferred = $q.defer();
@@ -717,7 +726,9 @@ angular.module('starter.services', [])
                         localStorage.setItem('admin', false);
                 }
             },
-
+            setGames: function(games) {
+                localStorage.setItem('games', JSON.stringify(games));
+            },
             getTeamId: function() {
                 var test = JSON.parse(localStorage.getItem('teams'));
                 for(var key in test)
@@ -727,10 +738,13 @@ angular.module('starter.services', [])
                 return JSON.parse(localStorage.getItem('players'));
             },
             getSettings: function() {
-                return localStorage.getItem('settings');
+                return JSON.parse(localStorage.getItem('settings'));
             },
             getAdmin: function() {
                 return localStorage.getItem('admin');
+            },
+            getGames: function() {
+                return JSON.parse(localStorage.getItem('games'));
             }
 
         }

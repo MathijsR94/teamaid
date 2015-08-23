@@ -193,6 +193,7 @@ angular.module('starter.controllers', [])
             ref.child('Admins').child(teamId).once('value', function(admin) {
                 localStorage.setAdmin(admin.val(), uid);
             })
+
         })
 
 
@@ -228,27 +229,32 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory, Utility, $stateParams) {
+	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory, Utility, localStorage, firebaseRef) {
 		$scope.ShowDelete = false;
-		$scope.isAdmin = false;
 
-		$scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
 
-			
-			$scope.games = Games.getGamesArray($scope.teamId);
-			$scope.gamesRef = Games.getGamesRef($scope.teamId);
-        }).then(function(){
-			//check if current user is Admin for this team
-			$scope.admin = User.isAdmin($scope.teamId).then(function(admins) {
-				admins.forEach(function(admin){
-					if(admin.$id === User.getUID()){
-						$scope.isAdmin = true;
-						console.log('isAdmin?: ' + $scope.isAdmin);
-					}
-				});
-			});
-		})
+        $scope.isAdmin = localStorage.getAdmin();
+        $scope.teamId = localStorage.getTeamId();
+
+        $scope.players = localStorage.getPlayers();
+
+        $scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
+            if(snap.val() === true) {
+                $scope.getGames = Games.getGamesArray($scope.teamId).then(function(games) {
+                   $scope.games = games;
+                    localStorage.setGames(games);
+                });
+            } else {
+                $scope.games = localStorage.getGames($scope.teamId);
+            }
+        });
+
+
+
+
+
+		$scope.gamesRef = Games.getGamesRef($scope.teamId);
+
 
 		$scope.showDelete = function() {
 			console.log('showdelete:' + $scope.ShowDelete);
@@ -278,7 +284,6 @@ angular.module('starter.controllers', [])
 			Games.setGame(game.$id);
 			$state.go('app.game_stats', { gameId: game.$id});
 		}
-		console.log($scope.isAdmin);
     })
 
 	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, $stateParams) {
