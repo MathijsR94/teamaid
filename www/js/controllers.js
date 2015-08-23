@@ -439,9 +439,12 @@ angular.module('starter.controllers', [])
 		$scope.actualPositions = [];
 		$scope.homeScore = 0;
 		$scope.awayScore = 0;
-		Teams.getTeamName($scope.teamId).then(function(teamName){
-			$scope.teamName = teamName;
-		});
+		
+		$scope.teamName = localStorage.getTeamName();
+		console.log($scope.teamName);
+		// Teams.getTeamName($scope.teamId).then(function(teamName){
+			// $scope.teamName = teamName;
+		// });
 		$scope.players = localStorage.getPlayers();
 		// Teams.getPlayers($scope.teamId).then(function(teamPlayers){
 			// $scope.players = teamPlayers;

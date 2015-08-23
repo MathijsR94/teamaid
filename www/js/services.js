@@ -748,6 +748,9 @@ angular.module('starter.services', [])
             },
             getGames: function() {
                 return JSON.parse(localStorage.getItem('games'));
+            },
+			getTeamName: function() {
+                return localStorage.getItem('teamName');
             }
 
         }
