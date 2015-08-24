@@ -149,6 +149,7 @@ angular.module('starter.controllers', [])
     })
 	
     .controller('LoginCtrl', function ($scope, firebaseRef, $state) {
+				
         //Login method
         $scope.login = function (em, pwd, isValid) {
             if (isValid) {
