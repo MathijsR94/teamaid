@@ -272,10 +272,12 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, localStorageFactory, $stateParams) {
+	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
 		$scope.gameId = $stateParams.gameId;
-		
+		$scope.players = localStorageFactory.getPlayers();
+		$scope.fieldPlayers = angular.copy($scope.players);
 		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.basis= {};
 		$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
 			$scope.gameDate = new Date(game.date);
 			$scope.game = game;
@@ -286,9 +288,43 @@ angular.module('starter.controllers', [])
 			
 			$scope.unknown = (!$scope.present && !$scope.absent);
 			
-			$scope.players = localStorageFactory.getPlayers();
+			
 			$scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
-		})
+		});
+		
+		Statistics.getRef().child($scope.teamId).child($scope.gameId).on('value',function(statsSnap){
+			
+			if(statsSnap.val() !== null){
+				console.log(statsSnap.val());
+				if(typeof statsSnap.val().Basis !== 'undefined'){
+					
+					if(typeof statsSnap.val().externalPlayers !== 'undefined'){
+						for(var i = 1;i <= statsSnap.val().externalPlayers;i++){
+							//add external player to the fieldplayers List
+							$scope.fieldPlayers["external"+i] = {firstName : "external", insertion: "", lastName: ""+i};
+						};
+					}
+					for(key in statsSnap.val().Basis){
+						$scope.basis[statsSnap.val().Basis[key]] = key;
+					};
+					$scope.tactic = statsSnap.val().tactic;
+				}
+			}
+			else{
+				$scope.tactic = 0;
+			}			
+		});
+		
+		$scope.toggleGroup = function(group) {
+			if ($scope.isGroupShown(group)) {
+			  $scope.shownGroup = null;
+			} else {
+			  $scope.shownGroup = group;
+			}
+		};
+		$scope.isGroupShown = function(group) {
+			return $scope.shownGroup === group;
+		};
 		
 		$scope.changeAttendance = function(type){
 			switch(type){
@@ -573,7 +609,7 @@ angular.module('starter.controllers', [])
 			for(key in $scope.positions){
 				basis[$scope.positions[key]] = key;
 			};
-			Statistics.updateBasis($scope.teamId,$scope.game.$id,basis,$scope.tactic,$scope.externalPlayers);
+			Statistics.updateBasis($scope.teamId,$scope.gameId,basis,$scope.tactic,$scope.externalPlayers);
 			//$scope.actualPositions = Statistics.updateActualTeam(basis); no need since we reload th whole page after this, else external players and basis  update  becomes alot more complicated, since all arrays  need to be rebuild
 			$state.go($state.current, {}, {reload: true});
 		};
@@ -586,7 +622,7 @@ angular.module('starter.controllers', [])
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}	
-			Statistics.newChange($scope.teamId,$scope.game.$id,playerIn, playerOut,pos, time, comment);
+			Statistics.newChange($scope.teamId,$scope.gameId,playerIn, playerOut,pos, time, comment);
 			$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 			$scope.selectedType = "";
 			$scope.toggleGroup(null);
@@ -600,7 +636,7 @@ angular.module('starter.controllers', [])
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}	
-			Statistics.newPosChange($scope.teamId,$scope.game.$id,player1, player2,pos1, pos2, time, comment);
+			Statistics.newPosChange($scope.teamId,$scope.gameId,player1, player2,pos1, pos2, time, comment);
 			$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 			$scope.selectedType = "";
 			$scope.toggleGroup(null);
@@ -616,7 +652,7 @@ angular.module('starter.controllers', [])
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}			
-			Statistics.newGoal($scope.teamId,$scope.game.$id, true, player, time, comment);
+			Statistics.newGoal($scope.teamId,$scope.gameId, true, player, time, comment);
 						$scope.selectedType = "";
 			$scope.toggleGroup(null);
 		};
@@ -629,12 +665,12 @@ angular.module('starter.controllers', [])
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}
-			Statistics.newGoal($scope.teamId,$scope.game.$id, false, 'undefined', time, comment);
+			Statistics.newGoal($scope.teamId,$scope.gameId, false, 'undefined', time, comment);
 			$scope.selectedType = "";
 			$scope.toggleGroup(null);			
 		};
 		$scope.saveCard = function(player, type, time, comment) {
-			Statistics.newCard($scope.teamId,$scope.game.$id, type, player, time, comment);
+			Statistics.newCard($scope.teamId,$scope.gameId, type, player, time, comment);
 			if(type === 'red'){
 				delete $scope.actualPlayers[player]; // remove from actual players
 				$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
@@ -1255,6 +1291,55 @@ angular.module('starter.controllers', [])
             else {
                 alert("wachtwoorden zijn niet gelijk");
             }
+        };	
+    })
+	
+	.controller('StatisticsCtrl', function ($scope, Statistics, localStorageFactory) {
+
+        $scope.teamId = localStorageFactory.getTeamId();
+		$scope.players = localStorageFactory.getPlayers();
+		console.log($scope.players);
+		Statistics.getRef().child($scope.teamId).once('value',function(statsSnap){
+			for(player in $scope.players){ // reset all gameTime counters to 0
+				$scope.players[player]['totGameTime'] = 0;
+			}
+			for(key in statsSnap.val()){ // walk trough each game
+				var gameStats = statsSnap.val()[key];
+				var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.SecondHalfEnd - gameStats.SecondHalfStart))/60;
+				//console.log(maxGameTime);
+				for(player in gameStats.Basis){
+					if(player.indexOf("external") == -1)
+						$scope.players[player]['totGameTime'] += maxGameTime;  // initially add a fill length game to each basis player
+				};
+				//console.log($scope.players);
+				for(change in gameStats.Changes){
+					//first half  or second half?
+					if(change.time < gameStats.firstHalfEnd){// first half
+						console.log("change in first half");
+					}
+					if(change.time > gameStats.SecondHalfEnd){// second half
+						console.log("change in Second half");
+					}
+					if(change.playerOut.indexOf("external") == -1){ // only calculate if  player is not external
+						//calc time
+					}
+					if(change.playerIn.indexOf("external") == -1){ // only calculate if  player is not external
+						// calc time
+					}
+				}
+				
+			}
+		});
+		
+        $scope.toggleGroup = function (group) {
+            if ($scope.isGroupShown(group)) {
+                $scope.shownGroup = null;
+            } else {
+                $scope.shownGroup = group;
+            }
+        };
+        $scope.isGroupShown = function (group) {
+            return $scope.shownGroup === group;
         };	
     })
 

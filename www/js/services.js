@@ -413,13 +413,12 @@ angular.module('starter.services', [])
 					present = dummy;
 				if(typeof absent === "undefined")
 					absent = dummy;	
-				//console.log(players);	
-                players.forEach(function(value,key) {
-					//console.log(key);
+				
+				for(key in players){
                     if(!(key in present) && !(key in absent)) {
-                        unknown.push(value);
+                        unknown.push(players[key]);
                     }
-                });
+                };
                 return unknown;
             },
 			checkAttendance: function(attendanceArray , uid) {
@@ -581,6 +580,9 @@ angular.module('starter.services', [])
 					comment : comment
 				});
 
+			},
+			getRef: function(){
+				return statsRef;
 			}
 		};
 	})

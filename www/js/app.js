@@ -211,6 +211,16 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
+		.state('app.statistics', {
+		  cache: false,
+		  url: "/statistics",
+		  views: {
+			'menuContent': {
+			  templateUrl: "templates/statistics.html",
+			  controller: 'StatisticsCtrl'
+			}
+		  }
+		})
 		.state('app.practises', {
 		  url: "/practises",
 		  views: {
