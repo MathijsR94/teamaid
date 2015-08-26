@@ -16,7 +16,6 @@
                     <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }" ng-click="changeAttendance('absent');">afwezig</a>
                 </div>
                 <div class="row responsive-sm">
-<<<<<<< HEAD
 				<div class="col"><span>aanwezig</span>
 					<ion-item ng-repeat="(id,value) in practise.Present">
 							   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
@@ -44,38 +43,6 @@
 					</ion-list>
 				</div>
 			</div>
-=======
-                    <div class="col">
-                        <div class="item item-divider">
-                            Aanwezig
-                        </div>
-
-                        <ion-item ng-repeat="(id,value) in practise.Present">
-                            {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
-                        </ion-item>
-                    </div>
-                    <div class="col">
-                        <div class="item item-divider">
-                            Afwezig
-                        </div>
-
-                        <ion-item ng-repeat="(id,value) in practise.Absent">
-                            {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
-                        </ion-item>
-                    </div>
-                    <div class="col">
-                        <div class="item item-divider">
-                            Onbekend
-                        </div>
-
-                        <ion-list>
-                            <ion-item ng-repeat="player in unknownPlayers">
-                                {{player.firstName}} {{player.insertion}} {{player.lastName}}
-                            </ion-item>
-                        </ion-list>
-                    </div>
-                </div>
->>>>>>> origin/master
             </div>
         </div>
 
