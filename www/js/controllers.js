@@ -1166,17 +1166,14 @@ angular.module('starter.controllers', [])
 	
 	.controller('FinanceCtrl', function ($scope, User, Teams, Finance, localStorageFactory, $state) {
 		$scope.isAdmin = localStorageFactory.getAdmin();
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.players = localStorageFactory.getPlayers();
 		
-        $scope.getTeam = User.getTeam().then(function(data) {
-			$scope.teamId = data;
-			Teams.getPlayers($scope.teamId).then(function(teamPlayers){
-				$scope.players = teamPlayers;
-			});
-			$scope.getCredits = Finance.getCredits($scope.teamId).then(function(data){
-				$scope.credits = data;
-				console.log($scope.credits);
-			});
-        });
+		$scope.getCredits = Finance.getCredits($scope.teamId).then(function(data){
+			$scope.credits = data;
+			console.log($scope.credits);
+		});
+
 		
 		$scope.toggleGroup = function(group) {
 			if ($scope.isGroupShown(group)) {
@@ -1196,12 +1193,12 @@ angular.module('starter.controllers', [])
 	
 	.controller('CreditsCtrl', function ($scope, Teams, localStorageFactory, User, Finance, $state,$ionicHistory) {
 
-			$scope.teamId = localStorageFactory.getTeamId();
-			$scope.nbsp = " "; // whitespace
-            $scope.players = localStorageFactory.getPlayers();
-				console.log( $scope.players );
-		    $scope.newCredit = function(uid, value, comment){
-			Finance.newCredit($scope.teamId, uid, value, comment);
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.nbsp = " "; // whitespace
+		$scope.players = localStorageFactory.getPlayers();
+		
+		$scope.newCredit = function(uid, value, comment){
+			Finance.newCredit($scope.teamId, uid, value, comment, $scope.players[uid]);
 			$ionicHistory.goBack();
 		}
     })

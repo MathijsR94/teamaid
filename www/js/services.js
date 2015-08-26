@@ -382,7 +382,7 @@ angular.module('starter.services', [])
 				});
 				return deferred.promise;
 			},
-			newCredit: function( teamId, uid, value, comment ) {
+			newCredit: function( teamId, uid, value, comment, player ) {
 				var balance = 0;
 				var playerRef = financeRef.child(teamId).child(uid);
 				var credits = $firebaseArray(playerRef.child("credits"));
@@ -391,25 +391,22 @@ angular.module('starter.services', [])
 				playerRef.once('value', function(dataSnapshot) {
 					if(dataSnapshot.val() !== null){
 						balance =dataSnapshot.val().balance;
+						// write back new balance
+						playerRef.update({
+							balance: ((+balance) + (+value))
+						});
 					}
 					else{ // this user is new to credits lets instantiate
 						// get his name
-						firebaseRef.child("Users").child(uid).once(function(data) {
-							if(data.val() !== null){
-								playerRef.update({
-									firstName: data.val().firstName,
-									insertion: data.val().insertion,
-									lastname:data.val().lastName,
-									balance: 0
-								});
-							}
-						})
+						playerRef.update({
+							firstName: player.firstName,
+							insertion: player.insertion,
+							lastname: player.lastName,
+							balance: (0 + (+value))
+						});
 					}
 				});
-				// write back new balance
-				playerRef.update({
-					balance: ((+balance) + (+value))
-				});
+				
 				
 				// add credit to the list
 				var timestamp = new Date();
