@@ -1,9 +1,11 @@
 <ion-view view-title="Spelers">
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="player in players">
-            {{player.firstName}} {{player.insertion}} {{player.lastName}}
-      </ion-item>
+        <a class="item item-thumbnail-left" href="#" ng-repeat="player in players">
+          <img src="../img/cover.png">
+          <h2>{{player.firstName}} {{player.insertion}} {{player.lastName}}</h2>
+          <p>Bijnaam</p>
+        </a>
     </ion-list>
 	<button ng-if="isAdmin" class="button button-block button-stable" ng-click="invitePlayer()">Invite player</button>
   </ion-content>

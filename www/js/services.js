@@ -107,6 +107,13 @@ angular.module('starter.services', [])
 			},
             getAccountData: function() {
                 return accountData;
+            },
+            getName: function() {
+                var deferred = $q.defer();
+                accountData.$loaded(function () {
+                    deferred.resolve(accountData);
+                });
+                return deferred.promise;
             }
         }
     })

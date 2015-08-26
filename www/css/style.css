@@ -4,6 +4,7 @@ body, .ionic-body {
 }
 .center {
     text-align : center;
+    display: block;
 }
 img {
     max-width : 100%;
