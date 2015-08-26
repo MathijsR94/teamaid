@@ -165,7 +165,19 @@ angular.module('starter.services', [])
                     deferred.resolve(players);
                 });
                 return deferred.promise;
-            }
+            },
+			activatePlayer: function(teamId, uid){
+				teamsRef.child(teamId).child("InActive").child(uid).once('value', function(data){
+					teamsRef.child(teamId).child("Players").child(uid).update(data.val());
+					teamsRef.child(teamId).child("InActive").child(uid).remove();
+				});
+			},
+			deactivatePlayer: function(teamId, uid){
+				teamsRef.child(teamId).child("Players").child(uid).once('value', function(data){
+					teamsRef.child(teamId).child("InActive").child(uid).update(data.val());
+					teamsRef.child(teamId).child("Players").child(uid).remove();
+				});				
+			}
         }
     })
 	.factory('Admins', function ($firebaseArray, firebaseRef, $q) {
@@ -407,8 +419,8 @@ angular.module('starter.services', [])
 		
 		return{
 			checkUnknown: function(present, absent, players) {
-				var unknown = new Array();
-				var dummy = [{"XidX": " "}];
+				var unknown = {};//new Array();
+				var dummy = {};
 				if(typeof present === "undefined")
 					present = dummy;
 				if(typeof absent === "undefined")
@@ -416,7 +428,8 @@ angular.module('starter.services', [])
 				
 				for(key in players){
                     if(!(key in present) && !(key in absent)) {
-                        unknown.push(players[key]);
+                        //unknown.push(players[key]);
+						unknown[key] = players[key];
                     }
                 };
                 return unknown;
@@ -430,7 +443,7 @@ angular.module('starter.services', [])
 					return(uid in attendanceArray);
 				}
 			},
-			addAttendance: function(type , source, uid, gameId, teamId, removalArray ) {		
+			addAttendance: function(type , source, uid, gameId, teamId, removalArray) {		
 				switch(type){
 				case "present": 
 					var player= {};
@@ -458,6 +471,21 @@ angular.module('starter.services', [])
 					return 0;
 				break;
 				}
+			},
+			resetAttendance: function(source, uid, gameId, teamId, present, absent) {		
+				var player= {};
+				player[uid] = true;
+				if(this.checkAttendance(present, uid)){
+					// remove from absent, because it is still listed there
+					delete present[uid];
+					ref.child(source).child(teamId).child(gameId).child("Present").set(present);	
+				}
+				if(this.checkAttendance(absent, uid)){
+					// remove from present, because it is still listed there
+					delete absent[uid]
+					ref.child(source).child(teamId).child(gameId).child("Absent").set(absent);	
+				}
+				return;
 			}
 		
 		}	
@@ -498,7 +526,7 @@ angular.module('starter.services', [])
 				var setting = {};
 				setting[key] = value;
 				ref.child("Teams").child(teamId).child("Settings").update(setting);
-			}
+			},
 		};
 	})
 	.factory('Statistics', function(firebaseRef,$firebaseObject, $firebaseArray, $q){
@@ -522,11 +550,10 @@ angular.module('starter.services', [])
 				return newActual;
 
 			},
-			updateBasis: function(teamId,gameId,basisTeam,tactic,externals){
+			updateBasis: function(teamId,gameId,basisTeam,tactic){
 				statsRef.child(teamId).child(gameId).update({ 
 					Basis : basisTeam,
-					tactic : tactic,
-					externalPlayers : externals
+					tactic : tactic
 				});
 				
 			},
@@ -583,6 +610,11 @@ angular.module('starter.services', [])
 			},
 			getRef: function(){
 				return statsRef;
+			},
+			storeExternals: function(teamId,gameId,externalPlayers){
+				statsRef.child(teamId).child(gameId).update({ 
+					externalPlayers : externalPlayers
+				});
 			}
 		};
 	})
@@ -727,7 +759,7 @@ angular.module('starter.services', [])
                 localStorage.setItem('games', JSON.stringify(games));
             },
             setTeamName: function(team) {
-                localStorage.setItem('teamName', JSON.stringify(team.teamName));
+                localStorage.setItem('teamName', team.teamName);
             },
             setPractises: function(practises) {
                 localStorage.setItem('practises', JSON.stringify(practises));

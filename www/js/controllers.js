@@ -197,17 +197,28 @@ angular.module('starter.controllers', [])
         })
     })
 	
-    .controller('PlayersCtrl', function ($scope, Teams, User, $state,$stateParams, localStorageFactory) {
+    .controller('PlayersCtrl', function ($scope, Teams, User, $state, $stateParams, localStorageFactory) {
 		
 		$scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
-
         $scope.players = localStorageFactory.getPlayers();
+		
+		Teams.ref().child($scope.teamId).on('value',function(teamSnap){
+			$scope.players = teamSnap.val().Players;
+			$scope.inactivePlayers = teamSnap.val().InActive;
+		});
 
-        console.log($scope.players);
 		$scope.invitePlayer = function() {
 			$state.go('app.invite', { teamId: $scope.teamId});
-		}
+		};
+		
+		$scope.activatePlayer = function(uid){
+			Teams.activatePlayer($scope.teamId ,uid);
+		};
+		
+		$scope.deactivatePlayer = function(uid){
+			Teams.deactivatePlayer($scope.teamId ,uid);
+		};
     })
 	
 	.controller('InvitesCtrl', function ($scope, User, Teams,  Mail, $state, $ionicHistory, $stateParams) {
@@ -235,7 +246,7 @@ angular.module('starter.controllers', [])
             if(snap.val() === true) {
                 $scope.getGames = Games.getGamesArray($scope.teamId).then(function(games) {
                    $scope.games = games;
-                    localStorageFactory.setGames(games);
+                   localStorageFactory.setGames(games);
                 });
             }
         });
@@ -253,8 +264,8 @@ angular.module('starter.controllers', [])
 
 		$scope.onItemDelete = function(item) {
 			var strippedItem = angular.copy(item);
-			Utility.deleteItem($scope.games, item, strippedItem);
-			console.log($scope.games);
+			$scope.games = Utility.deleteItem($scope.games, item, strippedItem);
+			//console.log($scope.games);
 			$scope.gamesRef.set($scope.games);
 		};
 
@@ -275,20 +286,21 @@ angular.module('starter.controllers', [])
 	.controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
 		$scope.gameId = $stateParams.gameId;
 		$scope.players = localStorageFactory.getPlayers();
-		$scope.fieldPlayers = angular.copy($scope.players);
 		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.isAdmin = localStorageFactory.getAdmin();
+		
+		$scope.settings = Settings.getSettings($scope.teamId);
+		
 		$scope.basis= {};
-		$scope.getGame = Games.getGame($scope.teamId).then(function(game) {
-			$scope.gameDate = new Date(game.date);
-			$scope.game = game;
-			$scope.settings = Settings.getSettings($scope.teamId);
+		$scope.fieldPlayers = angular.copy($scope.players);
+		
+		Games.getGamesRef($scope.teamId).child($scope.gameId).on('value',function(gameSnap){				
+			$scope.gameDate = new Date(gameSnap.val().date);
+			$scope.game = gameSnap.val();
 			//update buttons
 			$scope.present = Attendance.checkAttendance($scope.game.Present,User.getUID());
 			$scope.absent = Attendance.checkAttendance($scope.game.Absent,User.getUID());
-			
 			$scope.unknown = (!$scope.present && !$scope.absent);
-			
-			
 			$scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
 		});
 		
@@ -299,10 +311,7 @@ angular.module('starter.controllers', [])
 				if(typeof statsSnap.val().Basis !== 'undefined'){
 					
 					if(typeof statsSnap.val().externalPlayers !== 'undefined'){
-						for(var i = 1;i <= statsSnap.val().externalPlayers;i++){
-							//add external player to the fieldplayers List
-							$scope.fieldPlayers["external"+i] = {firstName : "external", insertion: "", lastName: ""+i};
-						};
+						$scope.fieldPlayers = angular.extend($scope.fieldPlayers,statsSnap.val().externalPlayers);
 					}
 					for(key in statsSnap.val().Basis){
 						$scope.basis[statsSnap.val().Basis[key]] = key;
@@ -333,8 +342,7 @@ angular.module('starter.controllers', [])
 				if($scope.present === true ){
 					// already logged, no change needed
 				}else{
-					$scope.present = Attendance.addAttendance("present","Games",User.getUID(),$scope.gameId,$scope.teamId,$scope.game.Absent);
-					$scope.absent = false;					
+					$scope.present = Attendance.addAttendance("present","Games",User.getUID(),$scope.gameId,$scope.teamId,$scope.game.Absent);					
 				}
 			break;
 			case "absent": 
@@ -342,17 +350,30 @@ angular.module('starter.controllers', [])
 					// already logged, no change needed
 				}else{
 					$scope.absent = Attendance.addAttendance("absent","Games",User.getUID(),$scope.gameId,$scope.teamId,$scope.game.Present);
-					$scope.present = false;
 				}
 			break;
 			default:
 				//nothing yet
 			break;
 			}
-			//update buttons
-			$scope.unknown = (!$scope.present && !$scope.absent);
-			// update unknown
-			$scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players)
+		}
+		$scope.forceAttendance = function(type,uid){
+			switch(type){
+			case "present":
+				Attendance.addAttendance("present","Games",uid,$scope.gameId,$scope.teamId,$scope.game.Absent);
+			break;
+			case "absent": 
+				Attendance.addAttendance("absent","Games",uid,$scope.gameId,$scope.teamId,$scope.game.Present);
+				break;
+			case 'unknown':
+				//remove  attendance, reset to unknown
+				Attendance.resetAttendance("Games",uid,$scope.gameId,$scope.teamId,$scope.game.Present,$scope.game.Absent);
+				return true;
+			break;
+			default:
+				//nothing
+			break;
+			}			
 		}
 	})
 
@@ -440,7 +461,10 @@ angular.module('starter.controllers', [])
 		$scope.gameId = $stateParams.gameId;
 		$scope.selectedType = "";
 		$scope.typeStats = ["wissel","positie wissel", "goal voor","goal tegen", "gele kaart", "rode kaart"]
+		$scope.externalPlayerNames = {};
 		$scope.game ={}; // empty game object
+		$scope.homeScore = 0;
+		$scope.awayScore = 0;
 		
 		$scope.teamId = localStorageFactory.getTeamId(); // get TeamId from local storage
 		$scope.nbsp = " "; // whitespace
@@ -448,18 +472,16 @@ angular.module('starter.controllers', [])
 		$scope.tactic = 0;
 		$scope.positions = [];
 		$scope.actualPositions = [];
-		$scope.homeScore = 0;
-		$scope.awayScore = 0;
 		
 		$scope.teamName = localStorageFactory.getTeamName();
 		$scope.players = localStorageFactory.getPlayers();
-		console.log($scope.players);
+		//console.log($scope.players);
 		//$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 		var gamesRef = firebaseRef.ref().child("Games").child($scope.teamId);
 		gamesRef.child(localStorageFactory.getSelectedGame()).on('value',function(gameSnap){
 			
 			$scope.game = gameSnap.val();
-			console.log($scope.game);
+			//console.log($scope.game);
 			if(typeof $scope.game.Present !== 'undefined'){
 				$scope.presentPlayers = angular.copy($scope.game.Present);
 			}
@@ -470,7 +492,10 @@ angular.module('starter.controllers', [])
 			// console.log(game);
 			var statsRef = firebaseRef.ref().child("Statistics").child($scope.teamId);
 			statsRef.child(localStorageFactory.getSelectedGame()).on('value',function(statsSnap){
-				console.log(statsSnap.val());
+				
+				$scope.homeScore = 0;
+				$scope.awayScore = 0;
+				//console.log(statsSnap.val());
 				var stats = statsSnap.val();
 				if(stats === null){ // no statistics 
 					var init = Statistics.initialize($scope.teamId,localStorageFactory.getSelectedGame(),$scope.game.time);
@@ -484,20 +509,32 @@ angular.module('starter.controllers', [])
 					$scope.changes = {};
 				}
 				else{
-					$scope.tactic = stats.tactic;
-					$scope.externalPlayers = stats.externalPlayers;						
+					$scope.tactic = stats.tactic;						
 					$scope.firstHalfStart = stats.firstHalfStart;
 					$scope.firstHalfEnd =  stats.firstHalfEnd;
 					$scope.secondHalfStart =  stats.secondHalfStart;
 					$scope.secondHalfEnd =  stats.secondHalfEnd;
 					
 					//external players must be added to the present List
-					if(typeof $scope.externalPlayers !== 'undefined'){
-						for(var i = 1;i <= $scope.externalPlayers;i++){
-							//add external player to the Present List
-							$scope.presentPlayers["external"+i]=true;
-							$scope.players["external"+i] = {firstName : "external", insertion: "", lastName: ""+i};
+					// if(typeof $scope.externalPlayers !== 'undefined'){
+						// for(var i = 1;i <= $scope.externalPlayers;i++){
+							// //add external player to the Present List
+							// $scope.presentPlayers["external"+i]=true;
+							// $scope.players["external"+i] = {firstName : "external", insertion: "", lastName: ""+i};
+						// };
+					// }
+					// else{
+						// $scope.externalPlayers = 0;
+					// }
+					
+					if(typeof stats.externalPlayers !== 'undefined'){
+						$scope.externalPlayers = Object.keys(stats.externalPlayers).length;
+						$scope.externalPlayerNames = stats.externalPlayers;
+						for(key in stats.externalPlayers){
+							$scope.presentPlayers[key]=true;
 						};
+						$scope.players = angular.extend($scope.players, stats.externalPlayers);
+						console.log($scope.players);
 					}
 					else{
 						$scope.externalPlayers = 0;
@@ -596,13 +633,20 @@ angular.module('starter.controllers', [])
 		};
 		$scope.updatePlayerList = function(externalPlayers){
 			for(var i = 1;i <= externalPlayers;i++){
+				if(typeof $scope.externalPlayerNames["external"+i] === 'undefined'){
+					$scope.externalPlayerNames["external"+i] = {firstName : "external"+i, insertion: "", lastName: ""};
+				}
 				//add external player to the Present List
-				$scope.presentPlayers["external"+i]=true;
-				$scope.players["external"+i] = {firstName : "external", insertion: "", lastName: ""+i};
+				//$scope.presentPlayers["external"+i]=true;
+				//$scope.players["external"+i] = {firstName : "external"+i, insertion: "", lastName: ""};
 				//console.log($scope.players);
 			};
 			$scope.externalPlayers = externalPlayers;
 		};
+		
+		$scope.storeExternalNames = function(){
+			Statistics.storeExternals($scope.teamId,$scope.gameId,$scope.externalPlayerNames);
+		}
 		$scope.storeBasis = function(tactic){
 			$scope.tactic = tactic;
 			var basis ={};
@@ -615,53 +659,53 @@ angular.module('starter.controllers', [])
 		};
 		$scope.saveChange = function(playerIn, playerOut, time, comment) {
 			var pos = $scope.actualPlayers[playerOut]; // position of player going out
-			$scope.actualPlayers[playerIn] = $scope.actualPlayers[playerOut]; // transfer position
-			delete $scope.actualPlayers[playerOut]; // remove from actual players
-			delete $scope.changes[playerIn]; // remove from available changeable players
+			//$scope.actualPlayers[playerIn] = $scope.actualPlayers[playerOut]; // transfer position
+			//delete $scope.actualPlayers[playerOut]; // remove from actual players
+			//delete $scope.changes[playerIn]; // remove from available changeable players
 			
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}	
 			Statistics.newChange($scope.teamId,$scope.gameId,playerIn, playerOut,pos, time, comment);
-			$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+			//$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 			$scope.selectedType = "";
 			$scope.toggleGroup(null);
 		};
 		$scope.savePosChange = function(player1, player2, time, comment) {
 			var pos1 = $scope.actualPlayers[player1]; // position of player1
 			var pos2 = $scope.actualPlayers[player2]; // position of player2
-			$scope.actualPlayers[player1] = pos2; // transfer position
-			$scope.actualPlayers[player2] = pos1; // transfer position
+			//$scope.actualPlayers[player1] = pos2; // transfer position
+			//$scope.actualPlayers[player2] = pos1; // transfer position
 			
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}	
 			Statistics.newPosChange($scope.teamId,$scope.gameId,player1, player2,pos1, pos2, time, comment);
-			$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+			//$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 			$scope.selectedType = "";
 			$scope.toggleGroup(null);
 		};
 		$scope.saveOurGoal = function(player, time, comment) {
-			// update Scoreboard
-			if($scope.game.home === $scope.teamname){
-				$scope.homeScore++;
-			}else{
-				$scope.awayScore++;
-			}
+			// // update Scoreboard
+			// if($scope.game.home === $scope.teamname){
+				// $scope.homeScore++;
+			// }else{
+				// $scope.awayScore++;
+			// }
 			
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}			
 			Statistics.newGoal($scope.teamId,$scope.gameId, true, player, time, comment);
-						$scope.selectedType = "";
+			$scope.selectedType = "";
 			$scope.toggleGroup(null);
 		};
 		$scope.saveTheirGoal = function(time, comment) {
-			if($scope.game.home !== $scope.teamname){
-				$scope.homeScore++;
-			}else{
-				$scope.awayScore++;
-			}
+			// if($scope.game.home !== $scope.teamname){
+				// $scope.homeScore++;
+			// }else{
+				// $scope.awayScore++;
+			// }
 			if(typeof comment === 'undefined'){ // protect against undefined
 				comment = " ";
 			}
@@ -670,17 +714,25 @@ angular.module('starter.controllers', [])
 			$scope.toggleGroup(null);			
 		};
 		$scope.saveCard = function(player, type, time, comment) {
-			Statistics.newCard($scope.teamId,$scope.gameId, type, player, time, comment);
+			
+			if(typeof comment === 'undefined'){ // protect against undefined
+				comment = " ";
+			}
+			
 			if(type === 'red'){
 				delete $scope.actualPlayers[player]; // remove from actual players
-				$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+				//$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 			}
 			else{ // yellow
+				
 				if (confirm('tweede gele kaart?')) {
+					type = 'yellow2';
 					delete $scope.actualPlayers[player]; // remove from actual players
-					$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+					//$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 				}
 			}
+			
+			Statistics.newCard($scope.teamId,$scope.gameId, type, player, time, comment);
 			$scope.selectedType = "";
 			$scope.toggleGroup(null);
 		};
@@ -759,19 +811,20 @@ angular.module('starter.controllers', [])
 
     .controller('Practises_DetailCtrl', function ($scope, Practises, User, Teams, Attendance, Settings,localStorageFactory, $stateParams) {
 		$scope.practiseId = $stateParams.practiseId;
-		
+		$scope.players = localStorageFactory.getPlayers();
 		$scope.teamId = localStorageFactory.getTeamId();
-		$scope.getPractise = Practises.getPractise($scope.teamId).then(function(practise){
-			console.log(practise);
-			$scope.practiseDate = new Date(practise.date);
-			$scope.practise = practise;
-			$scope.settings = Settings.getSettings($scope.teamId);
+		$scope.isAdmin = localStorageFactory.getAdmin();
+		
+		$scope.settings = Settings.getSettings($scope.teamId);
+		
+		Practises.getPractisesRef($scope.teamId).child($scope.practiseId).on('value',function(practiseSnap){		
+			$scope.practiseDate = new Date(practiseSnap.val().date);
+			$scope.practise = practiseSnap.val();
+			
 			//update buttons
 			$scope.present = Attendance.checkAttendance($scope.practise.Present,User.getUID());
 			$scope.absent = Attendance.checkAttendance($scope.practise.Absent,User.getUID());
 			$scope.unknown = (!$scope.present && !$scope.absent);
-			
-			$scope.players = localStorageFactory.getPlayers();
 			$scope.unknownPlayers = Attendance.checkUnknown($scope.practise.Present, $scope.practise.Absent, $scope.players);
 		});
 		
@@ -782,8 +835,7 @@ angular.module('starter.controllers', [])
 				if($scope.present === true ){
 					// already logged, no change needed
 				}else{
-					$scope.present = Attendance.addAttendance("present","Practises",User.getUID(),$scope.practiseId,$scope.teamId,$scope.practise.Absent);
-					$scope.absent = false;					
+					$scope.present = Attendance.addAttendance("present","Practises",User.getUID(),$scope.practiseId,$scope.teamId,$scope.practise.Absent);					
 				}
 			break;
 			case "absent": 
@@ -791,17 +843,30 @@ angular.module('starter.controllers', [])
 					// already logged, no change needed
 				}else{
 					$scope.absent = Attendance.addAttendance("absent","Practises",User.getUID(),$scope.practiseId,$scope.teamId,$scope.practise.Present);
-					$scope.present = false;
 				}
 			break;
 			default:
 				//nothing yet
 			break;
 			}
-			//update buttons
-			$scope.unknown = (!$scope.present && !$scope.absent);
-			// update unknown
-			$scope.unknownPlayers = Attendance.checkUnknown($scope.practise.Present, $scope.practise.Absent, $scope.players)
+		}
+		$scope.forceAttendance = function(type,uid){
+			switch(type){
+			case "present":
+				Attendance.addAttendance("present","Practises",uid,$scope.practiseId,$scope.teamId,$scope.practise.Absent);
+			break;
+			case "absent": 
+				Attendance.addAttendance("absent","Practises",uid,$scope.practiseId,$scope.teamId,$scope.practise.Present);
+				break;
+			case 'unknown':
+				//remove  attendance, reset to unknown
+				Attendance.resetAttendance("Practises",uid,$scope.practiseId,$scope.teamId,$scope.practise.Present,$scope.practise.Absent);
+				return true;
+			break;
+			default:
+				//nothing
+			break;
+			}			
 		}
     })
 
@@ -1291,7 +1356,7 @@ angular.module('starter.controllers', [])
             else {
                 alert("wachtwoorden zijn niet gelijk");
             }
-        };	
+        };
     })
 	
 	.controller('StatisticsCtrl', function ($scope, Statistics, localStorageFactory) {
@@ -1302,32 +1367,124 @@ angular.module('starter.controllers', [])
 		Statistics.getRef().child($scope.teamId).once('value',function(statsSnap){
 			for(player in $scope.players){ // reset all gameTime counters to 0
 				$scope.players[player]['totGameTime'] = 0;
+				$scope.players[player]['totYellow'] = 0;
+				$scope.players[player]['totRed'] = 0;
+				$scope.players[player]['totGoals'] = 0;	
 			}
 			for(key in statsSnap.val()){ // walk trough each game
 				var gameStats = statsSnap.val()[key];
-				var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.SecondHalfEnd - gameStats.SecondHalfStart))/60;
-				//console.log(maxGameTime);
+				var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
 				for(player in gameStats.Basis){
-					if(player.indexOf("external") == -1)
+					if(player.indexOf("external") === -1){
+						console.log($scope.players);
 						$scope.players[player]['totGameTime'] += maxGameTime;  // initially add a fill length game to each basis player
+					}
 				};
-				//console.log($scope.players);
-				for(change in gameStats.Changes){
-					//first half  or second half?
-					if(change.time < gameStats.firstHalfEnd){// first half
-						console.log("change in first half");
+				
+				var fieldPlayers = angular.copy(gameStats.Basis);
+				// loop trough Changes
+				for(key in gameStats.Changes){
+					var change = gameStats.Changes[key];
+					// update fieldPlayers ( used for cards later on )
+					if(change.type === "In/Out" ){ //change type, in/out or  position
+						fieldPlayers[change.playerIn] = fieldPlayers[change.playerOut]; // transfer position				
+						delete fieldPlayers[change.playerOut];
+
+						//first half  or second half?
+						var firstOrSecond = false; // false = first, true is second
+						if(change.time < gameStats.firstHalfEnd)
+							firstOrSecond = false;
+						if(change.time > gameStats.secondHalfStart)
+							firstOrSecond = true;
+						
+						// correct the time if it is outside of the given game times
+						if(change.time < gameStats.firstHalfStart){
+								change.time = gameStats.firstHalfStart;
+						}
+						else{ 
+							if( change.time > gameStats.firstHalfEnd && change.time < gameStats.secondHalfStart){
+								change.time = gameStats.secondHalfStart;
+							}
+							else{
+								if(change.time > gameStats.secondHalfEnd){
+									//console.log( change.time , " > ", gameStats.secondHalfEnd)
+									change.time = gameStats.secondHalfEnd;
+									continue; // this event is after the game no need to record it???
+								}
+							}
+						}
+						
+						var remainingTime = 0;
+						// calc remaining time
+						if(firstOrSecond === false){ // first half
+							remainingTime =((gameStats.firstHalfEnd - change.time) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
+						}
+						else{ // second half
+							remainingTime =((gameStats.secondHalfEnd - change.time))/60;
+						}
+						//console.log(change);
+						if(change.playerOut.indexOf("external") == -1){ // only calculate if player is not external
+							$scope.players[change.playerOut]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted. ( this  will be transferred to the player who will be changed in )
+						}
+						if(change.playerIn.indexOf("external") == -1) // only calculate if player is not external
+							$scope.players[change.playerIn]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
 					}
-					if(change.time > gameStats.SecondHalfEnd){// second half
-						console.log("change in Second half");
-					}
-					if(change.playerOut.indexOf("external") == -1){ // only calculate if  player is not external
-						//calc time
-					}
-					if(change.playerIn.indexOf("external") == -1){ // only calculate if  player is not external
-						// calc time
+				}
+				for(key in gameStats.Cards){
+					
+					var card = gameStats.Cards[key];
+					if(card.type === "red")
+							$scope.players[card.player]['totRed'] += 1; // sum count red cards
+						
+					if(card.type === "yellow" || card.type === 'yellow2') // sum count  yellow cards
+						$scope.players[card.player]['totYellow'] += 1;
+					
+					if(card.type === "red" || card.type === "yellow2" ){
+												
+						if(card.player in fieldPlayers){ // is this player on the field??
+							//reduce player's gametime
+							var firstOrSecond = false; // false = first, true is second
+							if(card.time < gameStats.firstHalfEnd)
+								firstOrSecond = false;
+							if(card.time > gameStats.secondHalfStart)
+								firstOrSecond = true;
+							
+							if(card.time < gameStats.firstHalfStart){
+								card.time = gameStats.firstHalfStart;
+							}
+							else{ 
+								if( card.time > gameStats.firstHalfEnd && card.time < gameStats.secondHalfStart){
+									card.time = gameStats.secondHalfStart;
+								}
+								else{
+									if(card.time > gameStats.secondHalfEnd){
+										card.time = gameStats.secondHalfEnd;
+									}
+								}
+							}
+							var remainingTime = 0;
+							// calc remaining time
+							if(firstOrSecond === false){ // first half
+								remainingTime =((gameStats.firstHalfEnd - card.time) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
+							}
+							else{
+								remainingTime =((gameStats.secondHalfEnd - card.time))/60;
+							}
+							console.log(card.type,$scope.players[card.player],remainingTime);
+							if(card.player.indexOf("external") == -1){ // only calculate if player is not external
+								$scope.players[card.player]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted.
+							}
+						}
 					}
 				}
 				
+				for(key in gameStats.OurGoals){
+					var goal = gameStats.OurGoals[key];
+					
+					if(goal.player.indexOf("external") == -1){ // only calculate if player is not external
+						$scope.players[card.player]['totGoals'] += 1; // update totGoals
+					}
+				}
 			}
 		});
 		

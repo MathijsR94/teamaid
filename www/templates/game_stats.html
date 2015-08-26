@@ -57,7 +57,14 @@
 					<option value="9">9</option>
 					<option value="10">10</option>
 				</select>
-			</label>			
+			</label>
+			<label class="item item-input " ng-repeat="(key,player) in externalPlayerNames">
+				<span class="input-label">naam {{key}}</span>
+				<input type="text" ng-model="player.firstName"/>
+			</label>
+			<div ng-if="externalPlayers > 0">
+					<button class="button button-block" ng-click="storeExternalNames()">save names</button>
+			</div>
 			<!-- 4-4-2 -->
 			<div ng-if="tactic !== 0 && tactic !== undefined ">
 				<div name="goalkeeper" class="row">
@@ -89,7 +96,7 @@
 					<div class="col-10" ng-if="tactic === '4-4-2'"></div>
 				</div>
 				<div class="buttons">
-					<button class="button button-block" ng-click="storeBasis(tactic)">save</button>
+					<button class="button button-block" ng-click="storeBasis(tactic)">save opstelling</button>
 				</div>
 			</div>
 			

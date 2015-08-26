@@ -1,8 +1,15 @@
 <ion-view view-title="Spelers">
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="player in players">
+      <ion-item ng-repeat="(key,player) in players">
             {{player.firstName}} {{player.insertion}} {{player.lastName}}
+			<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivatePlayer(key)">Deactivate</ion-option-button>
+      </ion-item>
+    </ion-list>
+	<ion-list>
+      <ion-item class="inactive" ng-repeat="(key,player) in inactivePlayers">
+            {{player.firstName}} {{player.insertion}} {{player.lastName}}
+			<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); activatePlayer(key)">Activate</ion-option-button>
       </ion-item>
     </ion-list>
 	<button ng-if="isAdmin" class="button button-block button-stable" ng-click="invitePlayer()">Invite player</button>
