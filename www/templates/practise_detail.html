@@ -2,18 +2,21 @@
     <ion-content>
         <div class="row">
             <div class="col">
-                <h1>Training</h1>
-                <span>{{ practiseDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian></span>
-				<span>{{practise.location}}</span>
+                <h1 class="center">Training</h1>
+                <span class="center">{{ practiseDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian></span>
+				<span class="center">Locatie: {{practise.location}}</span>
 				<div ng-if="settings.dutyPractises === true">
 					<span ng-repeat="(id,value) in practise.Duty">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
 				</div>
+
+                <h3 class="center">Geef hier je beschikbaarheid op</h3>
+                <span class="center">Ik ben</span>
                 <div class="button-bar">
                     <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }" ng-click="changeAttendance('present');">aanwezig</a>
                     <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }" ng-click="changeAttendance('absent');">afwezig</a>
-                    <a ng-class="{ 'button button-royal' : unknown , 'button button-stable' : !unknown}">onbekend</a>
                 </div>
                 <div class="row responsive-sm">
+<<<<<<< HEAD
 				<div class="col"><span>aanwezig</span>
 					<ion-item ng-repeat="(id,value) in practise.Present">
 							   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
@@ -41,6 +44,38 @@
 					</ion-list>
 				</div>
 			</div>
+=======
+                    <div class="col">
+                        <div class="item item-divider">
+                            Aanwezig
+                        </div>
+
+                        <ion-item ng-repeat="(id,value) in practise.Present">
+                            {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+                        </ion-item>
+                    </div>
+                    <div class="col">
+                        <div class="item item-divider">
+                            Afwezig
+                        </div>
+
+                        <ion-item ng-repeat="(id,value) in practise.Absent">
+                            {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+                        </ion-item>
+                    </div>
+                    <div class="col">
+                        <div class="item item-divider">
+                            Onbekend
+                        </div>
+
+                        <ion-list>
+                            <ion-item ng-repeat="player in unknownPlayers">
+                                {{player.firstName}} {{player.insertion}} {{player.lastName}}
+                            </ion-item>
+                        </ion-list>
+                    </div>
+                </div>
+>>>>>>> origin/master
             </div>
         </div>
 
