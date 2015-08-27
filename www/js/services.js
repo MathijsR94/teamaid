@@ -334,7 +334,12 @@ angular.module('starter.services', [])
 				return $firebaseObject(eventsRef.child(teamId));
 			},
 			getEventsArray: function(teamId) {
-				return $firebaseArray(eventsRef.child(teamId));
+                var deferred = $q.defer();
+                var events = $firebaseArray(eventsRef.child(teamId));
+                events.$loaded(function () {
+                    deferred.resolve(events);
+                });
+                return deferred.promise;
 			},
 			getEvent: function(teamId) {
 				var deferred = $q.defer();
@@ -355,12 +360,12 @@ angular.module('starter.services', [])
 					date : date.toString(),
 					time : time,
 					location : location
-				});							
+				});		
 			},
 			updateEvent: function(teamId, eventId, date, time, location){
-                console.log(teamId);
-				var eventsRef = eventsRef.child(teamId).child(eventId);
-				eventsRef.update({
+                //console.log(teamId);
+				
+				eventsRef.child(teamId).child(eventId).update({
 					date : date.toString(),
 					time : time,
 					location : location
@@ -782,6 +787,9 @@ angular.module('starter.services', [])
             setPractises: function(practises) {
                 localStorage.setItem('practises', JSON.stringify(practises));
             },
+			setEvents: function(events) {
+                localStorage.setItem('events', JSON.stringify(events));
+            },
             getTeamId: function() {
                 var test = JSON.parse(localStorage.getItem('teams'));
                 for(var key in test)
@@ -811,6 +819,9 @@ angular.module('starter.services', [])
             },
             getPractises: function() {
                 return JSON.parse(localStorage.getItem('practises'));
+            },
+			getEvents: function() {
+                return JSON.parse(localStorage.getItem('events'));
             }
 
         }
