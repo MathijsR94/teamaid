@@ -1,21 +1,23 @@
-<ion-view view-title="Trainingen" has-subheader>
+<ion-view view-title="Events" has-subheader>
     <ion-header-bar class="bar-stable bar-subheader">
         <div class="buttons">
             <button ng-if="isAdmin" class="button button-icon icon ion-ios-minus-outline" ng-click="showDelete()"></button>
         </div>
         <h1 class="title"></h1>
         <div class="buttons">
-            <button class="button button-stable" ng-if="isAdmin" ng-click="addPractise()">Add training</button>
+            <button class="button button-stable" ng-if="isAdmin" ng-click="addEvent()">Add event</button>
         </div>
     </ion-header-bar>
     <ion-content>
         <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
-            <ion-item ng-repeat="practise in practises | orderBy:'date'" ng-click="getDetail(practise.$id)">
-                <date-Time sdate='practise.date'></date-Time> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
+            <ion-item ng-repeat="event in events | orderBy:'date'" ng-click="getDetail(event.$id)">
+                <date-Time sdate='event.date'></date-Time> <standard-time-no-meridian etime='event.time'></standard-time-no-meridian> {{event.location}}
                 <ion-delete-button class="ion-minus-circled"
-                                   ng-click="onItemDelete(practise)">
+                                   ng-click="onItemDelete(event)">
                 </ion-delete-button>
-                <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); editPractise(practise)">Edit</ion-option-button>
+				<ion-option-button class="button-balanced" ng-click="$event.stopPropagation(); changeAttendance('present',event)">P</ion-option-button>
+				<ion-option-button class="button-assertive" ng-click="$event.stopPropagation(); changeAttendance('absent',event)">A</ion-option-button>
+                <ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editEvent(event)">Edit</ion-option-button>
             </ion-item>
         </ion-list>
 

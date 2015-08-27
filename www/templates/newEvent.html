@@ -1,36 +1,25 @@
-<ion-view title="New Training">
+<ion-view title="New Event">
     <ion-content>
         <div class="row row-center">
             <div class="col col-center">
-                <form name="registerForm"
-                      ng-submit="newPractise(location,weeks)" novalidate>
-                    <h3>Training</h3>
+                    <h3>Event</h3>
                     <div class="list">
-						<ionic-datepicker name="date" idate="practiseDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
-							<button class="button button-block button-positive"> {{ practiseDate | date:'dd - MMMM - yyyy' }} </button>
+						<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+							<button class="button button-block button-stable"> {{ eventDate | date:'dd - MMMM - yyyy' }} </button>
 						</ionic-datepicker>
-						<ionic-timepicker name="time" etime="practiseTime" format="24" step="15" callback="timePickerCallback">
-							<button class="button button-block button-positive"> <standard-time-no-meridian etime='practiseTime'></standard-time-no-meridian></button>
+						<ionic-timepicker name="time" etime="eventTime" format="24" step="15" callback="timePickerCallback">
+							<button class="button button-block button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
 						</ionic-timepicker>
                         <label class="item item-input">
                             <span class="input-label">Locatie</span>
                             <input type="text" ng-model="location" required/>
-                        </label>
-						<br>
-						<i>
-							Herhalen voor {{weeks}} weken
-						</i>
-						<label class="item range range-positive">
-							<input type="range" name="rangeInput" min="1" max="52" ng-model="weeks" ng-change="drag(rangeValue)">                                                       
-						</label>
-						
+                        </label>						
                     </div>				
                     <div>
-                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="newEvent(location)">
                             Toevoegen
                         </button>
                     </div>
-                </form>
                 <button class="button button-block button-clear button-stable waves-light waves-effect"
                         ui-sref="tab.games">
                     Annuleren

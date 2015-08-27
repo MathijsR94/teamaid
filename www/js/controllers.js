@@ -1037,7 +1037,7 @@ angular.module('starter.controllers', [])
             $state.go('app.event', { eventId: event });
         }
 		
-		$scope.addPractise = function(){
+		$scope.addEvent = function(){
 			$state.go('app.newEvent');
 		}
 
