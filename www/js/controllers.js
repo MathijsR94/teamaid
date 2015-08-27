@@ -308,7 +308,6 @@ angular.module('starter.controllers', [])
 			
 			switch(type){
 				case "present":	
-					console.log(game);
 					$scope.present = Attendance.addAttendance("present","Games",User.getUID(),game.$id,$scope.teamId,game.Absent);					
 				break;
 				case "absent": 
@@ -777,7 +776,7 @@ angular.module('starter.controllers', [])
 
 	})
 	
-	.controller('PractisesCtrl', function ($scope, Practises, User, $state, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
+	.controller('PractisesCtrl', function ($scope, Practises, User, $state, Attendance, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
 		$scope.ShowDelete = false;
 		$scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
@@ -842,6 +841,20 @@ angular.module('starter.controllers', [])
             Practises.setPractise(practise.$id);
             $state.go('app.practise_edit', { practiseId: practise.$id});
         }
+		$scope.changeAttendance = function(type,practise){
+			
+			switch(type){
+				case "present":	
+					$scope.present = Attendance.addAttendance("present","Practises",User.getUID(),practise.$id,$scope.teamId,practise.Absent);					
+				break;
+				case "absent": 
+					$scope.absent = Attendance.addAttendance("absent","Practises",User.getUID(),practise.$id,$scope.teamId,practise.Present);
+				break;
+				default:
+					//nothing yet
+				break;
+			}
+		}
 		
     })
 
@@ -1380,9 +1393,9 @@ angular.module('starter.controllers', [])
 		
 		$scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
             if(snap.val() === true) {
-                Settings.getSettings($scope.teamId).then(function(settings) {
-                   $scope.settings = settings;
-                   localStorageFactory.setSettings(settings);
+                Settings.getRef().child($scope.teamId).child("Settings").on("value", function(settingsSnap) {
+                   $scope.settings = settingsSnap.val();
+                   localStorageFactory.setSettings(settingsSnap.val());
                 });
             }
         });

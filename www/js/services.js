@@ -521,15 +521,18 @@ angular.module('starter.services', [])
 	})
 	
 	.factory('Settings', function(firebaseRef,$firebaseObject, $q){
-		var ref = firebaseRef.ref();
+		var settingsRef = firebaseRef.ref().child("Teams");
 		return {
 			getSettings: function(teamId){
-				return $firebaseObject(ref.child("Teams").child(teamId).child("Settings"));
+				return $firebaseObject(settingsRef.child(teamId).child("Settings"));
+			},
+			getRef: function(){
+				return settingsRef;
 			},
 			updateSetting: function(key,value,teamId){
 				var setting = {};
 				setting[key] = value;
-				ref.child("Teams").child(teamId).child("Settings").update(setting);
+				settingsRef.child(teamId).child("Settings").update(setting);
 			},
 		};
 	})
