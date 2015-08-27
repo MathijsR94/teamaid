@@ -186,9 +186,28 @@ angular.module('starter.controllers', [])
             var teamId = localStorageFactory.getTeamId();
 
             ref.child('Teams').child(teamId).once('value', function(teamData) {
-                localStorageFactory.setPlayers(teamData.val().Players);
-                localStorageFactory.setSettings(teamData.val().Settings);
-                localStorageFactory.setTeamName(teamData.val());
+				
+				if(typeof teamData.val() !== 'undefined'){	
+					localStorageFactory.setTeamName(teamData.val());
+					
+					if(typeof teamData.val().Players !== 'undefined')
+						localStorageFactory.setPlayers(teamData.val().Players);
+					else
+						localStorageFactory.setPlayers({});
+					
+					if(typeof teamData.val().InActive !== 'undefined')
+						localStorageFactory.setInactivePlayers(teamData.val().InActive);
+					else
+						localStorageFactory.setInactivePlayers({});
+					
+					if(typeof teamData.val().Settings !== 'undefined')
+						localStorageFactory.setSettings(teamData.val().Settings);
+					else
+						localStorageFactory.setSettings({});	
+				}	
+				else
+					localStorageFactory.setTeamName({});
+				
             })
 
             ref.child('Admins').child(teamId).once('value', function(admin) {
@@ -242,11 +261,11 @@ angular.module('starter.controllers', [])
 		}
     })
 
-	.controller('GamesCtrl', function ($scope, Games, User, $state, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
+	.controller('GamesCtrl', function ($scope, Games, User, $state, Attendance, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
 		$scope.ShowDelete = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
-        $scope.games = localStorageFactory.getGames($scope.teamId);
+        $scope.games = localStorageFactory.getGames();
         $scope.players = localStorageFactory.getPlayers();
 
         $scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
@@ -270,11 +289,8 @@ angular.module('starter.controllers', [])
 		}
 
 		$scope.onItemDelete = function(item) {
-			var strippedItem = angular.copy(item);
-			$scope.games = Utility.deleteItem($scope.games, item, strippedItem);
-			//console.log($scope.games);
-			$scope.gamesRef.set($scope.games);
-		};
+			$scope.games.$remove(item);
+		}
 
 		$scope.getDetail = function(game) {
 			Games.setGame(game.$id);
@@ -287,6 +303,21 @@ angular.module('starter.controllers', [])
 		$scope.statsGame = function(game) {
 			Games.setGame(game.$id);
 			$state.go('app.game_stats', { gameId: game.$id});
+		}
+		$scope.changeAttendance = function(type,game){
+			
+			switch(type){
+				case "present":	
+					console.log(game);
+					$scope.present = Attendance.addAttendance("present","Games",User.getUID(),game.$id,$scope.teamId,game.Absent);					
+				break;
+				case "absent": 
+					$scope.absent = Attendance.addAttendance("absent","Games",User.getUID(),game.$id,$scope.teamId,game.Present);
+				break;
+				default:
+					//nothing yet
+				break;
+			}
 		}
     })
 
@@ -796,9 +827,7 @@ angular.module('starter.controllers', [])
 		}
 
         $scope.onItemDelete = function(item) {
-            var strippedItem = angular.copy(item);
-            Utility.deleteItem($scope.practises, item, strippedItem);
-            $scope.practisesRef.set($scope.practises);
+           $scope.practises.$remove(item);
         };
 		$scope.newPractise = function(location,repeatValue){
 			if (typeof ($scope.date) === 'undefined' || typeof ($scope.time) === 'undefined'|| typeof (repeatValue) === 'undefined') {
@@ -1192,13 +1221,25 @@ angular.module('starter.controllers', [])
     })
 	
 	.controller('CreditsCtrl', function ($scope, Teams, localStorageFactory, User, Finance, $state,$ionicHistory) {
-
 		$scope.teamId = localStorageFactory.getTeamId();
 		$scope.nbsp = " "; // whitespace
 		$scope.players = localStorageFactory.getPlayers();
 		
-		$scope.newCredit = function(uid, value, comment){
-			Finance.newCredit($scope.teamId, uid, value, comment, $scope.players[uid]);
+		$scope.newCredit = function(uid, value, comment, debetCredit){
+			console.log(debetCredit);
+			if(typeof comment === 'undefined'){ // protect against undefined
+				comment = " ";
+			}
+			var val = value;
+			if(debetCredit !== true){
+				Finance.newCredit($scope.teamId, uid, (val * (-1)), comment, $scope.players[uid]);
+				console.log("debet");
+			}
+			else{
+				Finance.newCredit($scope.teamId, uid, (val), comment, $scope.players[uid]);
+				console.log("credit");
+			}
+			
 			$ionicHistory.goBack();
 		}
     })
@@ -1331,12 +1372,20 @@ angular.module('starter.controllers', [])
 			
     })
 	
-	.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, localStorageFactory) {
+	.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, localStorageFactory,firebaseRef) {
 
         $scope.teamId = localStorageFactory.getTeamId();
-        $scope.settings = Settings.getSettings();
+        $scope.settings = localStorageFactory.getSettings();
         $scope.isAdmin = localStorageFactory.getAdmin();
 		
+		$scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
+            if(snap.val() === true) {
+                Settings.getSettings($scope.teamId).then(function(settings) {
+                   $scope.settings = settings;
+                   localStorageFactory.setSettings(settings);
+                });
+            }
+        });
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
                 $scope.shownGroup = null;
@@ -1347,8 +1396,6 @@ angular.module('starter.controllers', [])
         $scope.isGroupShown = function (group) {
             return $scope.shownGroup === group;
         };
-
-
         $scope.changeSetting = function (key, value) {
             console.log(key, value);
             Settings.updateSetting(key, value, $scope.teamId);
@@ -1367,6 +1414,12 @@ angular.module('starter.controllers', [])
 
         $scope.teamId = localStorageFactory.getTeamId();
 		$scope.players = localStorageFactory.getPlayers();
+		$scope.inactivePlayers = localStorageFactory.getInactivePlayers();
+		
+		if(typeof $scope.inactivePlayers !== 'undefined'){
+			$scope.players = angular.extend($scope.players,$scope.inactivePlayers);
+		}
+		
 		console.log($scope.players);
 		Statistics.getRef().child($scope.teamId).once('value',function(statsSnap){
 			for(player in $scope.players){ // reset all gameTime counters to 0
@@ -1413,7 +1466,7 @@ angular.module('starter.controllers', [])
 								if(change.time > gameStats.secondHalfEnd){
 									//console.log( change.time , " > ", gameStats.secondHalfEnd)
 									change.time = gameStats.secondHalfEnd;
-									continue; // this event is after the game no need to record it???
+									//continue; // this event is after the game no need to record it???
 								}
 							}
 						}
@@ -1434,49 +1487,53 @@ angular.module('starter.controllers', [])
 							$scope.players[change.playerIn]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
 					}
 				}
+				
 				for(key in gameStats.Cards){
-					
+				
 					var card = gameStats.Cards[key];
-					if(card.type === "red")
-							$scope.players[card.player]['totRed'] += 1; // sum count red cards
-						
-					if(card.type === "yellow" || card.type === 'yellow2') // sum count  yellow cards
-						$scope.players[card.player]['totYellow'] += 1;
-					
-					if(card.type === "red" || card.type === "yellow2" ){
-												
-						if(card.player in fieldPlayers){ // is this player on the field??
-							//reduce player's gametime
-							var firstOrSecond = false; // false = first, true is second
-							if(card.time < gameStats.firstHalfEnd)
-								firstOrSecond = false;
-							if(card.time > gameStats.secondHalfStart)
-								firstOrSecond = true;
+					//console.log(card);
+					if(card.player.indexOf("external") == -1){
+						if(card.type === "red")
+								$scope.players[card.player]['totRed'] += 1; // sum count red cards
 							
-							if(card.time < gameStats.firstHalfStart){
-								card.time = gameStats.firstHalfStart;
-							}
-							else{ 
-								if( card.time > gameStats.firstHalfEnd && card.time < gameStats.secondHalfStart){
-									card.time = gameStats.secondHalfStart;
+						if(card.type === "yellow" || card.type === 'yellow2') // sum count  yellow cards
+							$scope.players[card.player]['totYellow'] += 1;
+					
+						if(card.type === "red" || card.type === "yellow2" ){
+													
+							if(card.player in fieldPlayers){ // is this player on the field??
+								//reduce player's gametime
+								var firstOrSecond = false; // false = first, true is second
+								if(card.time < gameStats.firstHalfEnd)
+									firstOrSecond = false;
+								if(card.time > gameStats.secondHalfStart)
+									firstOrSecond = true;
+								
+								if(card.time < gameStats.firstHalfStart){
+									card.time = gameStats.firstHalfStart;
 								}
-								else{
-									if(card.time > gameStats.secondHalfEnd){
-										card.time = gameStats.secondHalfEnd;
+								else{ 
+									if( card.time > gameStats.firstHalfEnd && card.time < gameStats.secondHalfStart){
+										card.time = gameStats.secondHalfStart;
+									}
+									else{
+										if(card.time > gameStats.secondHalfEnd){
+											card.time = gameStats.secondHalfEnd;
+										}
 									}
 								}
-							}
-							var remainingTime = 0;
-							// calc remaining time
-							if(firstOrSecond === false){ // first half
-								remainingTime =((gameStats.firstHalfEnd - card.time) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
-							}
-							else{
-								remainingTime =((gameStats.secondHalfEnd - card.time))/60;
-							}
-							console.log(card.type,$scope.players[card.player],remainingTime);
-							if(card.player.indexOf("external") == -1){ // only calculate if player is not external
+								var remainingTime = 0;
+								// calc remaining time
+								if(firstOrSecond === false){ // first half
+									remainingTime =((gameStats.firstHalfEnd - card.time) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
+								}
+								else{
+									remainingTime =((gameStats.secondHalfEnd - card.time))/60;
+								}
+								console.log(card.type,$scope.players[card.player],remainingTime);
+								//if(card.player.indexOf("external") == -1){ // only calculate if player is not external
 								$scope.players[card.player]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted.
+								//}
 							}
 						}
 					}

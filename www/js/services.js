@@ -716,13 +716,20 @@ angular.module('starter.services', [])
 	
     .factory('Utility', function () {
         return {
-            deleteItem: function (array, item, strippedItem) {
+            deleteItem: function (array, item) {
                 console.log(item);
-                console.log(strippedItem);
-                var array = array;
+                var retArray = [];
                 if (confirm('Weet je zeker dat je dit item wilt verwijderen?')) {
-                    array.$remove(item);
-                    return array;
+					array.forEach(function(game){
+						if(game !== item){
+							var obj = angular.copy(game);
+							console.log(obj);
+							retArray.push(obj);
+							console.log(retArray);
+						}
+					});
+                    //array.$remove(item);
+                    return retArray;
                 }
 
             },
@@ -747,6 +754,9 @@ angular.module('starter.services', [])
             },
             setPlayers: function(players) {
                 localStorage.setItem('players', JSON.stringify(players));
+            },
+			setInactivePlayers: function(inactivePlayers) {
+                localStorage.setItem('inactivePlayers', JSON.stringify(inactivePlayers));
             },
             setSettings: function(settings) {
                 localStorage.setItem('settings', JSON.stringify(settings));
@@ -775,6 +785,9 @@ angular.module('starter.services', [])
             },
             getPlayers: function() {
                 return JSON.parse(localStorage.getItem('players'));
+            },
+			getInactivePlayers: function() {
+                return JSON.parse(localStorage.getItem('inactivePlayers'));
             },
             getSettings: function() {
                 return JSON.parse(localStorage.getItem('settings'));

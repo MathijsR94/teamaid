@@ -2,16 +2,18 @@
     <ion-content>
         <div class="row row-center">
             <div class="col col-center">
-                <form name="registerForm"
-                      ng-submit="newCredit(selectedPlayer,value,comment)" novalidate>
-                    <h3>Boete</h3>
+                    <h3>Credits</h3>
                     <div class="list">
 						<label class="item item-input item-select">
                             <span class="input-label">Speler</span>
                             <select ng-model="selectedPlayer" ng-options="key as (player.firstName +nbsp+ player.insertion +nbsp+ player.lastName) for (key,player) in players"></select>
                         </label>
+                        <ion-toggle ng-model="debetCredit">
+							<span class="input-label" ng-if="debetCredit === true">Credit</span>
+							<span class="input-label" ng-if="debetCredit !== true">Debet</span>
+						</ion-toggle>
                         <label class="item item-input">
-                            <span class="input-label">Credit</span>
+                            <span class="input-label">Bedrag</span> € &nbsp <span ng-if="debetCredit !== true"> - &nbsp </span>
                             <input type="tel" ng-model="value" required/>
                         </label>
                         <label class="item item-input">
@@ -20,11 +22,10 @@
                         </label>
                     </div>
                     <div>
-                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="newCredit(selectedPlayer,value,comment,debetCredit)">
                             Toevoegen
                         </button>
                     </div>
-                </form>
                 <button class="button button-block button-clear button-stable waves-light waves-effect"
                         ui-sref="tab.games">
                     Annuleren

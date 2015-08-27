@@ -2,8 +2,6 @@
     <ion-content>
         <div class="row row-center">
             <div class="col col-center">
-                <form name="registerForm"
-                      ng-submit="newPractise(location,weeks)" novalidate>
                     <h3>Training</h3>
                     <div class="list">
 						<ionic-datepicker name="date" idate="practiseDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
@@ -26,11 +24,10 @@
 						
                     </div>				
                     <div>
-                        <button class="button button-block button-greenbricks waves-light waves-effect">
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="newPractise(location,weeks)">
                             Toevoegen
                         </button>
                     </div>
-                </form>
                 <button class="button button-block button-clear button-stable waves-light waves-effect"
                         ui-sref="tab.games">
                     Annuleren
