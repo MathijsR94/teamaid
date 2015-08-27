@@ -1,21 +1,30 @@
 <ion-view view-title="Edit Wedstrijd">
     <ion-content>
-        <label class="item-input">
+        <label ng-if="home !== teamName" class="item-input">
             <span class="input-label">Thuisteam</span>
             <input type="text"
                    ng-model="home"/>
         </label>
-        <label class="item-input">
+        <label  ng-if="away !== teamName" class="item-input">
             <span class="input-label">Uitteam</span>
             <input type="text"
                    ng-model="away"/>
         </label>
+		<span>Datum
         <ionic-datepicker name="date" idate="gameDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
-            <button class="button button-block button-positive"> {{ gameDate | date:'dd - MMMM - yyyy' }} </button>
+            <button class="button button-block button-stable"> {{ gameDate | date:'dd - MMMM - yyyy' }} </button>
         </ionic-datepicker>
+		</span>
+		<span>Wedstrijd Aanvang
         <ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
-            <button class="button button-block button-positive"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+            <button class="button button-block button-stable"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
         </ionic-timepicker>
+		</span>
+		<span>Verzameltijd
+		<ionic-timepicker name="time" etime="collectTime" format="24" step="15" callback="timePickerCallback">
+            <button class="button button-block button-stable"> <standard-time-no-meridian etime='collectTime'></standard-time-no-meridian></button>
+        </ionic-timepicker>
+		</span>
 
         <button class="button button-block" ng-click="updateGame(home, away)">Opslaan</button>
     </ion-content>

@@ -1,12 +1,15 @@
 <ion-view view-title="Edit Training">
     <ion-content>
+		<span>Datum
         <ionic-datepicker name="date" idate="practiseDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
-            <button class="button button-block button-positive"> {{ practiseDate | date:'dd - MMMM - yyyy' }} </button>
+            <button class="button button-block button-stable"> {{ practiseDate | date:'dd - MMMM - yyyy' }} </button>
         </ionic-datepicker>
+		</span>
+		<span>tijd
         <ionic-timepicker name="time" etime="gameTime" format="24" step="15" callback="timePickerCallback">
-            <button class="button button-block button-positive"> <standard-time-no-meridian etime='practiseTime'></standard-time-no-meridian></button>
+            <button class="button button-block button-stable"> <standard-time-no-meridian etime='practiseTime'></standard-time-no-meridian></button>
         </ionic-timepicker>
-
+		</span>
         <label class="item-input">
             <span class="input-label">Locatie</span>
             <input type="text"

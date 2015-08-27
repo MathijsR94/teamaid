@@ -235,22 +235,23 @@ angular.module('starter.services', [])
                 });
                 return deferred.promise;
             },
-			createGame: function(teamId, gameDate, gameTime, home, away){
+			createGame: function(teamId, gameDate, gameTime,collectTime, home, away){
 				var teamGamesRef = gamesRef.child(teamId);
 				var games = $firebaseArray(teamGamesRef);
 
 				games.$add({
 					date : gameDate.toString(),
 					time : gameTime,
+					collect : collectTime,
 					home : home,
 					away : away
 				});			
 			},
-			updateGame: function(teamId, gameId, date, time, home, away){
-				var gameRef = gamesRef.child(teamId).child(gameId);
-				gameRef.update({
+			updateGame: function(teamId, gameId, date, time,collectTime, home, away){
+				gamesRef.child(teamId).child(gameId).update({
 					date : date.toString(),
 					time : time,
+					collect: collectTime,
 					home : home,
 					away : away
 				});
@@ -308,9 +309,9 @@ angular.module('starter.services', [])
 				};					
 			},
 			updatePractise: function(teamId, practiseId, date, time, location){
-                console.log(teamId);
-				var practisesRef = practisesRef.child(teamId).child(practiseId);
-				practisesRef.update({
+                //console.log(teamId);
+				
+				practisesRef.child(teamId).child(practiseId).update({
 					date : date.toString(),
 					time : time,
 					location : location

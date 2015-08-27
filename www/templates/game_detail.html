@@ -3,8 +3,9 @@
 	<ion-list>
 		<div class="col">
 		<h1 class="center">{{game.home}} vs {{game.away}}</h1>
-		<span class="center">{{ gameDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian
-				etime='game.time'></standard-time-no-meridian></span>
+		<span class="center">Datum: {{ gameDate | date:'dd - MM - yyyy' }}</span> 
+		<span class="center">Aanvang wedstrijd: <standard-time-no-meridian etime='game.time'></standard-time-no-meridian></span>
+		<span class="center">Verzameltijd: <standard-time-no-meridian etime='game.collect'></standard-time-no-meridian></span>
 
 		<div ng-if="settings.dutyGames === true">
 			<span ng-repeat="(id,value) in game.Duty">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>

@@ -212,7 +212,6 @@ app.directive('dateTime', function() {
 		  }
 		})
 		.state('app.statistics', {
-		  cache: false,
 		  url: "/statistics",
 		  views: {
 			'menuContent': {

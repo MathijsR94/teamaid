@@ -416,6 +416,7 @@ angular.module('starter.controllers', [])
 
 	.controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory) {
 		$scope.gameId = $stateParams.gameId;
+		$scope.teamName = localStorageFactory.getTeamName();
 		
 		$scope.teamId = localStorageFactory.getTeamId();
 		$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
@@ -425,6 +426,10 @@ angular.module('starter.controllers', [])
 			$scope.game = game;
 			$scope.home = game.home;
 			$scope.away = game.away;
+			if(typeof game.collect !== 'undefined')
+				$scope.collectTime = game.collect;
+			else
+				$scope.collectTime = 0;
 		})
 		$scope.datePickerCallback = function (val) {
 			if (typeof(val) === 'undefined') {
@@ -445,7 +450,7 @@ angular.module('starter.controllers', [])
 		};
 
 		$scope.updateGame = function(home, away) {
-			Games.updateGame($scope.teamId, $scope.gameId, $scope.gameDate, $scope.gameTime, home, away);
+			Games.updateGame($scope.teamId, $scope.gameId, $scope.gameDate,$scope.collectTime, $scope.gameTime, home, away);
 			$ionicHistory.goBack();
 		}
 	})
@@ -457,6 +462,7 @@ angular.module('starter.controllers', [])
 		$scope.gameDate = new Date();
 		$scope.title = "Selecteer datum";
 		$scope.gameTime = 52200;
+		$scope.collectTime = 48600;
 		
 		$scope.datePickerCallback = function (val) {
 			if (typeof(val) === 'undefined') {
@@ -475,23 +481,18 @@ angular.module('starter.controllers', [])
 			}
 		};
 		$scope.newGame = function(homeAway, opponent){
-			if (typeof ($scope.gameDate) === 'undefined' || typeof ($scope.gameTime) === 'undefined') {
-				
-			} else {
-				if(homeAway === true){
-					var home = $scope.teamName;
-					var away = opponent;
-				}
-				else{
-					var away = $scope.teamName;
-					var home = opponent;
-				}
-				Games.createGame($scope.teamId, $scope.gameDate, $scope.gameTime, home, away);
-				console.dir($ionicHistory);
-				$ionicHistory.goBack();
+			if(homeAway === true){
+				var home = $scope.teamName;
+				var away = opponent;
 			}
+			else{
+				var away = $scope.teamName;
+				var home = opponent;
+			}
+			Games.createGame($scope.teamId, $scope.gameDate, $scope.gameTime,$scope.collectTime, home, away);
+			//console.dir($ionicHistory);
+			$ionicHistory.goBack();
 		};
-	
 	})
 	
 	.controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics,$state, $stateParams,firebaseRef, localStorageFactory, $ionicHistory) {
@@ -921,7 +922,6 @@ angular.module('starter.controllers', [])
 
     .controller('Practises_EditCtrl', function ($scope, Practises, User, $stateParams,localStorageFactory, $ionicHistory) {
         $scope.practiseId = $stateParams.practiseId;
-
 		$scope.teamId = localStorageFactory.getTeamId();
 		$scope.getPractise = Practises.getPractise($scope.teamId).then(function (practise) {
 			$scope.practiseDate = new Date(practise.date);
@@ -980,14 +980,10 @@ angular.module('starter.controllers', [])
 			}
 		};
 
-		$scope.newPractise = function(location,repeatValue){
-			if (typeof ($scope.practiseDate) === 'undefined' || typeof ($scope.practiseTime) === 'undefined'|| typeof (repeatValue) === 'undefined') {
-				
-			} else {		
-				Practises.createPractise($scope.teamId, $scope.practiseDate, $scope.practiseTime, location, repeatValue);
-				//return to previous page
-				$ionicHistory.goBack();
-			}	
+		$scope.newPractise = function(location,repeatValue){		
+			Practises.createPractise($scope.teamId, $scope.practiseDate, $scope.practiseTime, location, repeatValue);
+			//return to previous page
+			$ionicHistory.goBack();
 		}
 	})
 	
@@ -1433,8 +1429,8 @@ angular.module('starter.controllers', [])
 			$scope.players = angular.extend($scope.players,$scope.inactivePlayers);
 		}
 		
-		console.log($scope.players);
-		Statistics.getRef().child($scope.teamId).once('value',function(statsSnap){
+		//console.log($scope.players);
+		Statistics.getRef().child($scope.teamId).on('value',function(statsSnap){
 			for(player in $scope.players){ // reset all gameTime counters to 0
 				$scope.players[player]['totGameTime'] = 0;
 				$scope.players[player]['totYellow'] = 0;
@@ -1444,14 +1440,16 @@ angular.module('starter.controllers', [])
 			for(key in statsSnap.val()){ // walk trough each game
 				var gameStats = statsSnap.val()[key];
 				var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
+				
 				for(player in gameStats.Basis){
 					if(player.indexOf("external") === -1){
-						console.log($scope.players);
+						//console.log($scope.players);
 						$scope.players[player]['totGameTime'] += maxGameTime;  // initially add a fill length game to each basis player
 					}
 				};
 				
 				var fieldPlayers = angular.copy(gameStats.Basis);
+				//console.log("changes");
 				// loop trough Changes
 				for(key in gameStats.Changes){
 					var change = gameStats.Changes[key];
@@ -1500,7 +1498,7 @@ angular.module('starter.controllers', [])
 							$scope.players[change.playerIn]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
 					}
 				}
-				
+				//console.log("cards");
 				for(key in gameStats.Cards){
 				
 					var card = gameStats.Cards[key];
@@ -1551,16 +1549,17 @@ angular.module('starter.controllers', [])
 						}
 					}
 				}
-				
+				//console.log("goals");
 				for(key in gameStats.OurGoals){
 					var goal = gameStats.OurGoals[key];
-					
 					if(goal.player.indexOf("external") == -1){ // only calculate if player is not external
 						$scope.players[card.player]['totGoals'] += 1; // update totGoals
 					}
 				}
 			}
-		});
+			console.log($scope.players);
+		})
+		
 		
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
