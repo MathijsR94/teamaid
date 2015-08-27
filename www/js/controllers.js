@@ -149,7 +149,15 @@ angular.module('starter.controllers', [])
     })
 	
     .controller('LoginCtrl', function ($scope, firebaseRef, $state) {
-				
+		
+		firebaseRef.ref().onAuth(function(authData) {
+		  if (authData) {
+			console.log("Authenticated with uid:", authData.uid);
+			$state.go('app.home');
+		  } else {
+			console.log("Client unauthenticated.")
+		  }
+		});		
         //Login method
         $scope.login = function (em, pwd, isValid) {
             if (isValid) {
