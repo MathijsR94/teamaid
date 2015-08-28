@@ -794,10 +794,13 @@ angular.module('starter.services', [])
 				console.log(admins);
                 for(var key in admins) {
 					console.log(key, uid);
-                    if(key === uid)
+                    if(key === uid){
                         localStorage.setItem('admin', true);
-                    else
+						break;
+					}
+                    else{
                         localStorage.setItem('admin', false);
+					}
                 }
             },
             setGames: function(games) {
