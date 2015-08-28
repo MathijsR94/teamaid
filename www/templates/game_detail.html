@@ -1,4 +1,4 @@
-<ion-view view-title="Wedstrijd detail">
+<ion-view view-title="Wedstrijd info">
     <ion-content>
 	<ion-list>
 		<div class="col">
@@ -8,7 +8,7 @@
 		<span class="center">Verzameltijd: <standard-time-no-meridian etime='game.collect'></standard-time-no-meridian></span>
 
 		<div ng-if="settings.dutyGames === true">
-			<span ng-repeat="(id,value) in game.Duty">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+			<span ng-repeat="(id,value) in game.Duty" class="center">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
 		</div>
 			<h3 class="center">Geef hier je beschikbaarheid op</h3>
                 <span class="center">Ik ben</span>

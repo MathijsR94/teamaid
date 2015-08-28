@@ -1225,11 +1225,14 @@ angular.module('starter.controllers', [])
 		}
     })
 	
-	.controller('CreditsCtrl', function ($scope, Teams, localStorageFactory, User, Finance, $state,$ionicHistory) {
+	.controller('CreditsCtrl', function ($scope, Teams, localStorageFactory, User, Finance, $state,$ionicHistory, Utility) {
 		$scope.teamId = localStorageFactory.getTeamId();
 		$scope.nbsp = " "; // whitespace
 		$scope.players = localStorageFactory.getPlayers();
-		
+
+        $scope.isEmpty = function(obj) {
+            return Utility.isEmpty(obj);
+        }
 		$scope.newCredit = function(uid, value, comment, debetCredit){
 			console.log(debetCredit);
 			if(typeof comment === 'undefined'){ // protect against undefined
@@ -1581,7 +1584,7 @@ angular.module('starter.controllers', [])
 			return filtered;
 		};
 	});
-	
+
 	function dynamicSort(property) {
 		var sortOrder = 1;
 		if(property[0] === "-") {

@@ -1,14 +1,20 @@
 <ion-view view-title="Teampot">
   <ion-content>
-    <ion-list ng-repeat="player in credits">
-       <ion-item class="item-stable" ng-click="toggleGroup(player.$id)" ng-class="{active: isGroupShown(player.$id)}">
-			<i class="icon" ng-class="isGroupShown(player.$id) ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-            €{{player.balance}} , {{players[player.$id].firstName}} {{players[player.$id].insertion}} {{players[player.$id].lastName}}
-		</ion-item>
-		<ion-item class="item-accordion" ng-repeat="credit in player.credits" ng-show="isGroupShown(player.$id)">
-            <date-Time sdate='credit.timestamp'></date-Time>  €{{credit.value}}  , {{credit.comment}}
-        </ion-item>
-    </ion-list>
-	<button ng-if="isAdmin == true" class="button button-block button-stable" ng-click="addCredit()">Add Credit</button>
+      <div class="row">
+          <div class="col">
+              <h3 class="center" ng-if="credits.length == 0">Wat een voorbeeldige spelers! Niemand heeft een boete...</h3>
+              <ion-list ng-repeat="player in credits" ng-if="credits != null">
+                  <ion-item class="item-stable" ng-click="toggleGroup(player.$id)" ng-class="{active: isGroupShown(player.$id)}">
+                      <i class="icon" ng-class="isGroupShown(player.$id) ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+                      {{players[player.$id].firstName}} {{players[player.$id].insertion}} {{players[player.$id].lastName}} : €{{player.balance}}
+                  </ion-item>
+                  <ion-item class="item-accordion" ng-repeat="credit in player.credits" ng-show="isGroupShown(player.$id)">
+                      <date-Time sdate='credit.timestamp'></date-Time>  €{{credit.value}}  , {{credit.comment}}
+                  </ion-item>
+              </ion-list>
+              <button ng-if="isAdmin == true" class="button button-block button-stable" ng-click="addCredit()">Add Credit</button>
+          </div>
+      </div>
+
   </ion-content>
 </ion-view>

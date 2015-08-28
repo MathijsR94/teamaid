@@ -17,7 +17,10 @@ img {
     clear : both;
     height : 40px;
 }
-
+.menu-bar-side {
+    background: #ae0f11;
+    color: #fff;
+}
 .menu-bar {
     background: #a10e10;
     color: #fff;
