@@ -1417,7 +1417,7 @@ angular.module('starter.controllers', [])
         };
     })
 	
-	.controller('StatisticsCtrl', function ($scope, Statistics, localStorageFactory) {
+	.controller('StatisticsCtrl', function ($scope, Statistics, localStorageFactory, $filter) {
 
         $scope.teamId = localStorageFactory.getTeamId();
 		$scope.players = localStorageFactory.getPlayers();
@@ -1429,13 +1429,13 @@ angular.module('starter.controllers', [])
 		
 		//console.log($scope.players);
 		Statistics.getRef().child($scope.teamId).on('value',function(statsSnap){
-			for(player in $scope.players){ // reset all gameTime counters to 0
+			for(var player in $scope.players){ // reset all gameTime counters to 0
 				$scope.players[player]['totGameTime'] = 0;
 				$scope.players[player]['totYellow'] = 0;
 				$scope.players[player]['totRed'] = 0;
 				$scope.players[player]['totGoals'] = 0;	
 			}
-			for(key in statsSnap.val()){ // walk trough each game
+			for(var key in statsSnap.val()){ // walk trough each game
 				var gameStats = statsSnap.val()[key];
 				var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
 				
@@ -1449,15 +1449,17 @@ angular.module('starter.controllers', [])
 				var fieldPlayers = angular.copy(gameStats.Basis);
 				//console.log("changes");
 				// loop trough Changes
-				for(key in gameStats.Changes){
-					var change = gameStats.Changes[key];
+                var firstOrSecond = false;
+                var remainingTime = 0;
+				for(var keyChange in gameStats.Changes){
+					var change = gameStats.Changes[keyChange];
 					// update fieldPlayers ( used for cards later on )
+
 					if(change.type === "In/Out" ){ //change type, in/out or  position
 						fieldPlayers[change.playerIn] = fieldPlayers[change.playerOut]; // transfer position				
 						delete fieldPlayers[change.playerOut];
 
 						//first half  or second half?
-						var firstOrSecond = false; // false = first, true is second
 						if(change.time < gameStats.firstHalfEnd)
 							firstOrSecond = false;
 						if(change.time > gameStats.secondHalfStart)
@@ -1480,7 +1482,7 @@ angular.module('starter.controllers', [])
 							}
 						}
 						
-						var remainingTime = 0;
+
 						// calc remaining time
 						if(firstOrSecond === false){ // first half
 							remainingTime =((gameStats.firstHalfEnd - change.time) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
@@ -1497,9 +1499,9 @@ angular.module('starter.controllers', [])
 					}
 				}
 				//console.log("cards");
-				for(key in gameStats.Cards){
+				for(var keyCards in gameStats.Cards){
 				
-					var card = gameStats.Cards[key];
+					var card = gameStats.Cards[keyCards];
 					//console.log(card);
 					if(card.player.indexOf("external") == -1){
 						if(card.type === "red")
@@ -1512,12 +1514,11 @@ angular.module('starter.controllers', [])
 													
 							if(card.player in fieldPlayers){ // is this player on the field??
 								//reduce player's gametime
-								var firstOrSecond = false; // false = first, true is second
 								if(card.time < gameStats.firstHalfEnd)
 									firstOrSecond = false;
-								if(card.time > gameStats.secondHalfStart)
+								else
 									firstOrSecond = true;
-								
+
 								if(card.time < gameStats.firstHalfStart){
 									card.time = gameStats.firstHalfStart;
 								}
@@ -1531,7 +1532,6 @@ angular.module('starter.controllers', [])
 										}
 									}
 								}
-								var remainingTime = 0;
 								// calc remaining time
 								if(firstOrSecond === false){ // first half
 									remainingTime =((gameStats.firstHalfEnd - card.time) + (gameStats.secondHalfEnd - gameStats.secondHalfStart))/60;
@@ -1548,8 +1548,8 @@ angular.module('starter.controllers', [])
 					}
 				}
 				//console.log("goals");
-				for(key in gameStats.OurGoals){
-					var goal = gameStats.OurGoals[key];
+				for(var keyGoals in gameStats.OurGoals){
+					var goal = gameStats.OurGoals[keyGoals];
 					if(goal.player.indexOf("external") == -1){ // only calculate if player is not external
 						$scope.players[card.player]['totGoals'] += 1; // update totGoals
 					}
@@ -1557,8 +1557,41 @@ angular.module('starter.controllers', [])
 			}
 			console.log($scope.players);
 		})
-		
-		
+        $scope.selected = [];
+        $scope.selected["firstName"] = true;
+        $scope.selected["totGoals"] = true;
+        $scope.selected["totGameTime"] = true;
+        $scope.selected["totRed"] = true;
+        $scope.selected["totYellow"] = true;
+        $scope.orderByField= "";
+        $scope.sortedPlayers = {};
+        $scope.order = function (sortingOption) {
+            //$scope.orderByField = sortingOption;
+            //var sort;
+            //if(!$scope.selected[sortingOption])
+            //    sort = "-" +sortingOption;
+            //else
+            //    sort = sortingOption;
+            //$scope.selected[sortingOption] = !$scope.selected[sortingOption];
+            //console.log($scope.players);
+            //for(var keyPlayer in $scope.players) {
+            //    $scope.sortedPlayers =  $filter('orderBy')($scope.players[keyPlayer], sort);
+            //}
+            //for(var i = 0; i < $scope.players.length; i++){
+            //    var lastName = $scope.players[i].lastName;
+            //    var doing = 1;
+            //    var left = 6 - 1 - status;
+            //    if(status == 6){
+            //        left = 0;
+            //        doing = 0;
+            //    }
+            //    $scope.data[$scope.sortedCustomers[i].$id] = [status, doing, left];
+            //    $scope.statussen[Math.floor($scope.sortedCustomers[i].status)-1].count++;
+            //}
+
+
+        };
+
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
                 $scope.shownGroup = null;
@@ -1618,7 +1651,7 @@ angular.module('starter.controllers', [])
                 $timeout(doDivide,0)
             }
         }
-    })
+    });
 
 	function dynamicSort(property) {
 		var sortOrder = 1;
@@ -1630,8 +1663,7 @@ angular.module('starter.controllers', [])
 			var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
 			return result * sortOrder;
 		}
-	};
-	
+	}
 	function removeSpecials(str) {
 			var lower = str.toLowerCase();
 			var upper = str.toUpperCase();

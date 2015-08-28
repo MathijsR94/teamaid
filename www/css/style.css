@@ -9,6 +9,7 @@ h1, h2, h3, h4, h5, h6 {
 .center {
     text-align : center;
     display: block;
+    margin: 0 auto;
 }
 img {
     max-width : 100%;
@@ -40,4 +41,23 @@ img {
     color: #444;
     box-shadow: none !important;
     border-color: #ccc;
+}
+
+.col-40 {
+-webkit-box-flex: 0;
+-webkit-flex: 0 0 40%;
+-moz-box-flex: 0;
+-moz-flex: 0 0 40%;
+-ms-flex: 0 0 40%;
+flex: 0 0 40%;
+max-width: 40%;
+}
+.col-30{
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 30%;
+    -moz-box-flex: 0;
+    -moz-flex: 0 0 30%;
+    -ms-flex: 0 0 30%;
+    flex: 0 0 30%;
+    max-width: 30%;
 }

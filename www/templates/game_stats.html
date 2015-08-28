@@ -1,32 +1,38 @@
 <ion-view view-title="Statistieken Wedstrijd">
     <ion-content>
-    <h1>{{game.home}} vs {{game.away}}</h1>
-	<h3> {{homeScore}} - {{awayScore}}</h3>
+		<div class="row">
+			<div class="col">
+				<h1 class="center">{{game.home}} vs {{game.away}}</h1>
+				<h3 class="center"> {{homeScore}} - {{awayScore}}</h3>
+			</div>
+		</div>
+
 	
 	<ion-list>
 		<ion-item class="item-stable" ng-click="toggleGroup('gameTimes')" ng-class="{active: isGroupShown('gameTimes')}">
 			  <i class="icon" ng-class="isGroupShown('gameTimes') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 			&nbsp;
-			wedstrijd tijden
+			Wedstrijd tijden
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('gameTimes')">
-			Eerste helft:
-			<ionic-timepicker etime="firstHalfStart" format="24" step="1" callback="timePickerCallback">
-					<button class="button button-positive"> <standard-time-no-meridian etime='firstHalfStart'></standard-time-no-meridian></button>
+			<div class="col col-30 float-left">Eerste helft:</div>
+			<div class="col"><ionic-timepicker etime="firstHalfStart" format="24" step="1" callback="timePickerCallback">
+					<button class="button button-stable"> <standard-time-no-meridian etime='firstHalfStart'></standard-time-no-meridian></button>
 			</ionic-timepicker>
 			tot 
 			<ionic-timepicker etime="firstHalfEnd" format="24" step="1" callback="timePickerCallback">
-					<button class="button button-positive"> <standard-time-no-meridian etime='firstHalfEnd'></standard-time-no-meridian></button>
+					<button class="button button-stable"> <standard-time-no-meridian etime='firstHalfEnd'></standard-time-no-meridian></button>
 			</ionic-timepicker>
-			<br>
-			Tweede helft:
-			<ionic-timepicker etime="secondHalfStart" format="24" step="1" callback="timePickerCallback">
-					<button class="button button-positive"> <standard-time-no-meridian etime='secondHalfStart'></standard-time-no-meridian></button>
+			</div>
+			<div class="col col-30 float-left">Tweede helft:</div>
+			<div class="col"><ionic-timepicker etime="secondHalfStart" format="24" step="1" callback="timePickerCallback">
+					<button class="button button-stable"> <standard-time-no-meridian etime='secondHalfStart'></standard-time-no-meridian></button>
 			</ionic-timepicker>
 			tot 
 			<ionic-timepicker etime="secondHalfEnd" format="24" step="1" callback="timePickerCallback">
-					<button class="button button-positive"> <standard-time-no-meridian etime='secondHalfEnd'></standard-time-no-meridian></button>
+					<button class="button button-stable"> <standard-time-no-meridian etime='secondHalfEnd'></standard-time-no-meridian></button>
 				</ionic-timepicker>
+				</div>
 		</ion-item>
 		<ion-item class="item-stable" ng-click="toggleGroup('basisTeam')" ng-class="{active: isGroupShown('basisTeam')}">
 			  <i class="icon" ng-class="isGroupShown('basisTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
@@ -68,35 +74,33 @@
 			<!-- 4-4-2 -->
 			<div ng-if="tactic !== 0 && tactic !== undefined ">
 				<div name="goalkeeper" class="row">
-				  <div class="col-33"></div>
-				  <div class="col"><select class="button button-block" ng-model="positions[1]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-				  <div class="col-33"></div>
+				  <div class="col"><select class="button button-block center" ng-model="positions[1]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
 				</div>
 				<div name="defense" class="row">
-					<div class="col"><select class="button button-block" ng-model="positions[2]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-					<div class="col"><select class="button button-block" ng-model="positions[3]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
-									 <select class="button button-block" ng-model="positions[4]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+					<div class="col"><select class="button button-block center" ng-model="positions[2]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
+					<div class="col"><select class="button button-block center" ng-model="positions[3]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+									 <select class="button button-block center" ng-model="positions[4]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
 					</div>
-					<div class="col"><select class="button button-block" ng-model="positions[5]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
+					<div class="col"><select class="button button-block center" ng-model="positions[5]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
 				</div>
 				<div name="midfield" class="row">
-					<div class="col"><select class="button button-block" ng-model="positions[6]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-					<div class="col"><select class="button button-block" ng-model="positions[7]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
-									 <select ng-if="tactic === '4-4-2'" class="button button-block"ng-model="positions[10]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+					<div class="col"><select class="button button-block center" ng-model="positions[6]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
+					<div class="col"><select class="button button-block center" ng-model="positions[7]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+									 <select ng-if="tactic === '4-4-2'" class="button button-block center"ng-model="positions[10]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
 					</div>
-					<div class="col"><select class="button button-block" ng-model="positions[8]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
+					<div class="col"><select class="button button-block center" ng-model="positions[8]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
 				</div>
 				<div name="attack" class="row">
 					<div class="col-10" ng-if="tactic === '4-4-2'"></div>
-					<div class="col"><select class="button button-block" ng-model="positions[9]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
+					<div class="col"><select class="button button-block center" ng-model="positions[9]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
 					<div class="col" ng-if="tactic === '4-3-3'">
-						<select class="button button-block" ng-model="positions[10]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+						<select class="button button-block center" ng-model="positions[10]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
 					</div>
-					<div class="col"><select class="button button-block" ng-model="positions[11]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
+					<div class="col"><select class="button button-block center" ng-model="positions[11]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
 					<div class="col-10" ng-if="tactic === '4-4-2'"></div>
 				</div>
 				<div class="buttons">
-					<button class="button button-block" ng-click="storeBasis(tactic)">save opstelling</button>
+					<button class="button button-block"  ng-click="storeBasis(tactic)">save opstelling</button>
 				</div>
 			</div>
 			
@@ -104,10 +108,10 @@
 		<ion-item class="item-stable" ng-click="toggleGroup('newStat')" ng-class="{active: isGroupShown('newStat')}">
 			  <i class="icon" ng-class="isGroupShown('newStat') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 			&nbsp;
-			gebeurtenis
+			Gebeurtenis
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('newStat')">
-			geef een gebeurtenis door:
+			<div class="item item-divider">Geef een gebeurtenis door:</div>
 			<label class="item item-input item-select">
 				<span class="input-label">Type</span>
 				<select ng-model="selectedType" ng-options="type as type for type in typeStats" ng-change="updateEventTime()">
@@ -125,7 +129,7 @@
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
-					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
 				</ionic-timepicker>
 				</label>
 				<label class="item item-input">
@@ -147,7 +151,7 @@
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
-					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
 				</ionic-timepicker>
 				</label>
 				<label class="item item-input">
@@ -165,7 +169,7 @@
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
-					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
 				</ionic-timepicker>
 				</label>
 				<label class="item item-input">
@@ -179,7 +183,7 @@
 			<div ng-if="selectedType === 'goal tegen'"> <!-- this is the div voor goals tegen-->
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
-					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
 				</ionic-timepicker>
 				</label>
 				<label class="item item-input">
@@ -197,7 +201,7 @@
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
-					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
 				</ionic-timepicker>
 				</label>
 				<label class="item item-input">
@@ -215,7 +219,7 @@
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
-					tijdstip: <button class="button button-positive"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
 				</ionic-timepicker>
 				</label>
 				<label class="item item-input">
@@ -230,7 +234,7 @@
 		<ion-item class="item-stable" ng-click="toggleGroup('currentTeam')" ng-class="{active: isGroupShown('currentTeam')}">
 			  <i class="icon" ng-class="isGroupShown('currentTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 			&nbsp;
-			actuele opstelling
+			Actuele opstelling
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('currentTeam')">	
 		
