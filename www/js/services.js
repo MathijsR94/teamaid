@@ -791,7 +791,9 @@ angular.module('starter.services', [])
                 localStorage.setItem('settings', JSON.stringify(settings));
             },
             setAdmin: function(admins, uid) {
+				console.log(admins);
                 for(var key in admins) {
+					console.log(key, uid);
                     if(key === uid)
                         localStorage.setItem('admin', true);
                     else
