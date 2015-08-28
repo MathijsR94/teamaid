@@ -1,6 +1,10 @@
 body, .ionic-body {
     font-family : 'Open Sans', sans-serif;
     font-size : 1em;
+    color: #555;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #333;
 }
 .center {
     text-align : center;

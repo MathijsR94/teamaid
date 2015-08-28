@@ -1577,13 +1577,48 @@ angular.module('starter.controllers', [])
 			angular.forEach(items, function(item) {
 				filtered.push(item);
 			});
+            console.log(field);
 			filtered.sort(function (a, b) {
 				return (a[field] > b[field] ? 1 : -1);
 			});
 			if(reverse) filtered.reverse();
 			return filtered;
 		};
-	});
+	})
+    .directive('autoListDivider', function($timeout) {
+        var lastDivideKey = "";
+
+        return {
+            link: function(scope, element, attrs) {
+                var key = attrs.autoListDividerValue;
+
+                var defaultDivideFunction = function(obj){
+                    console.log(obj);
+                    var date = new Date(obj);
+
+                    var monthNames = ["Januari", "Februari", "Maart", "April", "Mei", "Juni",
+                        "Juli", "Augustus", "September", "Oktober", "November", "December"
+                    ];
+
+                    return monthNames[date.getMonth()] + ' '  + date.getFullYear();
+                };
+
+                var doDivide = function(){
+                    var divideFunction = scope.$apply(attrs.autoListDividerFunction) || defaultDivideFunction;
+                    var divideKey = divideFunction(key);
+
+                    if(divideKey != lastDivideKey) {
+                        var contentTr = angular.element("<div class='item item-divider'>"+divideKey+"</div>");
+                        element[0].parentNode.insertBefore(contentTr[0], element[0]);
+                    }
+
+                    lastDivideKey = divideKey;
+                }
+
+                $timeout(doDivide,0)
+            }
+        }
+    })
 
 	function dynamicSort(property) {
 		var sortOrder = 1;
