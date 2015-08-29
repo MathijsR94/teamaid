@@ -4,7 +4,7 @@
             <div class="col col-center">
                     <h3>Training</h3>
                     <div class="list">
-						<ionic-datepicker name="date" idate="practiseDate" disablepreviousdates="true"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+						<ionic-datepicker name="date" idate="practiseDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
 							<button class="button button-block button-stable"> {{ practiseDate | date:'dd - MMMM - yyyy' }} </button>
 						</ionic-datepicker>
 						<ionic-timepicker name="time" etime="practiseTime" format="24" step="15" callback="timePickerCallback">
