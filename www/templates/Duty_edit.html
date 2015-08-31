@@ -1,0 +1,17 @@
+<ion-view view-title="Edit Wedstrijd">
+    <ion-content>
+        <label class="item-input">
+            <span class="input-label">Start Datum</span>
+            <span> {{ startDate | date:'dd - MMMM - yyyy' }} </span>
+        </label>
+		<label class="item-input">
+            <span class="input-label">Eind Datum</span>
+            <span> {{ endDate | date:'dd - MMMM - yyyy' }} </span>
+        </label>
+		<label ng-repeat="(key,duty) in dutyPlayers" class="item item-input item-select">
+			<span class="input-label">Speler</span>
+			<select ng-model="key" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in players" ng-change="changeKey(key)"></select>
+		</label>
+        <button class="button button-block" ng-click="updateDuty()">Opslaan</button>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,32 @@
+<ion-view title="New Corvee">
+    <ion-content>
+        <div class="row row-center">
+            <div class="col col-center">
+                    <h3>Corvee</h3>
+                    <div class="list">
+						<ionic-datepicker name="date" idate="dutyStart" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+							<span class="input-label">Start Datum</span>
+							<button class="button button-block button-stable"> {{ dutyStart | date:'dd - MMMM - yyyy' }} </button>
+						</ionic-datepicker>
+					<label class="item-input">
+						<span class="input-label">Eind Datum</span>
+						<span > {{ dutyEnd | date:'dd - MMMM - yyyy' }} </span>	
+					</label>	
+					<label class="item item-input item-select">
+						<span class="input-label">Speler</span>
+						<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in players"></select>
+					</label>
+                    </div>				
+                    <div>
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="newDuty(selectedPlayer)">
+                            Toevoegen
+                        </button>
+                    </div>
+                <button class="button button-block button-clear button-stable waves-light waves-effect"
+                        ui-sref="tab.games">
+                    Annuleren
+                </button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

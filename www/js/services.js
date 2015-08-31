@@ -1,9 +1,9 @@
 angular.module('starter.services', [])
     .factory('firebaseRef', function () {
-        var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
-		//var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
-		var ref = new Firebase("https://teamaid.firebaseio.com/.info/connected"); // live db
-        //var connectedRef = new Firebase("https://amber-torch-2058.firebaseio.com/.info/connected");
+        //var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
+		var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
+		//var ref = new Firebase("https://teamaid.firebaseio.com/.info/connected"); // live db
+        var connectedRef = new Firebase("https://amber-torch-2058.firebaseio.com/.info/connected");
         return {
             ref: function () {
                 return ref;
@@ -632,12 +632,20 @@ angular.module('starter.services', [])
 			}
 		};
 	})
-	.factory('Duties', function(firebaseRef,$firebaseObject, $q){
+	.factory('Duties', function(firebaseRef,$firebaseObject,$firebaseArray, $q){
 		var ref = firebaseRef.ref();
 		var dutyRef = ref.child("Duties");
+		var selectedDuty = localStorage.getItem("selectedDuty");
 		return {
 			getDuties: function(teamId) {
 				return $firebaseObject(dutyRef.child(teamId));
+			},
+			getDutiesArray: function(teamId) {
+				return $firebaseArray(dutyRef.child(teamId));
+			},
+			setDuty: function(dutyId) {
+				localStorage.setItem("selectedDuty", dutyId);
+				selectedDuty = dutyId;
 			},
 			addDuty: function(teamId, key,startValue,endValue,dutyObj) {
 				dutyRef.child(teamId).child(key).set({
@@ -645,7 +653,18 @@ angular.module('starter.services', [])
 					end : endValue.toString(),
 					Duty : dutyObj
 				});
+				return {start : startValue.toString(),
+						end : endValue.toString(),
+						Duty : dutyObj};
 				//console.log("add Duty");
+			},
+			getDuty: function(dutyId) {
+				var deferred = $q.defer();
+				var duties = $firebaseArray(dutyRef.child(dutyId));
+                duties.$loaded(function(){
+					deferred.resolve(duties.$getRecord(selectedDuty));
+				});
+				return deferred.promise;
 			},
 			updateDuty: function(teamId, key,dutyObj) {
 				
@@ -710,15 +729,21 @@ angular.module('starter.services', [])
 				});
 			
 			},
+			
 			checkForEvents: function(teamEvents,occurence){
 				var result = {};
-				teamEvents.forEach(function(event,id){
+				//console.log(occurence);
+				teamEvents.forEach(function(event){
 					var eventDate = new Date(event.date);
-					if( eventDate > occurence.start && eventDate <= occurence.end){
-						result[id] = true;
+					var startDate = new Date(occurence.start);
+					var endDate = new Date(occurence.end);
+					//console.log(endDate);
+					if( eventDate > startDate && eventDate <= endDate){
+						console.log("hit");
+						result[event.$id] = true;
 					}
 				});
-				//console.log(result);
+				console.log(result);
 				return result;
 			}
 		};

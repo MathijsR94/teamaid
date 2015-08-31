@@ -1,11 +1,25 @@
-<ion-view view-title="Spelers">
+<ion-view view-title="Corvee">
+<ion-header-bar class="bar-stable bar-subheader">
+      <div class="buttons">
+        <button ng-if="isAdmin" class="button button-icon icon ion-ios-minus-outline" ng-click="showDelete()"></button>
+      </div>
+      <h1 class="title"></h1>
+      <div class="buttons">
+		<button class="button button-bq" ng-if="isAdmin" ng-click="updateDuties()">Update Corvee</button>
+		<button class="button button-bq" ng-if="isAdmin" ng-click="addDuty()">Add corvee</button>
+      </div>
+</ion-header-bar>
   <ion-content>
-    <ion-list>
-      <ion-item ng-repeat="duty in duties | orderBy:'start'" >
+    <ion-list show-delete="ShowDelete" can-swipe="isAdmin">
+      <ion-item ng-repeat="duty in duties | orderBy:'start'">
             <date-Time sdate='duty.start'></date-Time> tot <date-Time sdate='duty.end'></date-Time> <span ng-repeat="(id,value) in duty.Duty">{{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+			<ion-delete-button class="ion-minus-circled"
+							   ng-click="onItemDelete(duty)">
+			</ion-delete-button>
+			<ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editDuty(duty)">Edit</ion-option-button>
       </ion-item>
     </ion-list>
-	<button class="button button-block button-stable" ng-click="updateDuties()">Update Corvee</button>
+	
 	
 
   </ion-content>

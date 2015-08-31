@@ -319,6 +319,24 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
+		.state('app.Duty_edit', {
+            url: "/Duties/:dutyId/edit",
+            views: {
+                'menuContent': {
+                    templateUrl: "templates/Duty_edit.html",
+                    controller: 'Duties_EditCtrl'
+                }
+            }
+        })
+		.state('app.newDuty', {
+		  url: "/newDuty",
+		  views: {
+			'menuContent': {
+			  templateUrl: "templates/newDuty.html",
+			  controller: 'newDutiesCtrl'
+			}
+		  }
+		})
 		.state('app.Settings', {
 		  url: "/Settings",
 		  views: {

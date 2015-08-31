@@ -805,23 +805,23 @@ angular.module('starter.controllers', [])
             }
         });
 
-		$scope.datePickerCallback = function(val) {
-			if(typeof(val)==='undefined'){      
-				console.log('Date not selected');
-			}else{
-				console.log('Selected date is : ', val);
-				$scope.date = val;
-			}
-		};
+		// $scope.datePickerCallback = function(val) {
+			// if(typeof(val)==='undefined'){      
+				// console.log('Date not selected');
+			// }else{
+				// console.log('Selected date is : ', val);
+				// $scope.date = val;
+			// }
+		// };
 
-		$scope.timePickerCallback = function(val) {
-		  if (typeof (val) === 'undefined') {
-			console.log('Time not selected');
-		  } else {
-			console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-			$scope.time = val;
-		  }
-		};
+		// $scope.timePickerCallback = function(val) {
+		  // if (typeof (val) === 'undefined') {
+			// console.log('Time not selected');
+		  // } else {
+			// console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+			// $scope.time = val;
+		  // }
+		// };
 
         $scope.getDetail = function(practise) {
             console.log('detail');
@@ -837,11 +837,11 @@ angular.module('starter.controllers', [])
         $scope.onItemDelete = function(item) {
            $scope.practises.$remove(item);
         };
-		$scope.newPractise = function(location,repeatValue){	
-			Practises.createPractise($scope.teamId, $scope.date, $scope.time, location, repeatValue);
-			//return to previous page
-			$ionicHistory.goBack();
-		}
+		// $scope.newPractise = function(location,repeatValue){	
+			// Practises.createPractise($scope.teamId, $scope.date, $scope.time, location, repeatValue);
+			// //return to previous page
+			// $ionicHistory.goBack();
+		// }
         $scope.editPractise = function(practise) {
             Practises.setPractise(practise.$id);
             $state.go('app.practise_edit', { practiseId: practise.$id});
@@ -998,36 +998,17 @@ angular.module('starter.controllers', [])
         $scope.events = localStorageFactory.getEvents();
         $scope.eventsRef = Events.getEventsRef($scope.teamId);
 		
-		$scope.showDelete = function() {
-			console.log('showdelete:' + $scope.ShowDelete);
-			$scope.ShowDelete = !$scope.ShowDelete;
-		};
-
-        $scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
+		$scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
             if(snap.val() === true) {
-                Events.getEventsArray($scope.teamId).then(function(events) {
-                    $scope.events = events;
-                    localStorageFactory.setEvents(events);
+                $scope.getEvents = Games.getEventsArray($scope.teamId).then(function(events) {
+                   $scope.events = events;
+                   localStorageFactory.setEvents(events);
                 });
             }
         });
-
-		$scope.datePickerCallback = function(val) {
-			if(typeof(val)==='undefined'){      
-				console.log('Date not selected');
-			}else{
-				console.log('Selected date is : ', val);
-				$scope.date = val;
-			}
-		};
-
-		$scope.timePickerCallback = function(val) {
-		  if (typeof (val) === 'undefined') {
-			console.log('Time not selected');
-		  } else {
-			console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-			$scope.time = val;
-		  }
+		$scope.showDelete = function() {
+			console.log('showdelete:' + $scope.ShowDelete);
+			$scope.ShowDelete = !$scope.ShowDelete;
 		};
 
         $scope.getDetail = function(practise) {
@@ -1045,11 +1026,11 @@ angular.module('starter.controllers', [])
            $scope.events.$remove(item);
         };
 		
-		$scope.newEvent = function(location){		
-			Events.createEvent($scope.teamId, $scope.date, $scope.time, location);
-			//return to previous page
-			$ionicHistory.goBack();
-		}
+		// $scope.newEvent = function(location){		
+			// Events.createEvent($scope.teamId, $scope.date, $scope.time, location);
+			// //return to previous page
+			// $ionicHistory.goBack();
+		// }
         $scope.editPractise = function(event) {
             Events.setPractise(event.$id);
             $state.go('app.event_edit', { eventId: event.$id});
@@ -1071,7 +1052,7 @@ angular.module('starter.controllers', [])
 		
     })
 
-       .controller('Events_DetailCtrl', function ($scope, Events, User, Teams, Attendance, Settings,localStorageFactory, $stateParams) {
+    .controller('Events_DetailCtrl', function ($scope, Events, User, Teams, Attendance, Settings,localStorageFactory, $stateParams) {
 		$scope.eventId = $stateParams.eventId;
 		$scope.players = localStorageFactory.getPlayers();
 		$scope.teamId = localStorageFactory.getTeamId();
@@ -1252,22 +1233,50 @@ angular.module('starter.controllers', [])
 		}
     })
 	
-	.controller('DutiesCtrl', function ($scope, Teams, Games,Practises, Settings, User, Duties, localStorageFactory) {
-
-        $scope.currentDate = new Date();
-        //console.log($scope.currentDate);
-
+	.controller('DutiesCtrl', function ($scope, Teams, Games, Practises, Events, Settings, User, Duties,  $state, firebaseRef, localStorageFactory) {
+		$scope.ShowDelete = false;
+		$scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.settings = localStorageFactory.getSettings();
-        $scope.duties = Duties.getDuties($scope.teamId);
+        $scope.duties = Duties.getDutiesArray($scope.teamId);
         //get Games
         $scope.games = localStorageFactory.getGames();
         // get Practices
         $scope.practises = localStorageFactory.getPractises();
         // get Events
-        //$scope.events = ;
-
+        $scope.events = localStorageFactory.getEvents();
+		
         $scope.players = localStorageFactory.getPlayers();
+		
+		$scope.connected =  firebaseRef.connectedRef().on("value", function(snap) {
+            if(snap.val() === true) {
+                $scope.getGames = Games.getGamesArray($scope.teamId).then(function(games) {
+                   $scope.games = games;
+                   localStorageFactory.setGames(games);
+                });
+            }
+			if(snap.val() === true) {
+                $scope.getPractises = Practises.getPractisesArray($scope.teamId).then(function(practises) {
+                    $scope.practises = practises;
+                    localStorageFactory.setPractises(practises);
+                });
+            }
+			if(snap.val() === true) {
+                $scope.getEvents = Events.getEventsArray($scope.teamId).then(function(events) {
+                   $scope.events = events;
+                   localStorageFactory.setEvents(events);
+                });
+            }
+        });
+		
+		$scope.currentDate = new Date();
+        //console.log($scope.currentDate);
+		
+		$scope.showDelete = function() {
+			console.log('showdelete:' + $scope.ShowDelete);
+			$scope.ShowDelete = !$scope.ShowDelete;
+		};
+		
 		$scope.updateDuties = function(){
 		
 			var dutyPlayers = new Array();
@@ -1304,7 +1313,7 @@ angular.module('starter.controllers', [])
 				}else{
 					// there is a duty record here, lets see who is listed
 					//console.log("find history player");
-					var foundDuties = Object.keys($scope.duties[backTrackKey].Duty);
+					var foundDuties = Object.keys($scope.duties.$getRecord(backTrackKey).Duty);
 					//remove from loopPlayers
 					foundDuties.forEach(function(key){
 						var index =loopPlayers.indexOf(key);
@@ -1347,7 +1356,7 @@ angular.module('starter.controllers', [])
 					if(loopPlayers.length <= 1){
 						loopPlayers = dutyPlayers.slice(); // reset to the original full array
 					}
-					if(typeof $scope.duties[occurenceKey] === "undefined"){
+					if($scope.duties.$getRecord(occurenceKey) === null){
 						// this Duty item does not yet exist lets create it
 						Duties.addDuty($scope.teamId,occurenceKey,occurence.start, occurence.end,duty);
 					}
@@ -1361,7 +1370,7 @@ angular.module('starter.controllers', [])
 				}
 				else{
 					// remove the  duty instance if  it already exists
-					if(typeof $scope.duties[occurenceKey] === "undefined"){
+					if($scope.duties.$getRecord(occurenceKey) === null){
 					// this Duty item does not yet exist. thats good!
 					}
 					else{
@@ -1376,8 +1385,169 @@ angular.module('starter.controllers', [])
 			});
 			
 		}
-			
+	    $scope.onItemDelete = function(item) {
+           $scope.duties.$remove(item);
+		   // unlink items!
+		   
+		   var occurenceEvents = {};
+			var retVal = {};
+			if($scope.settings.dutyGames === true){
+				retVal = Duties.checkForEvents($scope.games,item);
+				if(Object.keys(retVal).length > 0)
+					occurenceEvents["Games"] = retVal;
+			}
+			if($scope.settings.dutyPractises === true){
+				retVal = Duties.checkForEvents($scope.practises,item);
+				if(Object.keys(retVal).length > 0)
+					occurenceEvents["Practises"] = retVal;
+			}
+			if($scope.settings.dutyEvents === true){
+				retVal = Duties.checkForEvents($scope.events,item);
+				if(Object.keys(retVal).length > 0)
+					occurenceEvents["Events"] = retVal;
+			}
+			Duties.unlinkEvents($scope.teamId,occurenceEvents);
+        };
+		
+		$scope.addDuty = function(){
+			$state.go('app.newDuty');
+		}
+		
+		$scope.editDuty = function(duty) {
+			console.log(duty);
+            Duties.setDuty(duty.$id);
+            $state.go('app.Duty_edit', { dutyId: duty.$id});
+        };		
     })
+	
+	.controller('Duties_EditCtrl', function($scope, Duties, Settings, $ionicHistory, localStorageFactory , $stateParams){
+		$scope.dutyId = $stateParams.dutyId;
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.players = localStorageFactory.getPlayers();
+		$scope.settings = localStorageFactory.getSettings();
+        $scope.duties = Duties.getDutiesArray($scope.teamId);
+        //get Games
+        $scope.games = localStorageFactory.getGames();
+        // get Practices
+        $scope.practises = localStorageFactory.getPractises();
+        // get Events
+                // get Events
+        $scope.events = localStorageFactory.getEvents();
+
+		console.log($scope.dutyId);
+		$scope.dutyPlayers = {};
+		$scope.getDuty = Duties.getDuty($scope.teamId).then(function (duty) {
+			$scope.occurence = duty;
+			$scope.startDate = new Date(duty.start);
+			$scope.endDate = new Date(duty.end);
+			$scope.dutyPlayers =  angular.copy(duty.Duty);
+			console.log($scope.dutyPlayers);
+		});
+		
+		$scope.changeKey = function(key){
+			// temporary fix while  the number of corvee remains 1
+			console.log(key);
+			delete $scope.dutyPlayers[Object.keys($scope.dutyPlayers)[0]]
+			$scope.dutyPlayers[key] = true;
+		}
+		
+		$scope.updateDuty = function(){
+			console.log($scope.dutyPlayers);
+			var occurenceEvents = {};
+			var retVal = {};
+			if($scope.settings.dutyGames === true){
+				retVal = Duties.checkForEvents($scope.games,$scope.occurence);
+				if(Object.keys(retVal).length > 0)
+					occurenceEvents["Games"] = retVal;
+			}
+			if($scope.settings.dutyPractises === true){
+				retVal = Duties.checkForEvents($scope.practises,$scope.occurence);
+				if(Object.keys(retVal).length > 0)
+					occurenceEvents["Practises"] = retVal;
+			}
+			if($scope.settings.dutyEvents === true){
+				retVal = Duties.checkForEvents($scope.events,$scope.occurence);
+				if(Object.keys(retVal).length > 0)
+					occurenceEvents["Events"] = retVal;
+			}
+			Duties.linkEvents($scope.teamId, occurenceEvents, $scope.dutyPlayers);
+			Duties.updateDuty($scope.teamId, $scope.dutyId, $scope.dutyPlayers);
+			
+            $ionicHistory.goBack();
+		}
+	})
+	
+	.controller('newDutiesCtrl', function($scope, User, Duties, localStorageFactory, $ionicHistory) {
+		$scope.teamId = localStorageFactory.getTeamId();
+		$scope.players = localStorageFactory.getPlayers();
+		$scope.settings = localStorageFactory.getSettings();
+        $scope.duties = Duties.getDutiesArray($scope.teamId);
+        //get Games
+        $scope.games = localStorageFactory.getGames();
+        // get Practices
+        $scope.practises = localStorageFactory.getPractises();
+        // get Events
+        $scope.events = localStorageFactory.getEvents();
+		
+		$scope.dutyStart = new Date();
+		$scope.dutyEnd = new Date();
+		$scope.dutyEnd.setDate($scope.dutyStart.getDate() + 7);
+		$scope.title = "Selecteer datum";
+		
+		
+		
+		$scope.datePickerCallback = function (val) {
+			if (typeof(val) === 'undefined') {
+				console.log('Date not selected');
+			} else {
+				console.log('Selected date is : ', val);
+				$scope.dutyStart = val;
+				$scope.dutyEnd  = new Date(val);
+				$scope.dutyEnd.setDate($scope.dutyEnd.getDate() + 7);
+			}
+		};
+
+		$scope.newDuty = function(duty){
+
+			if(typeof duty !== 'undefined'){
+				var dutyPlayers ={};
+				dutyPlayers[duty] = true;
+				
+				console.log($scope.dutyEnd);
+				var occurenceKey = $scope.dutyStart.getFullYear() + "" + $scope.dutyStart.getMonth()  + "" + $scope.dutyStart.getDate();
+				// create new occurence
+				Duties.addDuty($scope.teamId,occurenceKey,$scope.dutyStart, $scope.dutyEnd, dutyPlayers);
+								
+				// gather to be linked events
+				var occurenceEvents = {};
+				var retVal = {};
+				if($scope.settings.dutyGames === true){
+					retVal = Duties.checkForEvents($scope.games,{start:$scope.dutyStart, end:$scope.dutyEnd});
+					if(Object.keys(retVal).length > 0)
+						occurenceEvents["Games"] = retVal;
+				}
+				if($scope.settings.dutyPractises === true){
+					retVal = Duties.checkForEvents($scope.practises,{start:$scope.dutyStart, end:$scope.dutyEnd});
+					if(Object.keys(retVal).length > 0)
+						occurenceEvents["Practises"] = retVal;
+				}
+				if($scope.settings.dutyEvents === true){
+					retVal = Duties.checkForEvents($scope.events,{start:$scope.dutyStart, end:$scope.dutyEnd});
+					if(Object.keys(retVal).length > 0)
+						occurenceEvents["Events"] = retVal;
+				}
+				// link all events
+				console.log(occurenceEvents);
+				Duties.linkEvents($scope.teamId, occurenceEvents, dutyPlayers);
+
+				//return to previous page
+				$ionicHistory.goBack();
+			}
+			else
+				alert("geen speler geselecteerd");
+		}
+	})
+	
 	
 	.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, localStorageFactory,firebaseRef) {
 
@@ -1576,7 +1746,7 @@ angular.module('starter.controllers', [])
             //console.log($scope.players);
             //for(var keyPlayer in $scope.players) {
             //    $scope.sortedPlayers =  $filter('orderBy')($scope.players[keyPlayer], sort);
-            //}
+            // }
             //for(var i = 0; i < $scope.players.length; i++){
             //    var lastName = $scope.players[i].lastName;
             //    var doing = 1;
@@ -1588,8 +1758,8 @@ angular.module('starter.controllers', [])
             //    $scope.data[$scope.sortedCustomers[i].$id] = [status, doing, left];
             //    $scope.statussen[Math.floor($scope.sortedCustomers[i].status)-1].count++;
             //}
-
-
+			//
+			//
         };
 
         $scope.toggleGroup = function (group) {
