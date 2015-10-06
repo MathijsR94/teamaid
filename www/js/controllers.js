@@ -274,8 +274,15 @@ angular.module('starter.controllers', [])
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.games = localStorageFactory.getGames();
+        //$scope.games.sort(function(a, b){return a.date - b.date});
         $scope.players = localStorageFactory.getPlayers();
 
+        //$scope.test = Games.getGamesRef($scope.teamId);
+        //$scope.array = [];
+        //$scope.games.orderByChild("date").on("child_added", function(snapshot) {
+        //    $scope.array.push(Date.parse(snapshot.val().date));
+        //    console.log($scope.array);
+        //});
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
                 $scope.getGames = Games.getGamesArray($scope.teamId).then(function (games) {
@@ -478,7 +485,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.gameDate = val;
+                $scope.gameDate = Date.parse(val);
             }
         };
         $scope.timePickerCallback = function (val) {
