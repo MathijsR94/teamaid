@@ -1754,7 +1754,7 @@ angular.module('starter.controllers', [])
                 for (var keyGoals in gameStats.OurGoals) {
                     var goal = gameStats.OurGoals[keyGoals];
                     if (goal.player.indexOf("external") == -1) { // only calculate if player is not external
-                        $scope.players[card.player]['totGoals'] += 1; // update totGoals
+                        $scope.players[goal.player]['totGoals'] += 1; // update totGoals
                     }
                 }
             }
