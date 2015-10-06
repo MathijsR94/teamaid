@@ -1,2 +1,2 @@
-cd C:\Users\z0032ewf\Desktop\GitHub\teamaid
+cd C:\Users\Koen\Documents\GitHub\teamaid
 ionic serve

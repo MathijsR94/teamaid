@@ -10,7 +10,7 @@
     </ion-header-bar>
   <ion-content >
     <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
-          <ion-item ng-repeat="game in games | orderBy: 'date'">
+          <ion-item ng-repeat="game in games | orderBy: 'date'" ng-click="getDetail(game.$id)>
             <span>{{game.date | date: 'dd-MM-yyyy'}}</span><standard-time-no-meridian etime='game.time'></standard-time-no-meridian> {{game.home}} vs {{game.away}}
 			<ion-delete-button class="ion-minus-circled"
 							   ng-click="onItemDelete(game)">
