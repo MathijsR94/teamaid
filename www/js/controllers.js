@@ -436,6 +436,7 @@ angular.module('starter.controllers', [])
 
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.getGame = Games.getGame($scope.teamId).then(function (game) {
+			console.log(game);
             $scope.gameDate = new Date(game.date);
             $scope.title = "Selecteer datum";
             $scope.gameTime = game.time;
@@ -445,14 +446,14 @@ angular.module('starter.controllers', [])
             if (typeof game.collect !== 'undefined')
                 $scope.collectTime = game.collect;
             else
-                $scope.collectTime = 0;
+                $scope.collectTime = game.time - 3600;
         })
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.gameDate = val;
+                $scope.gameDate = Date.parse(val);
             }
         };
 
@@ -466,7 +467,8 @@ angular.module('starter.controllers', [])
         };
 
         $scope.updateGame = function (home, away) {
-            Games.updateGame($scope.teamId, $scope.gameId, $scope.gameDate, $scope.collectTime, $scope.gameTime, home, away);
+			$scope.gameDate = Date.parse($scope.gameDate);
+            Games.updateGame($scope.teamId, $scope.gameId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
             $ionicHistory.goBack();
         }
     })
@@ -505,6 +507,7 @@ angular.module('starter.controllers', [])
                 var away = $scope.teamName;
                 var home = opponent;
             }
+			$scope.gameDate = Date.parse($scope.gameDate);
             Games.createGame($scope.teamId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
             //console.dir($ionicHistory);
             $ionicHistory.goBack();
