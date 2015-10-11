@@ -1285,16 +1285,16 @@ angular.module('starter.controllers', [])
 
             // create al required occurences ( we take a year by default)
             $scope.dutyOccurrences = new Array();
-            var firstDate = new Date(+$scope.currentDate.getFullYear(), $scope.currentDate.getMonth(), $scope.currentDate.getDate());
+            var firstDate = new Date($scope.currentDate.getFullYear(), $scope.currentDate.getMonth(), $scope.currentDate.getDate());
             // correct to start at day 0 so it always starts at the same day of the week!
             firstDate.setDate(firstDate.getDate() + (7 - $scope.currentDate.getDay()));
-            var backTrackDate = new Date(+firstDate);
-            var lastDate = new Date(+firstDate.getFullYear() + 1, firstDate.getMonth(), firstDate.getDate());
+            var backTrackDate = new Date(firstDate);
+            var lastDate = new Date(firstDate.getFullYear() + 1, firstDate.getMonth(), firstDate.getDate());
 
             while (firstDate < lastDate) {
                 $scope.dutyOccurrences.push({
-                    start: new Date(+firstDate),
-                    end: new Date(+firstDate.setDate(firstDate.getDate() + (7)))
+                    start: new Date(firstDate),
+                    end: new Date(firstDate.setDate(firstDate.getDate() + (7)))
                 });
             }
 
