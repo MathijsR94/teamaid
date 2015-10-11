@@ -106,39 +106,21 @@ app.directive('dateTime', function() {
  
 .config(function($stateProvider, $urlRouterProvider) {
 	$stateProvider
-	.state('tab', {
-	  url: "/tab",
-	  abstract: true,
-	  templateUrl: "templates/tabs.html"
-	})
-
-		.state('tab.login', {
-		  url: '/login',
-		  views: {
-			  'tab-account': {
-				  templateUrl: 'templates/login.html',
-				  controller: 'LoginCtrl'
-			  }
-		  }
+		.state('login', {
+			url: '/login',
+			templateUrl: 'templates/login.html',
+			controller: 'LoginCtrl'
 		})
 
-		.state('tab.lostpassword', {
-		  url: '/wachtwoordvergeten',
-		  views: {
-			  'tab-lostpassword': {
-				  templateUrl: 'templates/lostpassword.html',
-				  controller: 'ForgotPasswordCtrl'
-			  }
-		  }
+		.state('lostpassword', {
+			url: '/wachtwoordvergeten',
+			templateUrl: 'templates/lostpassword.html',
+			controller: 'ForgotPasswordCtrl'
 		})
-		.state('tab.register', {
-		  url: '/registreren',
-		  views: {
-			  'tab-register': {
-				  templateUrl: 'templates/register.html',
-				  controller: 'RegisterCtrl'
-			  }
-		  }
+		.state('register', {
+			url: '/registreren',
+			templateUrl: 'templates/register.html',
+			controller: 'RegisterCtrl'
 		})
 
 	.state('app', {
@@ -356,5 +338,5 @@ app.directive('dateTime', function() {
 		  }
 		});
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/login');
+  $urlRouterProvider.otherwise('/login');
 });
