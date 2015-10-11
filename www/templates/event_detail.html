@@ -1,51 +1,45 @@
 <ion-view view-title="Event">
     <ion-content>
-        <div class="row">
-            <div class="col">
-                <h1 class="center">Event</h1>
-                <span class="center">{{ eventDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='event.time'></standard-time-no-meridian></span>
-				<span class="center">Locatie: {{event.location}}</span>
-				<div ng-if="settings.dutyEvents === true">
-					<span ng-repeat="(id,value) in event.Duty">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
-				</div>
+		<h1 class="center">Event</h1>
+		<span class="center">{{ eventDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='event.time'></standard-time-no-meridian></span>
+		<span class="center">Locatie: {{event.location}}</span>
+		<div ng-if="settings.dutyEvents === true">
+			<span ng-repeat="(id,value) in event.Duty">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+		</div>
 
-                <h3 class="center">Geef hier je beschikbaarheid op</h3>
-                <span class="center">Ik ben</span>
-                <div class="button-bar">
-                    <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }" ng-click="changeAttendance('present');">aanwezig</a>
-                    <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }" ng-click="changeAttendance('absent');">afwezig</a>
-                </div>
-                <div class="row responsive-sm">
-				<div class="col"><span>aanwezig</span>
-					<ion-item ng-repeat="(id,value) in event.Present">
-							   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
-					<!-- <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> -->
-					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button>
-					<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U</ion-option-button>		   
-					</ion-item>
-				</div>
-				<div class="col"><span>afwezig</span>
-					<ion-item ng-repeat="(id,value) in event.Absent">
-							   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
-					<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button>
-					<!-- <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button> -->
-					<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U</ion-option-button>
-					</ion-item>
-				</div>
-				<div class="col"><span>onbekend</span>
-					<ion-list>
-					   <ion-item ng-repeat="(key,player) in unknownPlayers">
-						   {{player.firstName}} {{player.insertion}} {{player.lastName}}
-						<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',key)">P</ion-option-button>
-						<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',key)">A</ion-option-button>
-						<!-- <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',key)">U</ion-option-button> -->
-					   </ion-item>
-					</ion-list>
-				</div>
+		<h3 class="center">Geef hier je beschikbaarheid op</h3>
+		<span class="center">Ik ben</span>
+		<div class="button-bar">
+			<a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }" ng-click="changeAttendance('present');">aanwezig</a>
+			<a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }" ng-click="changeAttendance('absent');">afwezig</a>
+		</div>
+		<div class="row responsive-sm">
+			<div class="col"><span>aanwezig</span>
+				<ion-item ng-repeat="(id,value) in event.Present">
+						   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+				<!-- <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> -->
+				<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button>
+				<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U</ion-option-button>		   
+				</ion-item>
 			</div>
-            </div>
-        </div>
-
-		
+			<div class="col"><span>afwezig</span>
+				<ion-item ng-repeat="(id,value) in event.Absent">
+						   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+				<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button>
+				<!-- <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button> -->
+				<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U</ion-option-button>
+				</ion-item>
+			</div>
+			<div class="col"><span>onbekend</span>
+				<ion-list>
+				   <ion-item ng-repeat="(key,player) in unknownPlayers">
+					   {{player.firstName}} {{player.insertion}} {{player.lastName}}
+					<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',key)">P</ion-option-button>
+					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',key)">A</ion-option-button>
+					<!-- <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',key)">U</ion-option-button> -->
+				   </ion-item>
+				</ion-list>
+			</div>
+		</div>	
     </ion-content>
 </ion-view>

@@ -1,28 +1,20 @@
 <ion-view view-title="Training info">
     <ion-content>
-        <div class="row responsive-sm">
-            <div class="col col-50">
-                <span class="center">Datum : {{ practiseDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian
-                        etime='practise.time'></standard-time-no-meridian></span>
-                <span class="center">Locatie: {{practise.location}}</span>
-            </div>
-            <div class="col col-50" ng-if="settings.dutyPractises === true">
-                <span ng-repeat="(id,value) in practise.Duty" class="center">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h3 class="center">Geef hier je beschikbaarheid op</h3>
-                <span class="center">Ik ben</span>
+		<span class="center">Datum : {{ practiseDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian
+				etime='practise.time'></standard-time-no-meridian></span>
+		<span class="center">Locatie: {{practise.location}}</span>
+		<div ng-if="settings.dutyPractises === true">
+			<span ng-repeat="(id,value) in practise.Duty" class="center">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+		</div>
+		<h3 class="center">Geef hier je beschikbaarheid op</h3>
+		<span class="center">Ik ben</span>
 
-                <div class="button-bar">
-                    <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }"
-                       ng-click="changeAttendance('present');">aanwezig</a>
-                    <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }"
-                       ng-click="changeAttendance('absent');">afwezig</a>
-                </div>
-            </div>
-        </div>
+		<div class="button-bar">
+			<a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }"
+			   ng-click="changeAttendance('present');">aanwezig</a>
+			<a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }"
+			   ng-click="changeAttendance('absent');">afwezig</a>
+		</div>
         <div class="row responsive-sm">
             <div class="col">
                 <div class="item item-divider">
@@ -72,9 +64,5 @@
                 </ion-list>
             </div>
         </div>
-        </div>
-        </div>
-
-
     </ion-content>
 </ion-view>

@@ -274,15 +274,8 @@ angular.module('starter.controllers', [])
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.games = localStorageFactory.getGames();
-        //$scope.games.sort(function(a, b){return a.date - b.date});
         $scope.players = localStorageFactory.getPlayers();
 
-        //$scope.test = Games.getGamesRef($scope.teamId);
-        //$scope.array = [];
-        //$scope.games.orderByChild("date").on("child_added", function(snapshot) {
-        //    $scope.array.push(Date.parse(snapshot.val().date));
-        //    console.log($scope.array);
-        //});
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
                 $scope.getGames = Games.getGamesArray($scope.teamId).then(function (games) {
@@ -347,7 +340,7 @@ angular.module('starter.controllers', [])
         $scope.fieldPlayers = angular.copy($scope.players);
 
         Games.getGamesRef($scope.teamId).child($scope.gameId).on('value', function (gameSnap) {
-            $scope.gameDate = new Date(gameSnap.val().date);
+            $scope.gameDate = new Date(+gameSnap.val().date);
             $scope.game = gameSnap.val();
             //update buttons
             $scope.present = Attendance.checkAttendance($scope.game.Present, User.getUID());
@@ -436,8 +429,10 @@ angular.module('starter.controllers', [])
 
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.getGame = Games.getGame($scope.teamId).then(function (game) {
-			console.log(game);
-            $scope.gameDate = new Date(game.date);
+			
+            $scope.gameDate = new Date(+game.date);
+			console.log($scope.gameDate);
+			console.log(game.date);
             $scope.title = "Selecteer datum";
             $scope.gameTime = game.time;
             $scope.game = game;
@@ -457,7 +452,7 @@ angular.module('starter.controllers', [])
             }
         };
 
-        $scope.timePickerCallback = function (val) {
+        $scope.timePickerCallbackGameTime = function (val) {
             if (typeof (val) === 'undefined') {
                 console.log('Time not selected');
             } else {
@@ -465,9 +460,17 @@ angular.module('starter.controllers', [])
                 $scope.gameTime = val;
             }
         };
+		
+		$scope.timePickerCallbackCollectTime = function (val) {
+            if (typeof (val) === 'undefined') {
+                console.log('Time not selected');
+            } else {
+                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                $scope.collect = val;
+            }
+        };
 
         $scope.updateGame = function (home, away) {
-			$scope.gameDate = Date.parse($scope.gameDate);
             Games.updateGame($scope.teamId, $scope.gameId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
             $ionicHistory.goBack();
         }
@@ -673,8 +676,6 @@ angular.module('starter.controllers', [])
                 }
             })
         })
-        $scope.datePickerCallback = function (val) {
-        };
 
         $scope.timePickerCallback = function (val) {
         };
@@ -829,29 +830,11 @@ angular.module('starter.controllers', [])
             }
         });
 
-        // $scope.datePickerCallback = function(val) {
-        // if(typeof(val)==='undefined'){
-        // console.log('Date not selected');
-        // }else{
-        // console.log('Selected date is : ', val);
-        // $scope.date = val;
-        // }
-        // };
-
-        // $scope.timePickerCallback = function(val) {
-        // if (typeof (val) === 'undefined') {
-        // console.log('Time not selected');
-        // } else {
-        // console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-        // $scope.time = val;
-        // }
-        // };
-
         $scope.getDetail = function (practise) {
             console.log('detail');
             console.log(practise);
-            Practises.setPractise(practise);
-            $state.go('app.practise', {practiseId: practise});
+            Practises.setPractise(practise.$id);
+            $state.go('app.practise', {practiseId: practise.$id});
         }
 
         $scope.addPractise = function () {
@@ -861,11 +844,7 @@ angular.module('starter.controllers', [])
         $scope.onItemDelete = function (item) {
             $scope.practises.$remove(item);
         };
-        // $scope.newPractise = function(location,repeatValue){
-        // Practises.createPractise($scope.teamId, $scope.date, $scope.time, location, repeatValue);
-        // //return to previous page
-        // $ionicHistory.goBack();
-        // }
+
         $scope.editPractise = function (practise) {
             Practises.setPractise(practise.$id);
             $state.go('app.practise_edit', {practiseId: practise.$id});
@@ -896,7 +875,7 @@ angular.module('starter.controllers', [])
         $scope.settings = Settings.getSettings($scope.teamId);
 
         Practises.getPractisesRef($scope.teamId).child($scope.practiseId).on('value', function (practiseSnap) {
-            $scope.practiseDate = new Date(practiseSnap.val().date);
+            $scope.practiseDate = new Date(+practiseSnap.val().date);
             $scope.practise = practiseSnap.val();
 
             //update buttons
@@ -952,19 +931,19 @@ angular.module('starter.controllers', [])
         $scope.practiseId = $stateParams.practiseId;
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.getPractise = Practises.getPractise($scope.teamId).then(function (practise) {
-            $scope.practiseDate = new Date(practise.date);
+            $scope.practiseDate = new Date(+practise.date);
             $scope.title = "Selecteer datum";
             $scope.practiseTime = practise.time;
             $scope.practise = practise;
             $scope.location = practise.location;
         })
-
+		
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.practiseDate = val;
+                $scope.practiseDate = Date.parse(val);
             }
         };
 
@@ -995,7 +974,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.practiseDate = val;
+                $scope.practiseDate = Date.parse(val);
             }
         };
 
@@ -1024,12 +1003,11 @@ angular.module('starter.controllers', [])
 
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
-                $scope.getEvents = function() {
-                    Games.getEventsArray($scope.teamId).then(function (events) {
-                        $scope.events = events;
-                        localStorageFactory.setEvents(events);
-                    });
-                }
+				$scope.getEvents = Events.getEventsArray($scope.teamId).then(function (events) {
+                    $scope.events = events;
+                    console.log(events);
+					localStorageFactory.setEvents(events);
+                });
             }
         });
         $scope.showDelete = function () {
@@ -1037,11 +1015,9 @@ angular.module('starter.controllers', [])
             $scope.ShowDelete = !$scope.ShowDelete;
         };
 
-        $scope.getDetail = function (practise) {
-            //console.log('detail');
-            //console.log(event);
-            Events.setEvent(event);
-            $state.go('app.event', {eventId: event});
+        $scope.getDetail = function (event) {
+            Events.setEvent(event.$id);
+            $state.go('app.event', {eventId: event.$id});
         }
 
         $scope.addEvent = function () {
@@ -1052,13 +1028,8 @@ angular.module('starter.controllers', [])
             $scope.events.$remove(item);
         };
 
-        // $scope.newEvent = function(location){
-        // Events.createEvent($scope.teamId, $scope.date, $scope.time, location);
-        // //return to previous page
-        // $ionicHistory.goBack();
-        // }
-        $scope.editPractise = function (event) {
-            Events.setPractise(event.$id);
+        $scope.editEvent = function (event) {
+            Events.setEvent(event.$id);
             $state.go('app.event_edit', {eventId: event.$id});
         }
         $scope.changeAttendance = function (type, event) {
@@ -1087,7 +1058,7 @@ angular.module('starter.controllers', [])
         $scope.settings = Settings.getSettings($scope.teamId);
 
         Events.getEventsRef($scope.teamId).child($scope.eventId).on('value', function (eventSnap) {
-            $scope.eventDate = new Date(eventSnap.val().date);
+            $scope.eventDate = new Date(+eventSnap.val().date);
             $scope.event = eventSnap.val();
 
             //update buttons
@@ -1143,7 +1114,7 @@ angular.module('starter.controllers', [])
         $scope.eventId = $stateParams.eventId;
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.getEvent = Events.getEvent($scope.teamId).then(function (event) {
-            $scope.eventDate = new Date(event.date);
+            $scope.eventDate = new Date(+event.date);
             $scope.title = "Selecteer datum";
             $scope.eventTime = event.time;
             $scope.event = event;
@@ -1155,7 +1126,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.eventDate = val;
+                $scope.eventDate = Date.parse(val);
             }
         };
 
@@ -1185,7 +1156,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.eventDate = val;
+                $scope.eventDate = Date.parse(val);
             }
         };
 
@@ -1314,16 +1285,16 @@ angular.module('starter.controllers', [])
 
             // create al required occurences ( we take a year by default)
             $scope.dutyOccurrences = new Array();
-            var firstDate = new Date($scope.currentDate.getFullYear(), $scope.currentDate.getMonth(), $scope.currentDate.getDate());
+            var firstDate = new Date(+$scope.currentDate.getFullYear(), $scope.currentDate.getMonth(), $scope.currentDate.getDate());
             // correct to start at day 0 so it always starts at the same day of the week!
             firstDate.setDate(firstDate.getDate() + (7 - $scope.currentDate.getDay()));
-            var backTrackDate = new Date(firstDate);
-            var lastDate = new Date(firstDate.getFullYear() + 1, firstDate.getMonth(), firstDate.getDate());
+            var backTrackDate = new Date(+firstDate);
+            var lastDate = new Date(+firstDate.getFullYear() + 1, firstDate.getMonth(), firstDate.getDate());
 
             while (firstDate < lastDate) {
                 $scope.dutyOccurrences.push({
-                    start: new Date(firstDate),
-                    end: new Date(firstDate.setDate(firstDate.getDate() + (7)))
+                    start: new Date(+firstDate),
+                    end: new Date(+firstDate.setDate(firstDate.getDate() + (7)))
                 });
             }
 
@@ -1465,8 +1436,8 @@ angular.module('starter.controllers', [])
         $scope.dutyPlayers = {};
         $scope.getDuty = Duties.getDuty($scope.teamId).then(function (duty) {
             $scope.occurence = duty;
-            $scope.startDate = new Date(duty.start);
-            $scope.endDate = new Date(duty.end);
+            $scope.startDate = new Date(+duty.start);
+            $scope.endDate = new Date(+duty.end);
             $scope.dutyPlayers = angular.copy(duty.Duty);
             console.log($scope.dutyPlayers);
         });
@@ -1528,7 +1499,7 @@ angular.module('starter.controllers', [])
             } else {
                 console.log('Selected date is : ', val);
                 $scope.dutyStart = val;
-                $scope.dutyEnd = new Date(val);
+                $scope.dutyEnd = new Date(+val);
                 $scope.dutyEnd.setDate($scope.dutyEnd.getDate() + 7);
             }
         };
@@ -1650,7 +1621,6 @@ angular.module('starter.controllers', [])
                         $scope.players[player]['totGameTime'] += maxGameTime;  // initially add a fill length game to each basis player
                     }
                 }
-                ;
 
                 var fieldPlayers = angular.copy(gameStats.Basis);
                 //console.log("changes");
@@ -1821,7 +1791,7 @@ angular.module('starter.controllers', [])
 
                 var defaultDivideFunction = function (obj) {
                     console.log(obj);
-                    var date = new Date(obj);
+                    var date = new Date(+obj);
 
                     var monthNames = ["Januari", "Februari", "Maart", "April", "Mei", "Juni",
                         "Juli", "Augustus", "September", "Oktober", "November", "December"
@@ -1849,13 +1819,13 @@ angular.module('starter.controllers', [])
     .filter('cmdate', [
         '$filter', function($filter) {
             return function(input, format) {
-                return $filter('date')(new Date(input), format);
+                return $filter('date')(new Date(+input), format);
             };
         }
     ])
 .filter('monthName', [function() {
     return function (month) { //1 = January
-        var date = new Date(month);
+        var date = new Date(+month);
         var currentMonth = date.getMonth();
         var currentYear = date.getFullYear();
         var monthNames = [ 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni',
@@ -1891,7 +1861,7 @@ function removeSpecials(str) {
 }
 
 function formattedDate(date) {
-    var d = new Date(date || Date.now()),
+    var d = new Date(+date || Date.now()),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear();
