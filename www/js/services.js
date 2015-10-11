@@ -241,7 +241,7 @@ angular.module('starter.services', [])
 				var games = $firebaseArray(teamGamesRef);
 
 				games.$add({
-					date : gameDate.toString(),
+					date : Date.parse(gameDate),
 					time : gameTime,
 					collect : collectTime,
 					home : home,
@@ -250,7 +250,7 @@ angular.module('starter.services', [])
 			},
 			updateGame: function(teamId, gameId, date, time,collectTime, home, away){
 				gamesRef.child(teamId).child(gameId).update({
-					date : date.toString(),
+					date : Date.parse(date),
 					time : time,
 					collect: collectTime,
 					home : home,
@@ -301,19 +301,20 @@ angular.module('starter.services', [])
 				var practises = $firebaseArray(teamPractiseRef);
 				for (var i = 0; i < repeat; i++) {
 					practises.$add({
-						date : date.toString(),
+						date : Date.parse(date),
 						time : time,
 						location : location
 					});	
 					// increase a week
 					date.setDate(date.getDate() + (7));
+					//console.log(date);
 				};					
 			},
 			updatePractise: function(teamId, practiseId, date, time, location){
                 //console.log(teamId);
 				
 				practisesRef.child(teamId).child(practiseId).update({
-					date : date.toString(),
+					date : Date.parse(date),
 					time : time,
 					location : location
 				});
@@ -358,7 +359,7 @@ angular.module('starter.services', [])
 				var teamEventRef = eventsRef.child(teamId);
 				var events = $firebaseArray(teamEventRef);
 				events.$add({
-					date : date.toString(),
+					date : Date.parse(date),
 					time : time,
 					location : location
 				});		
@@ -367,7 +368,7 @@ angular.module('starter.services', [])
                 //console.log(teamId);
 				
 				eventsRef.child(teamId).child(eventId).update({
-					date : date.toString(),
+					date : Date.parse(date),
 					time : time,
 					location : location
 				});
@@ -629,6 +630,10 @@ angular.module('starter.services', [])
 				statsRef.child(teamId).child(gameId).update({ 
 					externalPlayers : externalPlayers
 				});
+			},
+			RemoveStats: function(teamId,gameId){
+				
+				statsRef.child(teamId).child(gameId).remove();
 			}
 		};
 	})
@@ -705,16 +710,18 @@ angular.module('starter.services', [])
 			},
 			unlinkEvents: function(teamId, events){
 				Object.keys(events).forEach(function(type){
-					//console.log(events);
+					console.log(type);
+					console.log(events);
 					var typeRef = ref.child(type).child(teamId);
 					switch(type){
 					case "Games":
-						//console.log(events.Games);
+						console.log(events.Games);
 						Object.keys(events.Games).forEach(function(event){
 							typeRef.child(event).child("Duty").remove();
 						});
 					break;
-					case "Practices":
+					case "Practises":
+						console.log(events.Practises);
 						Object.keys(events.Practises).forEach(function(event){
 							typeRef.child(event).child("Duty").remove();
 						});
@@ -734,7 +741,7 @@ angular.module('starter.services', [])
 				var result = {};
 				//console.log(occurence);
 				teamEvents.forEach(function(event){
-					var eventDate = new Date(event.date);
+					var eventDate = new Date(+event.date);
 					var startDate = new Date(occurence.start);
 					var endDate = new Date(occurence.end);
 					//console.log(endDate);

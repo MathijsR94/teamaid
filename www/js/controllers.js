@@ -269,7 +269,7 @@ angular.module('starter.controllers', [])
         }
     })
 
-    .controller('GamesCtrl', function ($scope, Games, User, $filter, $state, Attendance, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
+    .controller('GamesCtrl', function ($scope, Games, User, $filter, $state, Attendance,Statistics, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
         $scope.ShowDelete = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
@@ -297,7 +297,11 @@ angular.module('starter.controllers', [])
         }
 
         $scope.onItemDelete = function (item) {
+			console.log(item);
+			Statistics.RemoveStats($scope.teamId,item.$id);
             $scope.games.$remove(item);
+			//remove linked statistics!
+			
         }
 
         $scope.getDetail = function (game) {
@@ -431,8 +435,8 @@ angular.module('starter.controllers', [])
         $scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 			
             $scope.gameDate = new Date(+game.date);
-			console.log($scope.gameDate);
-			console.log(game.date);
+			//console.log($scope.gameDate);
+			//console.log(game.date);
             $scope.title = "Selecteer datum";
             $scope.gameTime = game.time;
             $scope.game = game;
@@ -448,7 +452,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.gameDate = Date.parse(val);
+                $scope.gameDate = val;
             }
         };
 
@@ -490,7 +494,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.gameDate = Date.parse(val);
+                $scope.gameDate = val;
             }
         };
         $scope.timePickerCallback = function (val) {
@@ -510,7 +514,6 @@ angular.module('starter.controllers', [])
                 var away = $scope.teamName;
                 var home = opponent;
             }
-			$scope.gameDate = Date.parse($scope.gameDate);
             Games.createGame($scope.teamId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
             //console.dir($ionicHistory);
             $ionicHistory.goBack();
@@ -943,7 +946,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.practiseDate = Date.parse(val);
+                $scope.practiseDate = val;
             }
         };
 
@@ -974,7 +977,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.practiseDate = Date.parse(val);
+				$scope.practiseDate = val;
             }
         };
 
@@ -988,6 +991,7 @@ angular.module('starter.controllers', [])
         };
 
         $scope.newPractise = function (location, repeatValue) {
+			//$scope.practiseDate = Date.parse($scope.practiseDate);
             Practises.createPractise($scope.teamId, $scope.practiseDate, $scope.practiseTime, location, repeatValue);
             //return to previous page
             $ionicHistory.goBack();
@@ -1126,7 +1130,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.eventDate = Date.parse(val);
+                $scope.eventDate = val;
             }
         };
 
@@ -1156,7 +1160,7 @@ angular.module('starter.controllers', [])
                 console.log('Date not selected');
             } else {
                 console.log('Selected date is : ', val);
-                $scope.eventDate = Date.parse(val);
+                $scope.eventDate = val;
             }
         };
 
@@ -1348,7 +1352,7 @@ angular.module('starter.controllers', [])
                 if (Object.keys(occurenceEvents).length > 0) {
 
                     var duty = {}
-                    duty[loopPlayers[0]] = true;
+                    duty[loopPlayers[0]] = true; 
                     loopPlayers.splice(0, 1);
                     ;
                     if (loopPlayers.length <= 1) {
@@ -1404,6 +1408,7 @@ angular.module('starter.controllers', [])
                 if (Object.keys(retVal).length > 0)
                     occurenceEvents["Events"] = retVal;
             }
+			console.log("occurrences");
             Duties.unlinkEvents($scope.teamId, occurenceEvents);
         };
 
