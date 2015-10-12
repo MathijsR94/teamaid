@@ -280,6 +280,7 @@ angular.module('starter.controllers', [])
             if (snap.val() === true) {
                 $scope.getGames = Games.getGamesArray($scope.teamId).then(function (games) {
                     $scope.games = games;
+					console.log(games);
                     localStorageFactory.setGames(games);
                 });
             }
@@ -1875,7 +1876,7 @@ angular.module('starter.controllers', [])
 .filter('isFuture', function() {
   return function(items) {
     return items.filter(function(item){
-      return item.date> Date.parse(new Date())
+      return item.date > Date.parse(new Date())
     });
   }
 })
@@ -1883,7 +1884,7 @@ angular.module('starter.controllers', [])
 .filter('isPast', function() {
   return function(items) {
     return items.filter(function(item){
-      return item.date < (Date.parse(new Date()) - (24*3600*100)) // create one day buffer 
+      return item.date <= (Date.parse(new Date()))
     });
   }
 });

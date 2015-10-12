@@ -1,9 +1,9 @@
 angular.module('starter.services', [])
     .factory('firebaseRef', function () {
-        //var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
-		var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
-		//var connectedRef = new Firebase("https://teamaid.firebaseio.com/.info/connected"); // live db
-        var connectedRef = new Firebase("https://amber-torch-2058.firebaseio.com/.info/connected");
+        var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
+		//var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
+		var connectedRef = new Firebase("https://teamaid.firebaseio.com/.info/connected"); // live db
+        //var connectedRef = new Firebase("https://amber-torch-2058.firebaseio.com/.info/connected");
         return {
             ref: function () {
                 return ref;
