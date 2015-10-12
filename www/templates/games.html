@@ -10,7 +10,7 @@
     </ion-header-bar>
   <ion-content >
     <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
-          <ion-item ng-repeat="game in games | orderBy: 'date'" ng-click="getDetail(game)">
+        <ion-item ng-repeat="game in games | orderBy: 'date' | isFuture" ng-click="getDetail(game)">
             <span>{{game.date | date: 'dd-MM-yyyy'}}</span> <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> {{game.home}} vs {{game.away}}
 			<ion-delete-button class="ion-minus-circled"
 							   ng-click="onItemDelete(game)">
@@ -19,7 +19,21 @@
 			<ion-option-button class="button-assertive" ng-click="$event.stopPropagation(); changeAttendance('absent',game)">A</ion-option-button>
 			<ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editGame(game)">Edit</ion-option-button>
 			<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); statsGame(game)">Stats</ion-option-button>
-	  </ion-item>
+		</ion-item>
+    </ion-list>
+	
+	Geschiedenis:
+	<ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
+        <ion-item ng-repeat="game in games | orderBy: '-date' | isPast" ng-click="getDetail(game)">
+            <span>{{game.date | date: 'dd-MM-yyyy'}}</span> <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> {{game.home}} vs {{game.away}}
+			<ion-delete-button class="ion-minus-circled"
+							   ng-click="onItemDelete(game)">
+			</ion-delete-button>
+			<ion-option-button class="button-balanced" ng-click="$event.stopPropagation(); changeAttendance('present',game)">P</ion-option-button>
+			<ion-option-button class="button-assertive" ng-click="$event.stopPropagation(); changeAttendance('absent',game)">A</ion-option-button>
+			<ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editGame(game)">Edit</ion-option-button>
+			<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); statsGame(game)">Stats</ion-option-button>
+		</ion-item>
     </ion-list>
 
   </ion-content>

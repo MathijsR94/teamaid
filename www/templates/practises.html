@@ -11,7 +11,7 @@
     </ion-header-bar>
     <ion-content>
         <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
-            <ion-item ng-repeat="practise in practises | orderObjectBy:'date'"  ng-click="getDetail(practise)">
+            <ion-item ng-repeat="practise in practises | orderBy:'date'  | isFuture"  ng-click="getDetail(practise)">
                 <span>{{practise.date | date: 'dd-MM-yyyy'}}</span> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
                 <ion-delete-button class="ion-minus-circled"
                                    ng-click="onItemDelete(practise)">
@@ -21,6 +21,18 @@
                 <ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editPractise(practise)">Edit</ion-option-button>
             </ion-item>
         </ion-list>
-
+		
+		Geschiedenis:
+		<ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
+            <ion-item ng-repeat="practise in practises | orderBy:'-date'  | isPast"  ng-click="getDetail(practise)">
+                <span>{{practise.date | date: 'dd-MM-yyyy'}}</span> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
+                <ion-delete-button class="ion-minus-circled"
+                                   ng-click="onItemDelete(practise)">
+                </ion-delete-button>
+				<ion-option-button class="button-balanced" ng-click="$event.stopPropagation(); changeAttendance('present',practise)">P</ion-option-button>
+				<ion-option-button class="button-assertive" ng-click="$event.stopPropagation(); changeAttendance('absent',practise)">A</ion-option-button>
+                <ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editPractise(practise)">Edit</ion-option-button>
+            </ion-item>
+        </ion-list>
     </ion-content>
 </ion-view>

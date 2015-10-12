@@ -118,7 +118,7 @@ angular.module('starter.controllers', [])
                                 }
                                 else {
                                     var teamId = teamName;
-                                    console.log(teamName);
+                                    //console.log(teamName);
 
                                     // link User to team
                                     Teams.linkPlayer(teamId, firstName, ins, lastName, uid);
@@ -263,7 +263,7 @@ angular.module('starter.controllers', [])
         });
 
         $scope.invite = function (em) {
-            console.log($scope.teamName);
+            //console.log($scope.teamName);
             Mail.mailInvite(em, $scope.teamId, $scope.teamName);
             $ionicHistory.goBack();
         }
@@ -284,11 +284,12 @@ angular.module('starter.controllers', [])
                 });
             }
         });
+		
 
         $scope.gamesRef = Games.getGamesRef($scope.teamId);
 
         $scope.showDelete = function () {
-            console.log('showdelete:' + $scope.ShowDelete);
+            //console.log('showdelete:' + $scope.ShowDelete);
             $scope.ShowDelete = !$scope.ShowDelete;
         }
 
@@ -297,10 +298,12 @@ angular.module('starter.controllers', [])
         }
 
         $scope.onItemDelete = function (item) {
-			console.log(item);
-			Statistics.RemoveStats($scope.teamId,item.$id);
-            $scope.games.$remove(item);
-			//remove linked statistics!
+			if (confirm('Dit Item verwijderen?')) {
+				//console.log(item);
+				Statistics.RemoveStats($scope.teamId,item.$id);
+				$scope.games.$remove(item);
+				//remove linked statistics!
+			}
 			
         }
 
@@ -356,7 +359,7 @@ angular.module('starter.controllers', [])
         Statistics.getRef().child($scope.teamId).child($scope.gameId).on('value', function (statsSnap) {
 
             if (statsSnap.val() !== null) {
-                console.log(statsSnap.val());
+                //console.log(statsSnap.val());
                 if (typeof statsSnap.val().Basis !== 'undefined') {
 
                     if (typeof statsSnap.val().externalPlayers !== 'undefined') {
@@ -449,27 +452,27 @@ angular.module('starter.controllers', [])
         })
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
-                console.log('Date not selected');
+                //console.log('Date not selected');
             } else {
-                console.log('Selected date is : ', val);
+                //console.log('Selected date is : ', val);
                 $scope.gameDate = val;
             }
         };
 
         $scope.timePickerCallbackGameTime = function (val) {
             if (typeof (val) === 'undefined') {
-                console.log('Time not selected');
+                //console.log('Time not selected');
             } else {
-                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
                 $scope.gameTime = val;
             }
         };
 		
 		$scope.timePickerCallbackCollectTime = function (val) {
             if (typeof (val) === 'undefined') {
-                console.log('Time not selected');
+                //console.log('Time not selected');
             } else {
-                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
                 $scope.collect = val;
             }
         };
@@ -491,17 +494,17 @@ angular.module('starter.controllers', [])
 
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
-                console.log('Date not selected');
+                //console.log('Date not selected');
             } else {
-                console.log('Selected date is : ', val);
+                //console.log('Selected date is : ', val);
                 $scope.gameDate = val;
             }
         };
         $scope.timePickerCallback = function (val) {
             if (typeof (val) === 'undefined') {
-                console.log('Time not selected');
+                //console.log('Time not selected');
             } else {
-                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
                 $scope.gameTime = val;
             }
         };
@@ -598,7 +601,7 @@ angular.module('starter.controllers', [])
                         }
                         ;
                         $scope.players = angular.extend($scope.players, stats.externalPlayers);
-                        console.log($scope.players);
+                        //console.log($scope.players);
                     }
                     else {
                         $scope.externalPlayers = 0;
@@ -648,6 +651,9 @@ angular.module('starter.controllers', [])
                     if (typeof stats.Cards !== 'undefined') {
                         for (key in stats.Cards) {
                             if (stats.Cards[key].type === 'red') {
+                                delete $scope.actualPlayers[stats.Cards[key].player]; // remove from actual players
+                            }
+							if (stats.Cards[key].type === 'yellow2') {
                                 delete $scope.actualPlayers[stats.Cards[key].player]; // remove from actual players
                             }
                         }
@@ -802,7 +808,7 @@ angular.module('starter.controllers', [])
                 if (confirm('tweede gele kaart?')) {
                     type = 'yellow2';
                     delete $scope.actualPlayers[player]; // remove from actual players
-                    //$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+                    $scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
                 }
             }
 
@@ -820,7 +826,7 @@ angular.module('starter.controllers', [])
         $scope.practises = localStorageFactory.getPractises();
         $scope.practisesRef = Practises.getPractisesRef($scope.teamId);
         $scope.showDelete = function () {
-            console.log('showdelete:' + $scope.ShowDelete);
+            //console.log('showdelete:' + $scope.ShowDelete);
             $scope.ShowDelete = !$scope.ShowDelete;
         };
 
@@ -834,8 +840,8 @@ angular.module('starter.controllers', [])
         });
 
         $scope.getDetail = function (practise) {
-            console.log('detail');
-            console.log(practise);
+            //console.log('detail');
+            //console.log(practise);
             Practises.setPractise(practise.$id);
             $state.go('app.practise', {practiseId: practise.$id});
         }
@@ -845,7 +851,9 @@ angular.module('starter.controllers', [])
         }
 
         $scope.onItemDelete = function (item) {
-            $scope.practises.$remove(item);
+			if (confirm('Dit Item verwijderen?')) {
+				$scope.practises.$remove(item);
+			}
         };
 
         $scope.editPractise = function (practise) {
@@ -943,18 +951,18 @@ angular.module('starter.controllers', [])
 		
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
-                console.log('Date not selected');
+                //console.log('Date not selected');
             } else {
-                console.log('Selected date is : ', val);
+                //console.log('Selected date is : ', val);
                 $scope.practiseDate = val;
             }
         };
 
         $scope.timePickerCallback = function (val) {
             if (typeof (val) === 'undefined') {
-                console.log('Time not selected');
+                //console.log('Time not selected');
             } else {
-                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
                 $scope.practiseTime = val;
             }
         };
@@ -974,18 +982,18 @@ angular.module('starter.controllers', [])
 
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
-                console.log('Date not selected');
+                //console.log('Date not selected');
             } else {
-                console.log('Selected date is : ', val);
+                //console.log('Selected date is : ', val);
 				$scope.practiseDate = val;
             }
         };
 
         $scope.timePickerCallback = function (val) {
             if (typeof (val) === 'undefined') {
-                console.log('Time not selected');
+                //console.log('Time not selected');
             } else {
-                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
                 $scope.practiseTime = val;
             }
         };
@@ -1009,13 +1017,13 @@ angular.module('starter.controllers', [])
             if (snap.val() === true) {
 				$scope.getEvents = Events.getEventsArray($scope.teamId).then(function (events) {
                     $scope.events = events;
-                    console.log(events);
+                    //console.log(events);
 					localStorageFactory.setEvents(events);
                 });
             }
         });
         $scope.showDelete = function () {
-            console.log('showdelete:' + $scope.ShowDelete);
+            //console.log('showdelete:' + $scope.ShowDelete);
             $scope.ShowDelete = !$scope.ShowDelete;
         };
 
@@ -1029,7 +1037,9 @@ angular.module('starter.controllers', [])
         }
 
         $scope.onItemDelete = function (item) {
-            $scope.events.$remove(item);
+			if (confirm('Dit Item verwijderen?')) {
+				$scope.events.$remove(item);
+			}
         };
 
         $scope.editEvent = function (event) {
@@ -1127,18 +1137,18 @@ angular.module('starter.controllers', [])
 
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
-                console.log('Date not selected');
+                //console.log('Date not selected');
             } else {
-                console.log('Selected date is : ', val);
+                //console.log('Selected date is : ', val);
                 $scope.eventDate = val;
             }
         };
 
         $scope.timePickerCallback = function (val) {
             if (typeof (val) === 'undefined') {
-                console.log('Time not selected');
+                //console.log('Time not selected');
             } else {
-                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
                 $scope.eventTime = val;
             }
         };
@@ -1157,18 +1167,18 @@ angular.module('starter.controllers', [])
 
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
-                console.log('Date not selected');
+                //console.log('Date not selected');
             } else {
-                console.log('Selected date is : ', val);
+                //console.log('Selected date is : ', val);
                 $scope.eventDate = val;
             }
         };
 
         $scope.timePickerCallback = function (val) {
             if (typeof (val) === 'undefined') {
-                console.log('Time not selected');
+                //console.log('Time not selected');
             } else {
-                console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
                 $scope.eventTime = val;
             }
         };
@@ -1187,7 +1197,7 @@ angular.module('starter.controllers', [])
 
         $scope.getCredits = Finance.getCredits($scope.teamId).then(function (data) {
             $scope.credits = data;
-            console.log($scope.credits);
+            //console.log($scope.credits);
         });
 
 
@@ -1216,18 +1226,18 @@ angular.module('starter.controllers', [])
             return Utility.isEmpty(obj);
         }
         $scope.newCredit = function (uid, value, comment, debetCredit) {
-            console.log(debetCredit);
+            //console.log(debetCredit);
             if (typeof comment === 'undefined') { // protect against undefined
                 comment = " ";
             }
             var val = value;
             if (debetCredit !== true) {
                 Finance.newCredit($scope.teamId, uid, (val * (-1)), comment, $scope.players[uid]);
-                console.log("debet");
+                //console.log("debet");
             }
             else {
                 Finance.newCredit($scope.teamId, uid, (val), comment, $scope.players[uid]);
-                console.log("credit");
+                //console.log("credit");
             }
 
             $ionicHistory.goBack();
@@ -1274,7 +1284,7 @@ angular.module('starter.controllers', [])
         //console.log($scope.currentDate);
 
         $scope.showDelete = function () {
-            console.log('showdelete:' + $scope.ShowDelete);
+            //console.log('showdelete:' + $scope.ShowDelete);
             $scope.ShowDelete = !$scope.ShowDelete;
         };
 
@@ -1347,7 +1357,7 @@ angular.module('starter.controllers', [])
                         occurenceEvents["Events"] = retVal;
                 }
                 //var occurenceEvents = Duties.checkForEvents($scope.games,occurence); // return array of the  events within this occurence (gameId, practiseId is needed to update datebase )
-                console.log(occurenceEvents);
+                //console.log(occurenceEvents);
                 //check if there are any events in this  returned array
                 if (Object.keys(occurenceEvents).length > 0) {
 
@@ -1388,28 +1398,30 @@ angular.module('starter.controllers', [])
 
         }
         $scope.onItemDelete = function (item) {
-            $scope.duties.$remove(item);
-            // unlink items!
+			if (confirm('Dit Item verwijderen?')) {
+				$scope.duties.$remove(item);
+				// unlink items!
 
-            var occurenceEvents = {};
-            var retVal = {};
-            if ($scope.settings.dutyGames === true) {
-                retVal = Duties.checkForEvents($scope.games, item);
-                if (Object.keys(retVal).length > 0)
-                    occurenceEvents["Games"] = retVal;
-            }
-            if ($scope.settings.dutyPractises === true) {
-                retVal = Duties.checkForEvents($scope.practises, item);
-                if (Object.keys(retVal).length > 0)
-                    occurenceEvents["Practises"] = retVal;
-            }
-            if ($scope.settings.dutyEvents === true) {
-                retVal = Duties.checkForEvents($scope.events, item);
-                if (Object.keys(retVal).length > 0)
-                    occurenceEvents["Events"] = retVal;
-            }
-			console.log("occurrences");
-            Duties.unlinkEvents($scope.teamId, occurenceEvents);
+				var occurenceEvents = {};
+				var retVal = {};
+				if ($scope.settings.dutyGames === true) {
+					retVal = Duties.checkForEvents($scope.games, item);
+					if (Object.keys(retVal).length > 0)
+						occurenceEvents["Games"] = retVal;
+				}
+				if ($scope.settings.dutyPractises === true) {
+					retVal = Duties.checkForEvents($scope.practises, item);
+					if (Object.keys(retVal).length > 0)
+						occurenceEvents["Practises"] = retVal;
+				}
+				if ($scope.settings.dutyEvents === true) {
+					retVal = Duties.checkForEvents($scope.events, item);
+					if (Object.keys(retVal).length > 0)
+						occurenceEvents["Events"] = retVal;
+				}
+				//console.log("occurrences");
+				Duties.unlinkEvents($scope.teamId, occurenceEvents);
+			}
         };
 
         $scope.addDuty = function () {
@@ -1417,7 +1429,7 @@ angular.module('starter.controllers', [])
         }
 
         $scope.editDuty = function (duty) {
-            console.log(duty);
+            //console.log(duty);
             Duties.setDuty(duty.$id);
             $state.go('app.Duty_edit', {dutyId: duty.$id});
         };
@@ -1437,25 +1449,25 @@ angular.module('starter.controllers', [])
         // get Events
         $scope.events = localStorageFactory.getEvents();
 
-        console.log($scope.dutyId);
+        //console.log($scope.dutyId);
         $scope.dutyPlayers = {};
         $scope.getDuty = Duties.getDuty($scope.teamId).then(function (duty) {
             $scope.occurence = duty;
             $scope.startDate = new Date(+duty.start);
             $scope.endDate = new Date(+duty.end);
             $scope.dutyPlayers = angular.copy(duty.Duty);
-            console.log($scope.dutyPlayers);
+            //console.log($scope.dutyPlayers);
         });
 
         $scope.changeKey = function (key) {
             // temporary fix while  the number of corvee remains 1
-            console.log(key);
+            //console.log(key);
             delete $scope.dutyPlayers[Object.keys($scope.dutyPlayers)[0]]
             $scope.dutyPlayers[key] = true;
         }
 
         $scope.updateDuty = function () {
-            console.log($scope.dutyPlayers);
+            //console.log($scope.dutyPlayers);
             var occurenceEvents = {};
             var retVal = {};
             if ($scope.settings.dutyGames === true) {
@@ -1500,9 +1512,9 @@ angular.module('starter.controllers', [])
 
         $scope.datePickerCallback = function (val) {
             if (typeof(val) === 'undefined') {
-                console.log('Date not selected');
+                //console.log('Date not selected');
             } else {
-                console.log('Selected date is : ', val);
+                //console.log('Selected date is : ', val);
                 $scope.dutyStart = val;
                 $scope.dutyEnd = new Date(+val);
                 $scope.dutyEnd.setDate($scope.dutyEnd.getDate() + 7);
@@ -1515,7 +1527,7 @@ angular.module('starter.controllers', [])
                 var dutyPlayers = {};
                 dutyPlayers[duty] = true;
 
-                console.log($scope.dutyEnd);
+                //console.log($scope.dutyEnd);
                 var occurenceKey = $scope.dutyStart.getFullYear() + "" + $scope.dutyStart.getMonth() + "" + $scope.dutyStart.getDate();
                 // create new occurence
                 Duties.addDuty($scope.teamId, occurenceKey, $scope.dutyStart, $scope.dutyEnd, dutyPlayers);
@@ -1539,7 +1551,7 @@ angular.module('starter.controllers', [])
                         occurenceEvents["Events"] = retVal;
                 }
                 // link all events
-                console.log(occurenceEvents);
+                //console.log(occurenceEvents);
                 Duties.linkEvents($scope.teamId, occurenceEvents, dutyPlayers);
 
                 //return to previous page
@@ -1576,7 +1588,7 @@ angular.module('starter.controllers', [])
             return $scope.shownGroup === group;
         };
         $scope.changeSetting = function (key, value) {
-            console.log(key, value);
+            //console.log(key, value);
             Settings.updateSetting(key, value, $scope.teamId);
         };
         $scope.changePassword = function (oldPW, newPW, cnfPwd) {
@@ -1599,15 +1611,15 @@ angular.module('starter.controllers', [])
             $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
         }
 
-        Object.size = function (obj) {
-            var size = 0, key;
-            for (key in obj) {
-                if (obj.hasOwnProperty(key)) size++;
-            }
-            return size;
-        };
+        // Object.size = function (obj) {
+            // var size = 0, key;
+            // for (key in obj) {
+                // if (obj.hasOwnProperty(key)) size++;
+            // }
+            // return size;
+        // };
 
-// Get the size of an object
+		// Get the size of an object
         //console.log($scope.players);
         Statistics.getRef().child($scope.teamId).on('value', function (statsSnap) {
             for (var player in $scope.players) { // reset all gameTime counters to 0
@@ -1675,8 +1687,9 @@ angular.module('starter.controllers', [])
                         if (change.playerOut.indexOf("external") == -1) { // only calculate if player is not external
                             $scope.players[change.playerOut]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted. ( this  will be transferred to the player who will be changed in )
                         }
-                        if (change.playerIn.indexOf("external") == -1) // only calculate if player is not external
+                        if (change.playerIn.indexOf("external") == -1){ // only calculate if player is not external
                             $scope.players[change.playerIn]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
+						}
                     }
                 }
                 //console.log("cards");
@@ -1720,7 +1733,7 @@ angular.module('starter.controllers', [])
                                 else {
                                     remainingTime = ((gameStats.secondHalfEnd - card.time)) / 60;
                                 }
-                                console.log(card.type, $scope.players[card.player], remainingTime);
+                                //console.log(card.type, $scope.players[card.player], remainingTime);
                                 //if(card.player.indexOf("external") == -1){ // only calculate if player is not external
                                 $scope.players[card.player]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted.
                                 //}
@@ -1736,7 +1749,7 @@ angular.module('starter.controllers', [])
                     }
                 }
             }
-            console.log($scope.players);
+            //console.log($scope.players);
         })
         $scope.selected = [];
         $scope.selected["firstName"] = true;
@@ -1779,7 +1792,7 @@ angular.module('starter.controllers', [])
             angular.forEach(items, function (item) {
                 filtered.push(item);
             });
-            console.log(field);
+            //console.log(field);
             filtered.sort(function (a, b) {
                 return (a[field] > b[field] ? 1 : -1);
             });
@@ -1795,7 +1808,7 @@ angular.module('starter.controllers', [])
                 var key = attrs.autoListDividerValue;
 
                 var defaultDivideFunction = function (obj) {
-                    console.log(obj);
+                    //console.log(obj);
                     var date = new Date(+obj);
 
                     var monthNames = ["Januari", "Februari", "Maart", "April", "Mei", "Juni",
@@ -1838,7 +1851,24 @@ angular.module('starter.controllers', [])
 
         return monthNames[currentMonth] + ' ' + currentYear;
     }
-}]);
+}])
+
+.filter('isFuture', function() {
+  return function(items) {
+    return items.filter(function(item){
+      return item.date> Date.parse(new Date())
+    });
+  }
+})
+
+.filter('isPast', function() {
+  return function(items) {
+    return items.filter(function(item){
+      return item.date < (Date.parse(new Date()) - (24*3600*100)) // create one day buffer 
+    });
+  }
+});
+
 function dynamicSort(property) {
     var sortOrder = 1;
     if (property[0] === "-") {
