@@ -526,7 +526,7 @@ angular.module('starter.controllers', [])
     .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, firebaseRef, localStorageFactory, $ionicHistory) {
         $scope.gameId = $stateParams.gameId;
         $scope.selectedType = "";
-        $scope.typeStats = ["wissel", "positie wissel", "goal voor", "goal tegen", "gele kaart", "rode kaart"]
+        $scope.typeStats = ["wissel", "positie wissel", "goal voor", "goal tegen", "gele kaart", "rode kaart", "event"]
         $scope.externalPlayerNames = {};
         $scope.game = {}; // empty game object
         $scope.homeScore = 0;
@@ -815,6 +815,14 @@ angular.module('starter.controllers', [])
             Statistics.newCard($scope.teamId, $scope.gameId, type, player, time, comment);
             $scope.selectedType = "";
             $scope.toggleGroup(null);
+        };
+		
+		$scope.saveGameEvent = function (time, comment) {
+            if (typeof comment !== 'undefined') { // protect against undefined
+                Statistics.newGameEvent($scope.teamId, $scope.gameId, time, comment);
+				$scope.selectedType = "";
+				$scope.toggleGroup(null);
+            }
         };
 
     })

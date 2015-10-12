@@ -230,6 +230,20 @@
 					<button class="button button-bq" ng-click="saveCard(selectedPlayer,'red',eventTime,comment)">save</button>
 				</div>
 			</div>
+			<div ng-if="selectedType === 'event'"> <!-- this is the div voor GameEvents-->
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveGameEvent(eventTime,comment)">save</button>
+				</div>
+			</div>
 		</ion-item>
 		<ion-item class="item-stable" ng-click="toggleGroup('currentTeam')" ng-class="{active: isGroupShown('currentTeam')}">
 			  <i class="icon" ng-class="isGroupShown('currentTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>

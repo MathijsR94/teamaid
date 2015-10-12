@@ -634,6 +634,13 @@ angular.module('starter.services', [])
 			RemoveStats: function(teamId,gameId){
 				
 				statsRef.child(teamId).child(gameId).remove();
+			},
+			newGameEvent: function(teamId, gameId, time, comment){
+				var gameEvents = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameEvents"));
+				gameEvents.$add({
+						time : time,
+						comment : comment
+					});
 			}
 		};
 	})
