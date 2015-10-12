@@ -500,7 +500,8 @@ angular.module('starter.controllers', [])
                 $scope.gameDate = val;
             }
         };
-        $scope.timePickerCallback = function (val) {
+		
+        $scope.timePickerCallbackGameTime = function (val) {
             if (typeof (val) === 'undefined') {
                 //console.log('Time not selected');
             } else {
@@ -508,6 +509,16 @@ angular.module('starter.controllers', [])
                 $scope.gameTime = val;
             }
         };
+		
+		$scope.timePickerCallbackCollectTime = function (val) {
+            if (typeof (val) === 'undefined') {
+                //console.log('Time not selected');
+            } else {
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                $scope.collect = val;
+            }
+        };
+		
         $scope.newGame = function (homeAway, opponent) {
             if (homeAway === true) {
                 var home = $scope.teamName;

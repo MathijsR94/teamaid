@@ -7,7 +7,7 @@
 						<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
 							<button class="button button-block button-stable"> {{ eventDate | date:'dd - MMMM - yyyy' }} </button>
 						</ionic-datepicker>
-						<ionic-timepicker name="time" etime="eventTime" format="24" step="15" callback="timePickerCallback">
+						<ionic-timepicker name="time" etime="eventTime" format="24" step="5" callback="timePickerCallback">
 							<button class="button button-block button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
 						</ionic-timepicker>
                         <label class="item item-input">
