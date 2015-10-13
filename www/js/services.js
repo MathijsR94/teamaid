@@ -661,12 +661,12 @@ angular.module('starter.services', [])
 			},
 			addDuty: function(teamId, key,startValue,endValue,dutyObj) {
 				dutyRef.child(teamId).child(key).set({
-					start : startValue.toString(),
-					end : endValue.toString(),
+					start : Date.parse(startValue),
+					end : Date.parse(endValue),
 					Duty : dutyObj
 				});
-				return {start : startValue.toString(),
-						end : endValue.toString(),
+				return {start : Date.parse(startValue),
+						end : Date.parse(endValue),
 						Duty : dutyObj};
 				//console.log("add Duty");
 			},
