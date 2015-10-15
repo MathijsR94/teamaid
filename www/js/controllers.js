@@ -1323,7 +1323,8 @@ angular.module('starter.controllers', [])
             // correct to start at day 0 so it always starts at the same day of the week!
             firstDate.setDate(firstDate.getDate() + (7 - $scope.currentDate.getDay()));
             var backTrackDate = new Date(firstDate);
-            var lastDate = new Date(firstDate.getFullYear(), firstDate.getMonth()+1, firstDate.getDate());
+			console.log(backTrackDate);
+            var lastDate = new Date(firstDate.getFullYear()+1, firstDate.getMonth(), firstDate.getDate());
 
             while (firstDate < lastDate) {
                 $scope.dutyOccurrences.push({
@@ -1334,20 +1335,24 @@ angular.module('starter.controllers', [])
 
             // backtrack our Duty schedule to initialize the loopPlayers array. this  will make sure we do give players double duty
             //backtrack for  no of  players times
+			//console.log($scope.duties);
+			//console.log($scope.duties.$getRecord(201579));
             for (var i = 0; i < dutyPlayers.length; i++) {
                 //actually make the backtrack go back
+				
                 backTrackDate.setDate(backTrackDate.getDate() - 7);
                 var backTrackKey = backTrackDate.getFullYear() + "" + backTrackDate.getMonth() + "" + backTrackDate.getDate();
-                if (typeof $scope.duties[backTrackKey] === "undefined") {
+                if (typeof $scope.duties.$getRecord([backTrackKey]) === "undefined" || $scope.duties.$getRecord([backTrackKey]) === null) {
                     // no Duty here or this date does not exist
                     console.log("no duty exists");
                 } else {
                     // there is a duty record here, lets see who is listed
-                    console.log("find history player");
+                    //console.log("find history player", backTrackKey);
+					//console.log($scope.duties.$getRecord(backTrackKey));
                     var foundDuties = Object.keys($scope.duties.$getRecord(backTrackKey).Duty);
                     //remove from loopPlayers
                     foundDuties.forEach(function (key) {
-						console.log(key);
+						//console.log(key);
                         var index = loopPlayers.indexOf(key);
                         if (index != -1)
                             loopPlayers.splice(loopPlayers.indexOf(key), 1);
