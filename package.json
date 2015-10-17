@@ -1,7 +1,7 @@
 {
   "name": "teamaid",
-  "version": "1.0.0",
-  "description": "teamaid: An Ionic project",
+  "version": "1.0.1",
+  "description": "Teamaid",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-concat": "^2.2.0",

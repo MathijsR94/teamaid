@@ -4,5 +4,41 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="PHARS">
+        <CLASSES>
+          <root url="phar://$MODULE_DIR$/platforms/ios/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/build/intermediates/assets/debug/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/assets/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/build/intermediates/assets/release/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/windows/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/build/intermediates/assets/debug/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/build/intermediates/assets/release/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/ios/build/emulator/teamaid.app/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/windows/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/ios/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/assets/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/ios/build/emulator/teamaid.app/www/php/php-jwt/composer.phar" />
+        </CLASSES>
+        <SOURCES>
+          <root url="phar://$MODULE_DIR$/platforms/ios/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/build/intermediates/assets/debug/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/assets/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/build/intermediates/assets/release/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/windows/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/build/intermediates/assets/debug/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/build/intermediates/assets/release/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/ios/build/emulator/teamaid.app/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/windows/www/php/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/ios/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/android/assets/www/php/php-jwt/composer.phar" />
+          <root url="phar://$MODULE_DIR$/platforms/ios/build/emulator/teamaid.app/www/php/php-jwt/composer.phar" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

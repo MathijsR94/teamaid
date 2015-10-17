@@ -175,12 +175,11 @@ angular.module('starter.controllers', [])
             }
         }
     })
-    .controller('LogoutCtrl', function ($scope, fireBaseData) {
+    .controller('LogoutCtrl', function ($scope, fireBaseData, $state) {
         //Logout method
         $scope.logout = function () {
-            console.log('logout');
             fireBaseData.logout();
-            document.location = "/";
+            $state.go('login');
         }
     })
 
