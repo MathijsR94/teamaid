@@ -561,6 +561,7 @@ angular.module('starter.controllers', [])
         $scope.game = {}; // empty game object
         $scope.homeScore = 0;
         $scope.awayScore = 0;
+		$scope.gameLog = {};
 
         $scope.teamId = localStorageFactory.getTeamId(); // get TeamId from local storage
         $scope.nbsp = " "; // whitespace
@@ -573,6 +574,79 @@ angular.module('starter.controllers', [])
         $scope.players = localStorageFactory.getPlayers();
         //console.log($scope.players);
         //$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
+			
+			
+		//	tijdelijk!!!
+		
+		// $scope.update = function(){		 // stats crawler
+			// var statsRef = firebaseRef.ref().child("Statistics");
+			// statsRef.once('value', function (statsSnap) {
+			
+				// $scope.stats = statsSnap.val();
+				// console.log($scope.stats);
+				// for (teamId in $scope.stats) { // team layer
+					//console.log(teamId, "TEAM");
+					// for (gameId in $scope.stats[teamId]) { // game layer
+						//console.log(gameId, "GAME");
+						// for (eventType in $scope.stats[teamId][gameId]) { // event layer
+							//console.log(eventType, "EVENTGROUP");
+							// switch(eventType){
+								
+								// case "Changes":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "Change");
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "Change"
+										// })
+									// }
+									// break;
+								// case "Cards":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "Card");
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "Card"
+										// })
+									// }
+									// break;
+								
+								// case "GameEvents":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "GameEvent");
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "GameEvent"
+										// })
+									// }
+									// break;
+								// case "OurGoals":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "OurGoal");
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "OurGoal"
+										// })
+									// }
+									// break;
+								// case "TheirGoals":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "TheirGoal");
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "TheirGoal"
+										// })
+									// }
+									// break;
+
+							// }
+						// }
+					// }
+				// }
+				
+			
+			// })
+		// }	
+			
+			////////////// tijdelijk ^^^^^^^^^^^^^^^^^^^^
+			
+			
+			
         var gamesRef = firebaseRef.ref().child("Games").child($scope.teamId);
         gamesRef.child(localStorageFactory.getSelectedGame()).on('value', function (gameSnap) {
 
@@ -584,6 +658,7 @@ angular.module('starter.controllers', [])
             else {
                 $scope.presentPlayers = {};
             }
+			
             // get current statistics and  fill them in !
             // console.log(game);
             var statsRef = firebaseRef.ref().child("Statistics").child($scope.teamId);
@@ -611,6 +686,10 @@ angular.module('starter.controllers', [])
                     $scope.secondHalfStart = stats.secondHalfStart;
                     $scope.secondHalfEnd = stats.secondHalfEnd;
 
+					
+					if (typeof stats.GameEvents !== 'undefined') {
+						$scope.gameLog = angular.extend($scope.gameLog,stats.GameEvents);
+					}
                     //external players must be added to the present List
                     // if(typeof $scope.externalPlayers !== 'undefined'){
                     // for(var i = 1;i <= $scope.externalPlayers;i++){
@@ -658,6 +737,7 @@ angular.module('starter.controllers', [])
                     }
 
                     if (typeof stats.Changes !== 'undefined') {
+						$scope.gameLog = angular.extend($scope.gameLog,stats.Changes);
                         for (key in stats.Changes) {
                             switch (stats.Changes[key].type) { //change type, in/out or  position
                                 case "In/Out":
@@ -679,6 +759,7 @@ angular.module('starter.controllers', [])
                     }
 
                     if (typeof stats.Cards !== 'undefined') {
+						$scope.gameLog = angular.extend($scope.gameLog,stats.Cards);
                         for (key in stats.Cards) {
                             if (stats.Cards[key].type === 'red') {
                                 delete $scope.actualPlayers[stats.Cards[key].player]; // remove from actual players
@@ -694,6 +775,7 @@ angular.module('starter.controllers', [])
 
                     // scoreboard Our Goals
                     if (typeof stats.OurGoals !== 'undefined') {
+						$scope.gameLog = angular.extend($scope.gameLog,stats.OurGoals);
                         for (key in stats.OurGoals) {
                             if ($scope.game.home === $scope.teamName)
                                 $scope.homeScore++;
@@ -704,6 +786,7 @@ angular.module('starter.controllers', [])
                     }
                     // scoreboard Their Goals
                     if (typeof stats.TheirGoals !== 'undefined') {
+						$scope.gameLog = angular.extend($scope.gameLog,stats.TheirGoals);
                         for (key in stats.TheirGoals) {
                             if ($scope.game.home !== $scope.teamName)
                                 $scope.homeScore++;
@@ -713,7 +796,9 @@ angular.module('starter.controllers', [])
                         ;
                     }
                 }
+			console.log($scope.gameLog);	
             })
+			
         })
 
         $scope.timePickerCallback = function (val) {
@@ -846,7 +931,6 @@ angular.module('starter.controllers', [])
             $scope.selectedType = "";
             $scope.toggleGroup(null);
         };
-		
 		$scope.saveGameEvent = function (time, comment) {
             if (typeof comment !== 'undefined') { // protect against undefined
                 Statistics.newGameEvent($scope.teamId, $scope.gameId, time, comment);
