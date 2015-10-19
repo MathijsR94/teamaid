@@ -274,7 +274,7 @@ angular.module('starter.controllers', [])
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.games = localStorageFactory.getGames();
         $scope.players = localStorageFactory.getPlayers();
-
+        $scope.limit = 3;
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
                 $scope.getGames = Games.getGamesArray($scope.teamId).then(function (games) {
@@ -333,6 +333,22 @@ angular.module('starter.controllers', [])
                     break;
             }
         }
+        $scope.toggleGroup = function (group) {
+            if ($scope.isGroupShown(group)) {
+                $scope.shownGroup = null;
+            } else {
+                $scope.shownGroup = group;
+            }
+        };
+        $scope.isGroupShown = function (group) {
+            return $scope.shownGroup === group;
+        };
+        $scope.loadMore = function() {
+            $scope.limit = $scope.games.length;
+        }
+        $scope.loadLess = function() {
+            $scope.limit = 3;
+        }
     })
 
     .controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
@@ -346,8 +362,10 @@ angular.module('starter.controllers', [])
         $scope.basis = {};
         $scope.fieldPlayers = angular.copy($scope.players);
 
+
         Games.getGamesRef($scope.teamId).child($scope.gameId).on('value', function (gameSnap) {
             $scope.gameDate = new Date(+gameSnap.val().date);
+            $scope.isPast = $scope.gameDate < new Date();
             $scope.game = gameSnap.val();
             //update buttons
             $scope.present = Attendance.checkAttendance($scope.game.Present, User.getUID());
@@ -376,6 +394,7 @@ angular.module('starter.controllers', [])
                 $scope.tactic = 0;
             }
         });
+
 
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
@@ -843,11 +862,19 @@ angular.module('starter.controllers', [])
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.practises = localStorageFactory.getPractises();
+        $scope.limit= 3;
         $scope.practisesRef = Practises.getPractisesRef($scope.teamId);
         $scope.showDelete = function () {
             //console.log('showdelete:' + $scope.ShowDelete);
             $scope.ShowDelete = !$scope.ShowDelete;
         };
+
+        $scope.loadMore = function() {
+            $scope.limit = $scope.practises.length;
+        }
+        $scope.loadLess = function() {
+            $scope.limit = 3;
+        }
 
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
@@ -893,7 +920,16 @@ angular.module('starter.controllers', [])
                     break;
             }
         }
-
+        $scope.toggleGroup = function (group) {
+            if ($scope.isGroupShown(group)) {
+                $scope.shownGroup = null;
+            } else {
+                $scope.shownGroup = group;
+            }
+        };
+        $scope.isGroupShown = function (group) {
+            return $scope.shownGroup === group;
+        };
     })
 
     .controller('Practises_DetailCtrl', function ($scope, Practises, User, Teams, Attendance, Settings, localStorageFactory, $stateParams) {
@@ -906,6 +942,7 @@ angular.module('starter.controllers', [])
 
         Practises.getPractisesRef($scope.teamId).child($scope.practiseId).on('value', function (practiseSnap) {
             $scope.practiseDate = new Date(+practiseSnap.val().date);
+            $scope.isPast = $scope.practiseDate < new Date();
             $scope.practise = practiseSnap.val();
 
             //update buttons
@@ -1278,6 +1315,14 @@ angular.module('starter.controllers', [])
 
         $scope.players = localStorageFactory.getPlayers();
 
+        $scope.limit = 3;
+        $scope.loadMore = function() {
+            $scope.limit = $scope.games.length;
+        }
+        $scope.loadLess = function() {
+            $scope.limit = 3;
+        }
+
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
                 $scope.getGames = Games.getGamesArray($scope.teamId).then(function (games) {
@@ -1457,6 +1502,16 @@ angular.module('starter.controllers', [])
             //console.log(duty);
             Duties.setDuty(duty.$id);
             $state.go('app.Duty_edit', {dutyId: duty.$id});
+        };
+        $scope.toggleGroup = function (group) {
+            if ($scope.isGroupShown(group)) {
+                $scope.shownGroup = null;
+            } else {
+                $scope.shownGroup = group;
+            }
+        };
+        $scope.isGroupShown = function (group) {
+            return $scope.shownGroup === group;
         };
     })
 
@@ -1886,12 +1941,28 @@ angular.module('starter.controllers', [])
   }
 })
 
+    .filter('isFutureDuty', function() {
+        return function(items) {
+            return items.filter(function(item){
+                return item.end > Date.parse(new Date())
+            });
+        }
+    })
+
 .filter('isPast', function() {
   return function(items) {
     return items.filter(function(item){
       return item.date <= (Date.parse(new Date()))
     });
   }
+})
+
+.filter('isPastDuty', function() {
+    return function(items) {
+        return items.filter(function(item){
+            return item.end <= (Date.parse(new Date()))
+        });
+    }
 });
 
 function dynamicSort(property) {

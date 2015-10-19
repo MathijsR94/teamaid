@@ -11,7 +11,7 @@
     </ion-header-bar>
     <ion-content>
         <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
-            <ion-item ng-repeat="practise in practises | orderBy:'date'  | isFuture"  ng-click="getDetail(practise)">
+            <ion-item ng-repeat="practise in practises | orderBy:'date'  | isFuture | limitTo:limit"  ng-click="getDetail(practise)">
                 <span>{{practise.date | date: 'dd-MM-yyyy'}}</span> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
                 <ion-delete-button class="ion-minus-circled"
                                    ng-click="onItemDelete(practise)">
@@ -20,11 +20,16 @@
 				<ion-option-button class="button-assertive" ng-click="$event.stopPropagation(); changeAttendance('absent',practise)">A</ion-option-button>
                 <ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editPractise(practise)">Edit</ion-option-button>
             </ion-item>
+            <ion-item class="center"><div ng-click="loadMore()" ng-show="limit == 3">Meer laden</div><div ng-click="loadLess()" ng-show="limit != 3 ">Minder laden</div></ion-item>
         </ion-list>
-		
-		Geschiedenis:
-		<ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
-            <ion-item ng-repeat="practise in practises | orderBy:'-date'  | isPast"  ng-click="getDetail(practise)">
+
+        <ion-item class="item-stable" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
+            <i class="icon" ng-class="isGroupShown('past') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+            Geschiedenis
+        </ion-item>
+        <!--<date-Time sdate='credit.timestamp'></date-Time>  €{{credit.value}}  , {{credit.comment}}-->
+        <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
+            <ion-item ng-repeat="practise in practises | orderBy:'-date'  | isPast"  ng-click="getDetail(practise)" class="item-accordion disabled" ng-show="isGroupShown('past')">
                 <span>{{practise.date | date: 'dd-MM-yyyy'}}</span> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}
                 <ion-delete-button class="ion-minus-circled"
                                    ng-click="onItemDelete(practise)">

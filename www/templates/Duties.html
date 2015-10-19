@@ -11,7 +11,7 @@
 </ion-header-bar>
   <ion-content>
     <ion-list show-delete="ShowDelete" can-swipe="isAdmin">
-      <ion-item ng-repeat="duty in duties | orderBy:'start'">
+      <ion-item ng-repeat="duty in duties | orderBy:'start' | isFutureDuty | limitTo: limit">
             <date-Time sdate='duty.start'></date-Time> tot <date-Time sdate='duty.end'></date-Time> <span ng-repeat="(id,value) in duty.Duty">{{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
 			<ion-delete-button class="ion-minus-circled"
 							   ng-click="onItemDelete(duty)">
@@ -19,6 +19,21 @@
 			<ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editDuty(duty)">Edit</ion-option-button>
       </ion-item>
     </ion-list>
+      <ion-item class="item-stable" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
+          <i class="icon" ng-class="isGroupShown('past') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+          Geschiedenis
+      </ion-item>
+      <!--<date-Time sdate='credit.timestamp'></date-Time>  €{{credit.value}}  , {{credit.comment}}-->
+      <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
+          <ion-item ng-repeat="duty in duties | orderBy:'start' | isPastDuty" class="item-accordion disabled" ng-show="isGroupShown('past')">
+              <date-Time sdate='duty.start'></date-Time> tot <date-Time sdate='duty.end'></date-Time> <span ng-repeat="(id,value) in duty.Duty">{{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+              <ion-delete-button class="ion-minus-circled"
+                                 ng-click="onItemDelete(duty)">
+              </ion-delete-button>
+              <ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editDuty(duty)">Edit</ion-option-button>
+          </ion-item>
+      </ion-list>
+      </ion-list>
 	
 	
 

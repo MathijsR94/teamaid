@@ -6,6 +6,7 @@
 		<div ng-if="settings.dutyPractises === true">
 			<span ng-repeat="(id,value) in practise.Duty" class="center">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
 		</div>
+        <div ng-show="!isPast">
 		<h3 class="center">Geef hier je beschikbaarheid op</h3>
 		<span class="center">Ik ben</span>
 
@@ -15,6 +16,7 @@
 			<a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }"
 			   ng-click="changeAttendance('absent');">afwezig</a>
 		</div>
+            </div>
         <div class="row responsive-sm">
             <div class="col">
                 <div class="item item-divider">
