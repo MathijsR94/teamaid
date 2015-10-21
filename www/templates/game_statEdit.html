@@ -1,0 +1,140 @@
+<ion-view view-title="Edit Wedstrijd">
+    <ion-content>
+			<div class="item item-divider">Geef een gebeurtenis door:</div>
+			<label class="item item-input item-select">
+				<span class="input-label">Type</span>
+				<select ng-model="selectedType" ng-options="type as type for type in typeStats" ng-change="updateEventTime()">
+					<option> type </option>
+				</select>
+			</label>
+			<div ng-if="selectedType === 'wissel'"> <!-- this  is  the div  voor wissel-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler Uit</span>
+					<select ng-model="selectedPlayerOut" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+				</label>
+				<label class="item item-input item-select">
+					<span class="input-label">Speler In</span>
+					<select ng-model="selectedPlayerIn" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in changes"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveChange(selectedPlayerIn,selectedPlayerOut,eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'positie wissel'"> <!-- this is the div voor positie wissel-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer1" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+				</label>
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="savePosChange(selectedPlayer1,selectedPlayer2,eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'goal voor'"> <!-- this is the div voor goals voor-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveOurGoal(selectedPlayer,eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'goal tegen'"> <!-- this is the div voor goals tegen-->
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveTheirGoal(eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'gele kaart'"> <!-- this is the div voor gele kaart-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveCard(selectedPlayer,'yellow',eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'rode kaart'"> <!-- this is the div voor rode kaart-->
+				<label class="item item-input item-select">
+					<span class="input-label">Speler</span>
+					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+				</label>
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveCard(selectedPlayer,'red',eventTime,comment)">save</button>
+				</div>
+			</div>
+			<div ng-if="selectedType === 'event'"> <!-- this is the div voor GameEvents-->
+				<label class="item item-input">
+				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
+					tijdstip: <button class="button button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
+				</ionic-timepicker>
+				</label>
+				<label class="item item-input">
+					<span class="input-label">commentaar</span>
+					<input type="text" ng-model="comment"/>
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="saveGameEvent(eventTime,comment)">save</button>
+				</div>
+			</div>
+
+
+        <button class="button button-block" ng-click="updateGame(home, away)">Opslaan</button>
+    </ion-content>
+</ion-view>

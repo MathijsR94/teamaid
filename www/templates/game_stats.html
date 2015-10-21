@@ -12,7 +12,7 @@
 			&nbsp;
 			Wedstrijd verslag
 		</ion-item>
-		<ion-item class="item-accordion" ng-repeat="event in gameLog | orderBy: 'time'" ng-show="isGroupShown('gameLog')">
+		<ion-item class="item-accordion" ng-repeat="(key,event) in gameLog" ng-show="isGroupShown('gameLog')">
 			<standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
 			<span ng-if="event.statsType === 'GameEvent'"> Event </span>
 			<span ng-if="event.statsType === 'OurGoal'"> Goal voor, {{(players[event.player].firstName +nbsp+ players[event.player].insertion +nbsp+ players[event.player].lastName)}}</span>
@@ -28,6 +28,11 @@
 				<span ng-if="event.type === 'In/Out'">,  {{(players[event.playerIn].firstName +nbsp+ players[event.playerIn].insertion +nbsp+ players[event.playerIn].lastName)}} voor {{(players[event.playerOut].firstName +nbsp+ players[event.playerOut].insertion +nbsp+ players[event.playerOut].lastName)}} </span>
 			</span>
 			, {{event.comment}}
+			<ion-delete-button class="ion-minus-circled"
+				   ng-click="onItemDelete(event)">
+			</ion-delete-button>
+			<ion-option-button class="button-dark" ng-click="$event.stopPropagation(); editStat(event,key)">Edit</ion-option-button>
+
 		</ion-item>
 		<ion-item class="item-stable" ng-click="toggleGroup('gameTimes')" ng-class="{active: isGroupShown('gameTimes')}">
 			  <i class="icon" ng-class="isGroupShown('gameTimes') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>

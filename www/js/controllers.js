@@ -230,13 +230,14 @@ angular.module('starter.controllers', [])
         })
     })
 
-    .controller('PlayersCtrl', function ($scope, Teams, User, $state, $stateParams, localStorageFactory) {
+    .controller('PlayersCtrl', function ($scope, Teams, User, $state, $stateParams, localStorageFactory, $firebaseArray) {
 
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.players = localStorageFactory.getPlayers();
 
-        Teams.ref().child($scope.teamId).on('value', function (teamSnap) {
+		
+        Teams.ref().child($scope.teamId).orderByChild("lastName").on('value', function (teamSnap) {
             $scope.players = teamSnap.val().Players;
             $scope.inactivePlayers = teamSnap.val().InActive;
         });
@@ -356,9 +357,10 @@ angular.module('starter.controllers', [])
         $scope.players = localStorageFactory.getPlayers();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.isAdmin = localStorageFactory.getAdmin();
-
+		$scope.nbsp = " ";
         $scope.settings = Settings.getSettings($scope.teamId);
-
+		
+		$scope.gameLog = {};
         $scope.basis = {};
         $scope.fieldPlayers = angular.copy($scope.players);
 
@@ -376,19 +378,37 @@ angular.module('starter.controllers', [])
 
         Statistics.getRef().child($scope.teamId).child($scope.gameId).on('value', function (statsSnap) {
 
-            if (statsSnap.val() !== null) {
-                //console.log(statsSnap.val());
-                if (typeof statsSnap.val().Basis !== 'undefined') {
+			var stats = statsSnap.val();
+            if (stats !== null) {
+                //console.log(stats);
+                if (typeof stats.Basis !== 'undefined') {
 
-                    if (typeof statsSnap.val().externalPlayers !== 'undefined') {
-                        $scope.fieldPlayers = angular.extend($scope.fieldPlayers, statsSnap.val().externalPlayers);
+                    if (typeof stats.externalPlayers !== 'undefined') {
+                        $scope.fieldPlayers = angular.extend($scope.fieldPlayers, stats.externalPlayers);
                     }
-                    for (key in statsSnap.val().Basis) {
-                        $scope.basis[statsSnap.val().Basis[key]] = key;
+                    for (key in stats.Basis) {
+                        $scope.basis[stats.Basis[key]] = key;
                     }
                     ;
-                    $scope.tactic = statsSnap.val().tactic;
+                    $scope.tactic = stats.tactic;
                 }
+				
+				if (typeof stats.GameEvents !== 'undefined') {
+					$scope.gameLog = angular.extend($scope.gameLog,stats.GameEvents);
+				}
+				if (typeof stats.Changes !== 'undefined') {
+					$scope.gameLog = angular.extend($scope.gameLog,stats.Changes);
+				}
+				if (typeof stats.Cards !== 'undefined') {
+					$scope.gameLog = angular.extend($scope.gameLog,stats.Cards);
+				}
+				if (typeof stats.OurGoals !== 'undefined') {
+					$scope.gameLog = angular.extend($scope.gameLog,stats.OurGoals);
+				}
+				if (typeof stats.TheirGoals !== 'undefined') {
+					$scope.gameLog = angular.extend($scope.gameLog,stats.TheirGoals);
+				}
+				
             }
             else {
                 $scope.tactic = 0;
@@ -576,74 +596,74 @@ angular.module('starter.controllers', [])
         //$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 			
 			
-		//	tijdelijk!!!
+/* 			tijdelijk!!!
 		
-		// $scope.update = function(){		 // stats crawler
-			// var statsRef = firebaseRef.ref().child("Statistics");
-			// statsRef.once('value', function (statsSnap) {
+		$scope.update = function(){		 // stats crawler
+			var statsRef = firebaseRef.ref().child("Statistics");
+			statsRef.once('value', function (statsSnap) {
 			
-				// $scope.stats = statsSnap.val();
-				// console.log($scope.stats);
-				// for (teamId in $scope.stats) { // team layer
-					//console.log(teamId, "TEAM");
-					// for (gameId in $scope.stats[teamId]) { // game layer
-						//console.log(gameId, "GAME");
-						// for (eventType in $scope.stats[teamId][gameId]) { // event layer
-							//console.log(eventType, "EVENTGROUP");
-							// switch(eventType){
+				$scope.stats = statsSnap.val();
+				console.log($scope.stats);
+				for (teamId in $scope.stats) { // team layer
+					console.log(teamId, "TEAM");
+					for (gameId in $scope.stats[teamId]) { // game layer
+						console.log(gameId, "GAME");
+						for (eventType in $scope.stats[teamId][gameId]) { // event layer
+							console.log(eventType, "EVENTGROUP");
+							switch(eventType){
 								
-								// case "Changes":
-									// for (event in $scope.stats[teamId][gameId][eventType]){
-										// console.log(event, "Change");
-										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											// statsType: "Change"
-										// })
-									// }
-									// break;
-								// case "Cards":
-									// for (event in $scope.stats[teamId][gameId][eventType]){
-										// console.log(event, "Card");
-										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											// statsType: "Card"
-										// })
-									// }
-									// break;
+								case "Changes":
+									for (event in $scope.stats[teamId][gameId][eventType]){
+										console.log(event, "Change");
+										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											statsType: "Change"
+										})
+									}
+									break;
+								case "Cards":
+									for (event in $scope.stats[teamId][gameId][eventType]){
+										console.log(event, "Card");
+										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											statsType: "Card"
+										})
+									}
+									break;
 								
-								// case "GameEvents":
-									// for (event in $scope.stats[teamId][gameId][eventType]){
-										// console.log(event, "GameEvent");
-										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											// statsType: "GameEvent"
-										// })
-									// }
-									// break;
-								// case "OurGoals":
-									// for (event in $scope.stats[teamId][gameId][eventType]){
-										// console.log(event, "OurGoal");
-										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											// statsType: "OurGoal"
-										// })
-									// }
-									// break;
-								// case "TheirGoals":
-									// for (event in $scope.stats[teamId][gameId][eventType]){
-										// console.log(event, "TheirGoal");
-										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											// statsType: "TheirGoal"
-										// })
-									// }
-									// break;
+								case "GameEvents":
+									for (event in $scope.stats[teamId][gameId][eventType]){
+										console.log(event, "GameEvent");
+										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											statsType: "GameEvent"
+										})
+									}
+									break;
+								case "OurGoals":
+									for (event in $scope.stats[teamId][gameId][eventType]){
+										console.log(event, "OurGoal");
+										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											statsType: "OurGoal"
+										})
+									}
+									break;
+								case "TheirGoals":
+									for (event in $scope.stats[teamId][gameId][eventType]){
+										console.log(event, "TheirGoal");
+										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											statsType: "TheirGoal"
+										})
+									}
+									break;
 
-							// }
-						// }
-					// }
-				// }
+							}
+						}
+					}
+				}
 				
 			
-			// })
-		// }	
+			})
+		}	
 			
-			////////////// tijdelijk ^^^^^^^^^^^^^^^^^^^^
+			//////////// tijdelijk ^^^^^^^^^^^^^^^^^^^^ */
 			
 			
 			
@@ -796,11 +816,12 @@ angular.module('starter.controllers', [])
                         ;
                     }
                 }
-			console.log($scope.gameLog);	
+			console.log($scope.gameLog);
+			//console.log($scope.presentPlayers);			
             })
 			
         })
-
+		
         $scope.timePickerCallback = function (val) {
         };
 
@@ -938,9 +959,46 @@ angular.module('starter.controllers', [])
 				$scope.toggleGroup(null);
             }
         };
+		
+		$scope.editStat = function (event,id) {
+			console.log(id);
+            //$state.go('app.game_stat_edit', {gameId: $scope.gameId, statId: id, statType:event.statsType});
+        }
 
     })
 
+	.controller('Games_StatsEditCtrl', function ($scope, Teams, Statistics, User, $stateParams, localStorageFactory, $ionicHistory) {
+        $scope.gameId = $stateParams.gameId;
+		$scope.statId = $stateParams.statId;
+		$scope.type = $stateParams.statType;
+        $scope.teamId = localStorageFactory.getTeamId();
+		
+		console.log($scope.gameId);
+		console.log($scope.statId);
+		console.log($scope.type);
+        
+		$scope.getStat = Statistics.getStat($scope.teamId,$scope.gameId,$scope.type & "s",$scope.statId).then(function (stat) {
+			
+            // fill variables!
+			console.log(stat);
+        })
+        
+
+        $scope.timePickerCallback = function (val) {
+            if (typeof (val) === 'undefined') {
+                //console.log('Time not selected');
+            } else {
+                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                $scope.EventTime = val;
+            }
+        };
+
+        $scope.updateStat = function (home, away) {
+            //Games.updateGame($scope.teamId, $scope.gameId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
+            $ionicHistory.goBack();
+        }
+    })
+	
     .controller('PractisesCtrl', function ($scope, Practises, User, $state, Attendance, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
         $scope.ShowDelete = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
@@ -1792,7 +1850,7 @@ angular.module('starter.controllers', [])
                 $scope.players[player]['totRed'] = 0;
                 $scope.players[player]['totGoals'] = 0;
             }
-            for (var key in statsSnap.val()) { // walk trough each game
+            for (var key in statsSnap.val()){ // walk trough each game
                 var gameStats = statsSnap.val()[key];
                 var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.secondHalfEnd - gameStats.secondHalfStart)) / 60;
 
@@ -1913,7 +1971,7 @@ angular.module('starter.controllers', [])
                     }
                 }
             }
-            //console.log($scope.players);
+            console.log($scope.players);
         })
         $scope.selected = [];
         $scope.selected["firstName"] = true;
@@ -2025,13 +2083,13 @@ angular.module('starter.controllers', [])
   }
 })
 
-    .filter('isFutureDuty', function() {
-        return function(items) {
-            return items.filter(function(item){
-                return item.end > Date.parse(new Date())
-            });
-        }
-    })
+.filter('isFutureDuty', function() {
+	return function(items) {
+		return items.filter(function(item){
+			return item.end > Date.parse(new Date())
+		});
+	}
+})
 
 .filter('isPast', function() {
   return function(items) {

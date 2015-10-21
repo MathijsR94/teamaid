@@ -193,7 +193,18 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
+		.state('app.game_stat_edit', {
+		  cache: false,
+		  url: "/game/:gameId/statEdit",
+		  views: {
+			'menuContent': {
+			  templateUrl: "templates/game_statEdit.html",
+			  controller: 'Games_StatsEditCtrl'
+			}
+		  }
+		})
 		.state('app.statistics', {
+		  cache: false,
 		  url: "/statistics",
 		  views: {
 			'menuContent': {
