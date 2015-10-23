@@ -6,24 +6,25 @@
 				<h3 class="center"> {{homeScore}} - {{awayScore}}</h3>
 			</div>
 		</div>
+		<!-- <button class="button button-block"  ng-click="update()">update</button> -->
 	<ion-list>
 		<ion-item class="item-stable" ng-click="toggleGroup('gameLog')" ng-class="{active: isGroupShown('gameLog')}">
 			  <i class="icon" ng-class="isGroupShown('gameLog') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 			&nbsp;
 			Wedstrijd verslag
 		</ion-item>
-		<ion-item class="item-accordion" ng-repeat="(key,event) in gameLog" ng-show="isGroupShown('gameLog')">
+		<ion-item class="item-accordion" ng-repeat="event in gameLog | orderBy: 'time'" ng-show="isGroupShown('gameLog')">
 			<standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
-			<span ng-if="event.statsType === 'GameEvent'"> Event </span>
-			<span ng-if="event.statsType === 'OurGoal'"> Goal voor, {{(players[event.player].firstName +nbsp+ players[event.player].insertion +nbsp+ players[event.player].lastName)}}</span>
-			<span ng-if="event.statsType === 'TheirGoal'"> Goal tegen </span>
-			<span ng-if="event.statsType === 'Card'"> Kaart 
+			<span ng-if="event.statsType === 'GameEvents'"> Event </span>
+			<span ng-if="event.statsType === 'OurGoals'"> Goal voor, {{(players[event.player].firstName +nbsp+ players[event.player].insertion +nbsp+ players[event.player].lastName)}}</span>
+			<span ng-if="event.statsType === 'TheirGoals'"> Goal tegen </span>
+			<span ng-if="event.statsType === 'Cards'"> Kaart 
 				<span ng-if="event.type === 'red'">Rood,  </span>
 				<span ng-if="event.type === 'yellow'">Geel,  </span>
 				<span ng-if="event.type === 'yellow2'">Tweede geel,  </span>
 				{{(players[event.player].firstName +nbsp+ players[event.player].insertion +nbsp+ players[event.player].lastName)}}
 			</span>
-			<span ng-if="event.statsType === 'Change'"> Wissel 
+			<span ng-if="event.statsType === 'Changes'"> Wissel 
 				<span ng-if="event.type === 'Position'">Positie,  {{(players[event.player1].firstName +nbsp+ players[event.player1].insertion +nbsp+ players[event.player1].lastName)}} voor {{(players[event.player2].firstName +nbsp+ players[event.player2].insertion +nbsp+ players[event.player2].lastName)}} </span>
 				<span ng-if="event.type === 'In/Out'">,  {{(players[event.playerIn].firstName +nbsp+ players[event.playerIn].insertion +nbsp+ players[event.playerIn].lastName)}} voor {{(players[event.playerOut].firstName +nbsp+ players[event.playerOut].insertion +nbsp+ players[event.playerOut].lastName)}} </span>
 			</span>
@@ -31,7 +32,7 @@
 			<ion-delete-button class="ion-minus-circled"
 				   ng-click="onItemDelete(event)">
 			</ion-delete-button>
-			<ion-option-button class="button-dark" ng-click="$event.stopPropagation(); editStat(event,key)">Edit</ion-option-button>
+			<ion-option-button class="button-dark" ng-click="$event.stopPropagation(); editStat(event)">Edit</ion-option-button>
 
 		</ion-item>
 		<ion-item class="item-stable" ng-click="toggleGroup('gameTimes')" ng-class="{active: isGroupShown('gameTimes')}">

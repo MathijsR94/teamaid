@@ -1,8 +1,8 @@
 angular.module('starter.services', [])
     .factory('firebaseRef', function () {
-        //var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
+        // var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
 		var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
-		//var connectedRef = new Firebase("https://teamaid.firebaseio.com/.info/connected"); // live db
+		// var connectedRef = new Firebase("https://teamaid.firebaseio.com/.info/connected"); // live db
         var connectedRef = new Firebase("https://amber-torch-2058.firebaseio.com/.info/connected");
         return {
             ref: function () {
@@ -648,14 +648,12 @@ angular.module('starter.services', [])
 						comment : comment
 					});
 			},
-			getStat: function(teamId,gameId,type,statId) {
-                var deferred = $q.defer();
-                var stat = $firebaseObject(statsRef.child(teamId).child(gameId).child(type).child(statId));
-                stat.$loaded(function(){
-                    deferred.resolve(stat);
-                });
-                return deferred.promise;
-            }
+			updateStat: function(teamId,gameId,type,statId,time,comment) {
+				statsRef.child(teamId).child(gameId).child(type).child(statId).update({
+					time : time,
+					comment : comment
+				})
+			}
 		};
 	})
 	.factory('Duties', function(firebaseRef,$firebaseObject,$firebaseArray, $q){
@@ -868,6 +866,12 @@ angular.module('starter.services', [])
             },
 			setEvents: function(events) {
                 localStorage.setItem('events', JSON.stringify(events));
+            },
+			setSelectedStat: function(stat){
+				localStorage.setItem('selectedStat', JSON.stringify(stat));
+			},
+			getSelectedStat: function() {
+                return JSON.parse(localStorage.getItem('selectedStat'));
             },
             getTeamId: function() {
                 var test = JSON.parse(localStorage.getItem('teams'));
