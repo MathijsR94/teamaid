@@ -1,85 +1,78 @@
 <?php
 /*
-   Plugin Name: SporlinkScraper
-   Plugin URI: http://wordpress.org/extend/plugins/sporlinkscraper/
-   Version: 0.1
-   Author: Koen Zoon & Mathijs Rutgers
-   Description: scraper voor sportlink tabellen
-   Text Domain: sporlinkscraper
-   License: GPLv3
-  */
-
-/*
-    "WordPress Plugin Template" Copyright (C) 2015 Michael Simpson  (email : michael.d.simpson@gmail.com)
-
-    This following part of this file is part of WordPress Plugin Template for WordPress.
-
-    WordPress Plugin Template is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    WordPress Plugin Template is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Contact Form to Database Extension.
-    If not, see http://www.gnu.org/licenses/gpl-3.0.html
+* Plugin Name: SportlinkScraper
+* Description: Create your WordPress shortcode.
+* Version: 1.0
+* Author: InkThemes
+* Author URI: http://inkthemes.com
 */
+// Example 1 : WP Shortcode to display form on any page or post.
 
-$Sporlinkscraper_minimalRequiredPhpVersion = '5.0';
+include('simple_html_dom.php');
 
-/**
- * Check the PHP version and give a useful error message if the user's version is less than the required version
- * @return boolean true if version check passed. If false, triggers an error which WP will handle, by displaying
- * an error message on the Admin page
- */
-function Sporlinkscraper_noticePhpVersionWrong() {
-    global $Sporlinkscraper_minimalRequiredPhpVersion;
-    echo '<div class="updated fade">' .
-      __('Error: plugin "SporlinkScraper" requires a newer version of PHP to be running.',  'sporlinkscraper').
-            '<br/>' . __('Minimal version of PHP required: ', 'sporlinkscraper') . '<strong>' . $Sporlinkscraper_minimalRequiredPhpVersion . '</strong>' .
-            '<br/>' . __('Your server\'s PHP version: ', 'sporlinkscraper') . '<strong>' . phpversion() . '</strong>' .
-         '</div>';
+function Scrape_Function($atts, $content = "")
+{
+    $sl_teamcode = types_render_field('sl_teamcode', array('output' => 'raw'));
+
+    switch($atts['type']){
+case "Verjaardagen":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=305&Itemid=179';
+break;
+case "teamContent":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=313&Itemid=179&teamcode='.$atts['team'].'&poulecode='.$atts['poule'];
+break;
+case "ProgrammaActual":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=314';
+break;
+case "Programma1wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=315';
+break;
+case "Programma2wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=316';
+break;
+case "Programma3wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=317';
+break;
+case "Programma4wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=318';
+break;
+case "Programma5wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=319';
+break;
+case "Programma6wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=320';
+break;
+case "UitlsagenActual":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=156&ItemId=179';
+break;
+case "Uitlsagen1wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=201&ItemId=179';
+break;
+case "Uitlsagen2wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=202&ItemId=179';
+break;
+case "Uitlsagen3wk":
+    $url = 'http://bequick.slclubsite.nl/index.php?option=com_content&view=article&id=203&ItemId=179';
+break;
+default:
+     $url  = "";
+break;
 }
-
-
-function Sporlinkscraper_PhpVersionCheck() {
-    global $Sporlinkscraper_minimalRequiredPhpVersion;
-    if (version_compare(phpversion(), $Sporlinkscraper_minimalRequiredPhpVersion) < 0) {
-        add_action('admin_notices', 'Sporlinkscraper_noticePhpVersionWrong');
-        return false;
+    $html = file_get_html($url);
+    $tables = $html->find('table');
+    echo '<table>';
+    foreach($tables[1]->find('tr') as $row) {
+        echo '<tr>';
+	foreach($row->find('th') as $data) {
+            echo '<th>' . $data->plaintext . '</th>';
+        }
+        foreach($row->find('td') as $data) {
+            echo '<td>' . $data->plaintext . '</td>';
+        }
+        echo '</tr>';
     }
-    return true;
+    echo '</table>';
 }
 
-
-/**
- * Initialize internationalization (i18n) for this plugin.
- * References:
- *      http://codex.wordpress.org/I18n_for_WordPress_Developers
- *      http://www.wdmac.com/how-to-create-a-po-language-translation#more-631
- * @return void
- */
-function Sporlinkscraper_i18n_init() {
-    $pluginDir = dirname(plugin_basename(__FILE__));
-    load_plugin_textdomain('sporlinkscraper', false, $pluginDir . '/languages/');
-}
-
-
-//////////////////////////////////
-// Run initialization
-/////////////////////////////////
-
-// Initialize i18n
-add_action('plugins_loadedi','Sporlinkscraper_i18n_init');
-
-// Run the version check.
-// If it is successful, continue with initialization for this plugin
-if (Sporlinkscraper_PhpVersionCheck()) {
-    // Only load and run the init function if we know PHP version can parse it
-    include_once('sporlinkscraper_init.php');
-    Sporlinkscraper_init(__FILE__);
-}
+add_shortcode('scrape', 'Scrape_Function');
+?>
