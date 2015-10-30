@@ -588,7 +588,7 @@ angular.module('starter.controllers', [])
         //$scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 			
 			
-		 		//	tijdelijk!!!
+	/* 	 		//	tijdelijk!!!
 		
 		$scope.update = function(){		 // stats crawler
 			var statsRef = firebaseRef.ref().child("Statistics");
@@ -612,55 +612,55 @@ angular.module('starter.controllers', [])
 									statsRef.child(teamId).child(gameId).child(eventType).child(event).remove();
 								}
 							}
-							/* switch(eventType){
+							// switch(eventType){
 								
 								
-								case "Changes":
-									for (event in $scope.stats[teamId][gameId][eventType]){
-										console.log(event, "Changes");
+								// case "Changes":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "Changes");
 										
-										add statstype:
-										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											statsType: "Changes"
-										})
-									}
-									break;
-								case "Cards":
-									for (event in $scope.stats[teamId][gameId][eventType]){
-										console.log(event, "Cards");
+										// add statstype:
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "Changes"
+										// })
+									// }
+									// break;
+								// case "Cards":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "Cards");
 										
-										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											statsType: "Cards"
-										})
-									}
-									break;
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "Cards"
+										// })
+									// }
+									// break;
 								
-								case "GameEvents":
-									for (event in $scope.stats[teamId][gameId][eventType]){
-										console.log(event, "GameEvents");
-										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											statsType: "GameEvents"
-										})
-									}
-									break;
-								case "OurGoals":
-									for (event in $scope.stats[teamId][gameId][eventType]){
-										console.log(event, "OurGoals");
-										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											statsType: "OurGoals"
-										})
-									}
-									break;
-								case "TheirGoals":
-									for (event in $scope.stats[teamId][gameId][eventType]){
-										console.log(event, "TheirGoals");
-										statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
-											statsType: "TheirGoals"
-										})
-									}
-									break;
+								// case "GameEvents":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "GameEvents");
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "GameEvents"
+										// })
+									// }
+									// break;
+								// case "OurGoals":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "OurGoals");
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "OurGoals"
+										// })
+									// }
+									// break;
+								// case "TheirGoals":
+									// for (event in $scope.stats[teamId][gameId][eventType]){
+										// console.log(event, "TheirGoals");
+										// statsRef.child(teamId).child(gameId).child(eventType).child(event).update({
+											// statsType: "TheirGoals"
+										// })
+									// }
+									// break;
 
-							} */
+							// } 
 						}
 					}
 				}
@@ -669,7 +669,7 @@ angular.module('starter.controllers', [])
 			})
 		}	
 			
-			//////////// tijdelijk ^^^^^^^^^^^^^^^^^^^^
+			//////////// tijdelijk ^^^^^^^^^^^^^^^^^^^^ */
 			
 			
 			
