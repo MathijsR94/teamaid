@@ -195,7 +195,7 @@ app.directive('dateTime', function() {
 		})
 		.state('app.game_stat_edit', {
 		  cache: false,
-		  url: "/game/:gameId/statEdit",
+		  url: "/game/:gameId/statEdit?:statId",
 		  views: {
 			'menuContent': {
 			  templateUrl: "templates/game_statEdit.html",

@@ -1,9 +1,9 @@
 angular.module('starter.services', [])
     .factory('firebaseRef', function () {
-        // var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
-		var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
-		// var connectedRef = new Firebase("https://teamaid.firebaseio.com/.info/connected"); // live db
-        var connectedRef = new Firebase("https://amber-torch-2058.firebaseio.com/.info/connected");
+        var ref = new Firebase("https://teamaid.firebaseio.com/"); // live db
+		// var ref = new Firebase("https://amber-torch-2058.firebaseio.com/"); // test db
+		var connectedRef = new Firebase("https://teamaid.firebaseio.com/.info/connected"); // live db
+        // var connectedRef = new Firebase("https://amber-torch-2058.firebaseio.com/.info/connected");
         return {
             ref: function () {
                 return ref;
@@ -573,11 +573,11 @@ angular.module('starter.services', [])
 				
 			},
 			newChange: function(teamId, gameId, playerIn, playerOut, pos, time, comment){
-				var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("Changes"));
+				var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
 				changes.$add({
 					time : time,
 					type : "In/Out",
-					statsType: "Change",
+					statsType: "Changes",
 					playerIn : playerIn,
 					playerOut : playerOut,
 					position : pos,
@@ -585,11 +585,11 @@ angular.module('starter.services', [])
 				});
 			},
 			newPosChange: function(teamId, gameId, player1, player2, pos1, pos2, time, comment){
-				var posChanges = $firebaseArray(statsRef.child(teamId).child(gameId).child("Changes"));
+				var posChanges = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
 				posChanges.$add({
 					time : time,
 					type : "Position",
-					statsType: "Change",
+					statsType: "Changes",
 					player1 : player1,
 					player2 : player2,
 					position1 : pos1,
@@ -599,29 +599,29 @@ angular.module('starter.services', [])
 			},
 			newGoal: function(teamId, gameId, ours, player, time, comment){
 				if(ours === true){
-					var ourGoals = $firebaseArray(statsRef.child(teamId).child(gameId).child("OurGoals"));
+					var ourGoals = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
 					ourGoals.$add({
 						player : player,
-						statsType: "OurGoal",
+						statsType: "OurGoals",
 						time : time,
 						comment : comment
 					});
 				}
 				else{
-					var theirGoals = $firebaseArray(statsRef.child(teamId).child(gameId).child("TheirGoals"));
+					var theirGoals = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
 					theirGoals.$add({
 						time : time,
-						statsType: "TheirGoal",
+						statsType: "TheirGoals",
 						comment : comment
 					});
 				}
 			},
 			newCard: function(teamId, gameId, type, player, time, comment){
 			
-				var cards = $firebaseArray(statsRef.child(teamId).child(gameId).child("Cards"));
+				var cards = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
 				cards.$add({
 					type : type,
-					statsType: "Card",
+					statsType: "Cards",
 					player : player,
 					time : time,
 					comment : comment
@@ -631,25 +631,40 @@ angular.module('starter.services', [])
 			getRef: function(){
 				return statsRef;
 			},
+			getGameLogArray: function(teamId,gameId){
+				var deferred = $q.defer();
+                var gameLog = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+                gameLog.$loaded(function () {
+                    deferred.resolve(gameLog);
+                });
+                return deferred.promise;
+			},
 			storeExternals: function(teamId,gameId,externalPlayers){
 				statsRef.child(teamId).child(gameId).update({ 
 					externalPlayers : externalPlayers
 				});
 			},
 			RemoveStats: function(teamId,gameId){
-				
 				statsRef.child(teamId).child(gameId).remove();
 			},
 			newGameEvent: function(teamId, gameId, time, comment){
-				var gameEvents = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameEvents"));
+				var gameEvents = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
 				gameEvents.$add({
 						time : time,
-						statsType: "GameEvent",
+						statsType: "GameEvents",
 						comment : comment
 					});
 			},
-			updateStat: function(teamId,gameId,type,statId,time,comment) {
-				statsRef.child(teamId).child(gameId).child(type).child(statId).update({
+			getStat: function(teamId,gameId,statId){
+				var deferred = $q.defer();
+                var stat = $firebaseObject(statsRef.child(teamId).child(gameId).child("GameLog").child(statId));
+                stat.$loaded(function(){
+                    deferred.resolve(stat);
+                });
+                return deferred.promise;				
+			},
+			updateStat: function(teamId,gameId,statId,time,comment) {
+				statsRef.child(teamId).child(gameId).child("GameLog").child(statId).update({
 					time : time,
 					comment : comment
 				})
