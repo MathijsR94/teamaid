@@ -2,6 +2,7 @@
     <ion-content>
         <ion-list>
 			<h1 class="center">{{game.home}} vs {{game.away}}</h1>
+			<h3 class="center">{{homeScore}} - {{awayScore}}</h3>
 			<span class="center">Datum: {{ game.date | date:'dd - MM - yyyy' }}</span>
 			<span class="center">Aanvang wedstrijd: <standard-time-no-meridian
 					etime='game.time'></standard-time-no-meridian></span>
@@ -90,17 +91,17 @@
 			<ion-item class="item-accordion" ng-repeat="event in gameLog | orderObjectBy:'time'" ng-show="isGroupShown('gameLog')">
 				<standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
 				<span ng-if="event.statsType === 'GameEvents'"> Event </span>
-				<span ng-if="event.statsType === 'OurGoals'"> Goal voor, {{(players[event.player].firstName +nbsp+ players[event.player].insertion +nbsp+ players[event.player].lastName)}}</span>
+				<span ng-if="event.statsType === 'OurGoals'"> Goal voor, {{(fieldPlayers[event.player].firstName +nbsp+ fieldPlayers[event.player].insertion +nbsp+ fieldPlayers[event.player].lastName)}}</span>
 				<span ng-if="event.statsType === 'TheirGoals'"> Goal tegen </span>
 				<span ng-if="event.statsType === 'Cards'"> Kaart 
 					<span ng-if="event.type === 'red'">Rood,  </span>
 					<span ng-if="event.type === 'yellow'">Geel,  </span>
 					<span ng-if="event.type === 'yellow2'">Tweede geel,  </span>
-					{{(players[event.player].firstName +nbsp+ players[event.player].insertion +nbsp+ players[event.player].lastName)}}
+					{{(fieldPlayers[event.player].firstName +nbsp+ fieldPlayers[event.player].insertion +nbsp+ fieldPlayers[event.player].lastName)}}
 				</span>
 				<span ng-if="event.statsType === 'Changes'"> Wissel 
-					<span ng-if="event.type === 'Position'">Positie,  {{(players[event.player1].firstName +nbsp+ players[event.player1].insertion +nbsp+ players[event.player1].lastName)}} voor {{(players[event.player2].firstName +nbsp+ players[event.player2].insertion +nbsp+ players[event.player2].lastName)}} </span>
-					<span ng-if="event.type === 'In/Out'">,  {{(players[event.playerIn].firstName +nbsp+ players[event.playerIn].insertion +nbsp+ players[event.playerIn].lastName)}} voor {{(players[event.playerOut].firstName +nbsp+ players[event.playerOut].insertion +nbsp+ players[event.playerOut].lastName)}} </span>
+					<span ng-if="event.type === 'Position'">Positie,  {{(fieldPlayers[event.player1].firstName +nbsp+ fieldPlayers[event.player1].insertion +nbsp+ fieldPlayers[event.player1].lastName)}} voor {{(fieldPlayers[event.player2].firstName +nbsp+ fieldPlayers[event.player2].insertion +nbsp+ fieldPlayers[event.player2].lastName)}} </span>
+					<span ng-if="event.type === 'In/Out'">,  {{(fieldPlayers[event.playerIn].firstName +nbsp+ fieldPlayers[event.playerIn].insertion +nbsp+ fieldPlayers[event.playerIn].lastName)}} voor {{(fieldPlayers[event.playerOut].firstName +nbsp+ fieldPlayers[event.playerOut].insertion +nbsp+ fieldPlayers[event.playerOut].lastName)}} </span>
 				</span>
 				, {{event.comment}}
 			</ion-item>

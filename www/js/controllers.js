@@ -359,6 +359,9 @@ angular.module('starter.controllers', [])
         $scope.isAdmin = localStorageFactory.getAdmin();
 		$scope.nbsp = " ";
         $scope.settings = Settings.getSettings($scope.teamId);
+		$scope.teamName = localStorageFactory.getTeamName();
+		$scope.homeScore = 0;
+        $scope.awayScore = 0;
 		
 		$scope.gameLog = {};
         $scope.basis = {};
@@ -374,34 +377,61 @@ angular.module('starter.controllers', [])
             $scope.absent = Attendance.checkAttendance($scope.game.Absent, User.getUID());
             $scope.unknown = (!$scope.present && !$scope.absent);
             $scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
-        });
+        
 
-        Statistics.getRef().child($scope.teamId).child($scope.gameId).on('value', function (statsSnap) {
+			Statistics.getRef().child($scope.teamId).child($scope.gameId).on('value', function (statsSnap) {
 
-			var stats = statsSnap.val();
-            if (stats !== null) {
-                //console.log(stats);
-                if (typeof stats.Basis !== 'undefined') {
+				var stats = statsSnap.val();
+				if (stats !== null) {
+					//console.log(stats);
+					if (typeof stats.Basis !== 'undefined') {
 
-                    if (typeof stats.externalPlayers !== 'undefined') {
-                        $scope.fieldPlayers = angular.extend($scope.fieldPlayers, stats.externalPlayers);
-                    }
-                    for (key in stats.Basis) {
-                        $scope.basis[stats.Basis[key]] = key;
-                    }
-                    ;
-                    $scope.tactic = stats.tactic;
-                }
-				
-				if (typeof stats.GameLog !== 'undefined') {
-					$scope.gameLog = stats.GameLog;
+						if (typeof stats.externalPlayers !== 'undefined') {
+							$scope.fieldPlayers = angular.extend($scope.fieldPlayers, stats.externalPlayers);
+						}
+						for (key in stats.Basis) {
+							$scope.basis[stats.Basis[key]] = key;
+						}
+						;
+						$scope.tactic = stats.tactic;
+					}
+					$scope.homeScore = 0;
+					$scope.awayScore = 0;
+					
+					if (typeof stats.GameLog !== 'undefined') {
+						$scope.gameLog = stats.GameLog;
+						
+						for (key in stats.GameLog) {
+								//console.log(stats.GameLog[key].statsType);
+								switch(stats.GameLog[key].statsType){
+									case "OurGoals":
+										if ($scope.game.home === $scope.teamName){
+											$scope.homeScore++;
+										}
+										else{
+											$scope.awayScore++;
+										}
+										break;
+										
+									case "TheirGoals":
+										if ($scope.game.home !== $scope.teamName){
+											$scope.homeScore++;
+										}
+										else{
+											$scope.awayScore++;
+										}
+										break;
+									default:
+										break;
+								}
+							}
+					}
 				}
-            }
-            else {
-                $scope.tactic = 0;
-            }
-        });
-
+				else {
+					$scope.tactic = 0;
+				}
+			});
+		});
 
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
