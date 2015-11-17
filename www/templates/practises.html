@@ -27,7 +27,6 @@
             <i class="icon" ng-class="isGroupShown('past') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
             Geschiedenis
         </ion-item>
-        <!--<date-Time sdate='credit.timestamp'></date-Time>  €{{credit.value}}  , {{credit.comment}}-->
         <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
             <ion-item ng-repeat="practise in practises | orderBy:'-date'  | isPast"  ng-click="getDetail(practise)" class="item-accordion disabled" ng-show="isGroupShown('past')">
                 <span>{{practise.date | date: 'dd-MM-yyyy'}}</span> <standard-time-no-meridian etime='practise.time'></standard-time-no-meridian> {{practise.location}}

@@ -36,6 +36,20 @@
                             Wijzigen
 			</button>
 		</ion-item>
+		<div ng-if="isAdmin == true">
+		<ion-item class="item-stable" ng-click="toggleGroup('LinkExt')" ng-class="{active: isGroupShown('LinkExt')}">
+			  <i class="icon" ng-class="isGroupShown('LinkExt') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			Link externe speler
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('LinkExt')">
+			<select class="button button-block center" ng-model="selectedExt" ng-options="id as value for (id,value) in externalList"></select>
+			<select class="button button-block center" ng-model="selectedInt" ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<div class="buttons">
+					<button class="button button-bq" ng-click="changeExtInt(selectedExt,selectedInt)">Update!</button>
+			</div>		
+		</ion-item>
+		</div>
 	 </ion-list>
   </ion-content>
 </ion-view>
