@@ -28,7 +28,7 @@
       </div>
     </div>
       <div class="row item" ng-repeat="player in sortedPlayers track by $index">
-            <div class="col col-30 whitespace float-left center">{{player.firstName}} {{player.insertion}} {{player.lastName}} </div>
+            <div  ng-click="ShowPlayerStats(player)" class="col col-30 whitespace float-left center">{{player.firstName}} {{player.insertion}} {{player.lastName}} </div>
             <div class="col col-10 float-left center">{{player.totGoals}}</div>
             <div class="col col-10 float-left center">{{player.totGameTime}}</div>
             <div class="col col-10 float-left center">{{player.totYellow}}</div>

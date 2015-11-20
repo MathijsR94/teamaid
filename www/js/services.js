@@ -854,6 +854,15 @@ angular.module('starter.services', [])
 			setInactivePlayers: function(inactivePlayers) {
                 localStorage.setItem('inactivePlayers', JSON.stringify(inactivePlayers));
             },
+			setStatistics: function(statistics) {
+				localStorage.setItem('statistics', JSON.stringify(statistics));
+			},
+			setRawStatistics: function(statistics) {
+				localStorage.setItem('RawStatistics', JSON.stringify(statistics));
+			},
+			setPlayerStatistics: function(PlayerStats) {
+				localStorage.setItem('PlayerStatistics', JSON.stringify(PlayerStats));
+			},
             setSettings: function(settings) {
                 localStorage.setItem('settings', JSON.stringify(settings));
             },
@@ -899,6 +908,15 @@ angular.module('starter.services', [])
 			getInactivePlayers: function() {
                 return JSON.parse(localStorage.getItem('inactivePlayers'));
             },
+			getStatistics: function() {
+				return JSON.parse(localStorage.getItem('statistics'));
+			},
+			getRawStatistics: function() {
+				return JSON.parse(localStorage.getItem('RawStatistics'));
+			},
+			getPlayerStatistics: function() {
+				return JSON.parse(localStorage.getItem('PlayerStatistics'));
+			},
             getSettings: function() {
                 return JSON.parse(localStorage.getItem('settings'));
             },

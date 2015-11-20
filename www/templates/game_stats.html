@@ -29,9 +29,7 @@
 				<span ng-if="event.type === 'In/Out'">,  {{(players[event.playerIn].firstName +nbsp+ players[event.playerIn].insertion +nbsp+ players[event.playerIn].lastName)}} voor {{(players[event.playerOut].firstName +nbsp+ players[event.playerOut].insertion +nbsp+ players[event.playerOut].lastName)}} </span>
 			</span>
 			, {{event.comment}}
-			<ion-delete-button class="ion-minus-circled"
-				   ng-click="onItemDelete(event)">
-			</ion-delete-button>
+			<ion-option-button class="button-assertive" ng-click="$event.stopPropagation(); onItemDelete(event)">Delete</ion-option-button>
 			<ion-option-button class="button-dark" ng-click="$event.stopPropagation(); editStat(event)">Edit</ion-option-button>
 
 		</ion-item>

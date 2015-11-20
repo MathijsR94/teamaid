@@ -1,0 +1,34 @@
+<ion-view view-title="Statistieken">
+  <ion-content>
+	<ion-list>
+		<h1 class="center"> {{players[playerId].firstName}} {{players[playerId].insertion}} {{players[playerId].lastName}} </h1>
+		<ion-item class="item-stable" ng-click="toggleGroup('gameTime')" ng-class="{active: isGroupShown('gameTime')}">
+			  <i class="icon" ng-class="isGroupShown('gameTime') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			speelminuten : {{playerStats.totGameTime}}
+		</ion-item>
+		<ion-item class="item-accordion" ng-repeat="item in playerStats.gametimeList | orderObjectBy:'date'" ng-show="isGroupShown('gameTime')">
+			{{item.gametime}} minuten  {{ item.date | date:'dd-MM-yyyy' }} <b> {{games[item.game].home}} vs {{games[item.game].away}} </b>
+		</ion-item>
+		<ion-item class="item-stable" ng-click="toggleGroup('goals')" ng-class="{active: isGroupShown('goals')}">
+			  <i class="icon" ng-class="isGroupShown('goals') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			goals : {{playerStats.totGoals}}
+		</ion-item>
+		<ion-item class="item-accordion" ng-repeat="item in playerStats.goalsList | orderObjectBy:'date'" ng-show="isGroupShown('goals')">
+			Goal: {{ item.date | date:'dd-MM-yyyy' }} <b> {{games[item.game].home}} vs {{games[item.game].away}} </b> {{statistics[item.game].GameLog[item.gamelogId].comment}}
+		</ion-item>
+		<ion-item class="item-stable" ng-click="toggleGroup('cards')" ng-class="{active: isGroupShown('cards')}">
+			  <i class="icon" ng-class="isGroupShown('cards') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			gele kaarten : {{playerStats.totYellow}} rode kaarten : {{playerStats.totRed}}
+		</ion-item>
+		<ion-item class="item-accordion" ng-repeat="item in playerStats.cardsList | orderObjectBy:'date'" ng-show="isGroupShown('cards')">
+			<span ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'yellow'"> Geel: </span>
+			<span ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'yellow2'"> 2e Geel: </span>
+			<span ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'red'"> Rood: </span>
+			{{ item.date | date:'dd-MM-yyyy' }} <b> {{games[item.game].home}} vs {{games[item.game].away}} </b> {{statistics[item.game].GameLog[item.gamelogId].comment}}
+		</ion-item>
+	</ion-list>
+  </ion-content>
+</ion-view>

@@ -213,6 +213,16 @@ app.directive('dateTime', function() {
 			}
 		  }
 		})
+		.state('app.playerStatistics', {
+		  cache: false,
+		  url: "/:playerId/Statistics",
+		  views: {
+			'menuContent': {
+			  templateUrl: "templates/playerStatistics.html",
+			  controller: 'PlayerStatsCtrl'
+			}
+		  }
+		})
 		.state('app.practises', {
 		  url: "/practises",
 		  views: {
