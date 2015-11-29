@@ -42,18 +42,18 @@ var app = angular.module('starter', ['ionic',
             }
 
         })
-        pushNotification = window.plugins.pushNotification;
-        pushNotification.register(
-            onNotification,
-            errorHandler,
-            {
-                'badge': 'true',
-                'sound': 'true',
-                'alert': 'true',
-                'ecb': 'onNotification',
-                'senderID': 'teamaid-1144',
-            }
-        );
+        //pushNotification = window.plugins.pushNotification;
+        //pushNotification.register(
+        //    onNotification,
+        //    errorHandler,
+        //    {
+        //        'badge': 'true',
+        //        'sound': 'true',
+        //        'alert': 'true',
+        //        'ecb': 'onNotification',
+        //        'senderID': 'teamaid-1144',
+        //    }
+        //);
     })
 
     .config(['$ionicAppProvider', function ($ionicAppProvider) {
