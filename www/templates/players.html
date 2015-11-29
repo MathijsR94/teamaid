@@ -1,8 +1,8 @@
 <ion-view view-title="Spelers">
   <ion-content>
     <ion-list>
-      <ion-item  class="item item-thumbnail-left" href="#" ng-repeat="(key,player) in players | toArray: true | orderBy : 'lastName'">
-          <img src="../img/cover.jpg" alt="Geen afbeelding" />
+      <ion-item  class="item item-thumbnail-left" href="#" ng-repeat="(key,player) in players | toArray: true | orderBy : 'lastName'" ng-click="ShowPlayerDetails(player)">
+		<img src="../img/cover.jpg" alt="Geen afbeelding" />
         <h2>{{player.firstName}} {{player.insertion}} {{player.lastName}}</h2>
         <p><!--Bijnaam--></p>
 		<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivatePlayer(key)">Deactivate</ion-option-button>

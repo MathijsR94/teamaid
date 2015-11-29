@@ -50,15 +50,15 @@ angular.module('starter.StatisticControllers', [])
             return $scope.shownGroup === group;
         };
 
-        $scope.ShowPlayerStats = function (player) {
+        $scope.ShowPlayerDetails = function (player) {
             console.log($scope.playerStats[player.id]);
             localStorageFactory.setPlayerStatistics($scope.playerStats[player.id]);
 
-            $state.go('app.playerStatistics', {playerId: player.id});
+            $state.go('app.playerDetail', {playerId: player.id});
         }
     })
 
-    .controller('PlayerStatsCtrl', function ($scope, Statistics, localStorageFactory, firebaseRef, Games, $filter, $stateParams) {
+    .controller('PlayerDetailCtrl', function ($scope, Statistics, localStorageFactory, firebaseRef, Games, $filter, $stateParams) {
 
         $scope.playerId = $stateParams.playerId;
         var sourceStats = localStorageFactory.getPlayerStatistics();
