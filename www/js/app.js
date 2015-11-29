@@ -5,6 +5,11 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 var app = angular.module('starter', ['ionic',
+    'ngCordova',
+    'ionic-datepicker',
+    'ionic-timepicker',
+    'ionic.service.core',
+    'ionic.service.push',
     'starter.GlobalControllers',
     'starter.LoginControllers',
     'starter.HomeControllers',
@@ -15,12 +20,12 @@ var app = angular.module('starter', ['ionic',
     'starter.DutyControllers',
     'starter.FinanceControllers',
     'starter.StatisticControllers',
+    'starter.PushControllers',
     'starter.filters',
     'starter.directives',
     'starter.functions',
     'starter.services',
-    'ionic-datepicker',
-    'ionic-timepicker',
+
     'firebase',
     'angular.filter'])
 
@@ -35,8 +40,29 @@ var app = angular.module('starter', ['ionic',
                 // org.apache.cordova.statusbar required
                 StatusBar.styleDefault();
             }
-        });
+
+        })
+        pushNotification = window.plugins.pushNotification;
+        pushNotification.register(
+            onNotification,
+            errorHandler,
+            {
+                'badge': 'true',
+                'sound': 'true',
+                'alert': 'true',
+                'ecb': 'onNotification',
+                'senderID': 'teamaid-1144',
+            }
+        );
     })
+
+    .config(['$ionicAppProvider', function ($ionicAppProvider) {
+        $ionicAppProvider.identify({
+            app_id: '7adf82e8',
+            api_key: '92c16e08ed219a1f0f2d2f4f2b715ac4043f7efa209bef4e',
+            dev_push: true
+        });
+    }])
     .config(function ($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state('login', {
@@ -279,6 +305,15 @@ var app = angular.module('starter', ['ionic',
                     'menuContent': {
                         templateUrl: "templates/Settings.html",
                         controller: 'SettingsCtrl'
+                    }
+                }
+            })
+            .state('app.push', {
+                url: "/push",
+                views: {
+                    'menuContent': {
+                        templateUrl: "templates/push.html",
+                        controller: 'PushCtrl'
                     }
                 }
             })
