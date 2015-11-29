@@ -172,13 +172,13 @@ var app = angular.module('starter', ['ionic',
                     }
                 }
             })
-            .state('app.playerStatistics', {
+            .state('app.playerDetail', {
                 cache: false,
-                url: "/:playerId/Statistics",
+                url: "/:playerId",
                 views: {
                     'menuContent': {
-                        templateUrl: "templates/playerStatistics.html",
-                        controller: 'PlayerStatsCtrl'
+                        templateUrl: "templates/player_detail.html",
+                        controller: 'PlayerDetailCtrl'
                     }
                 }
             })
