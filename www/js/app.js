@@ -25,12 +25,12 @@ var app = angular.module('starter', ['ionic',
     'starter.directives',
     'starter.functions',
     'starter.services',
-
     'firebase',
     'angular.filter'])
 
-    .run(function ($ionicPlatform) {
+    .run(function ($ionicPlatform, $ionicPush) {
         $ionicPlatform.ready(function () {
+            console.log(window);
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
             if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -40,20 +40,20 @@ var app = angular.module('starter', ['ionic',
                 // org.apache.cordova.statusbar required
                 StatusBar.styleDefault();
             }
-
+            //pushNotification = window.plugins.pushNotification;
+            $ionicPush.register(
+                onNotification,
+                errorHandler,
+                {
+                    'badge': 'true',
+                    'sound': 'true',
+                    'alert': 'true',
+                    'ecb': 'onNotification',
+                    'senderID': 'teamaid-1144',
+                }
+            );
         })
-        //pushNotification = window.plugins.pushNotification;
-        //pushNotification.register(
-        //    onNotification,
-        //    errorHandler,
-        //    {
-        //        'badge': 'true',
-        //        'sound': 'true',
-        //        'alert': 'true',
-        //        'ecb': 'onNotification',
-        //        'senderID': 'teamaid-1144',
-        //    }
-        //);
+
     })
 
     .config(['$ionicAppProvider', function ($ionicAppProvider) {
@@ -329,3 +329,45 @@ var app = angular.module('starter', ['ionic',
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/login');
     });
+
+window.onNotification = function (e) {
+
+    switch (e.event) {
+        case 'registered':
+            if (e.regid.length > 0) {
+
+                var device_token = e.regid;
+                RequestsService.register(device_token).then(function (response) {
+                    alert('registered!');
+                });
+            }
+            break;
+
+        case 'message':
+            alert('msg received: ' + e.message);
+            /*
+             {
+             "message": "Hello this is a push notification",
+             "payload": {
+             "message": "Hello this is a push notification",
+             "sound": "notification",
+             "title": "New Message",
+             "from": "813xxxxxxx",
+             "collapse_key": "do_not_collapse",
+             "foreground": true,
+             "event": "message"
+             }
+             }
+             */
+            break;
+
+        case 'error':
+            alert('error occured');
+            break;
+
+    }
+}
+
+window.errorHandler = function(error){
+    alert('an error occured');
+}
