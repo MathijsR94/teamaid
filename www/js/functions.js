@@ -36,3 +36,32 @@ function formattedDate(date) {
 
     return [month, day, year].join('-');
 }
+
+function calcReaminingTime(time, firstHalfStart, firstHalfEnd, secondHalfStart, secondHalfEnd) {
+	var firstOrSecond;
+
+	// correct the time if it is outside of the given game times
+	if (time < firstHalfStart) {
+		time = firstHalfStart;
+	}
+	else {
+		if (time > firstHalfEnd && time < secondHalfStart) {
+			time = secondHalfStart;
+		}
+		else {
+			if (time > secondHalfEnd) {
+				time = secondHalfEnd;
+			}
+		}
+	}
+
+	//first half  or second half?
+	if (time <= firstHalfEnd) {
+		return ((firstHalfEnd - time) + (secondHalfEnd - secondHalfStart)) / 60;
+	}
+	else {
+		if (time >= secondHalfStart) {
+			return ((secondHalfEnd - time)) / 60;
+		}
+	}
+};

@@ -857,9 +857,6 @@ angular.module('starter.services', [])
 			setStatistics: function(statistics) {
 				localStorage.setItem('statistics', JSON.stringify(statistics));
 			},
-			setRawStatistics: function(statistics) {
-				localStorage.setItem('RawStatistics', JSON.stringify(statistics));
-			},
 			setPlayerStatistics: function(PlayerStats) {
 				localStorage.setItem('PlayerStatistics', JSON.stringify(PlayerStats));
 			},
@@ -910,9 +907,6 @@ angular.module('starter.services', [])
             },
 			getStatistics: function() {
 				return JSON.parse(localStorage.getItem('statistics'));
-			},
-			getRawStatistics: function() {
-				return JSON.parse(localStorage.getItem('RawStatistics'));
 			},
 			getPlayerStatistics: function() {
 				return JSON.parse(localStorage.getItem('PlayerStatistics'));
