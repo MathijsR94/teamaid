@@ -30,7 +30,19 @@ angular.module('starter.FinanceControllers', [])
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.nbsp = " "; // whitespace
         $scope.players = localStorageFactory.getPlayers();
+		$scope.creditDate = new Date();
+        $scope.creditDate.setHours(0, 0, 0, 0);
+        $scope.title = "Selecteer datum";
 
+		
+		$scope.datePickerCallback = function (val) {
+            if (typeof(val) === 'undefined') {
+                //console.log('Date not selected');
+            } else {
+                //console.log('Selected date is : ', val);
+                $scope.creditDate = val;
+            }
+        };
         $scope.isEmpty = function (obj) {
             return Utility.isEmpty(obj);
         }
@@ -41,11 +53,11 @@ angular.module('starter.FinanceControllers', [])
             }
             var val = value;
             if (debetCredit !== true) {
-                Finance.newCredit($scope.teamId, uid, (val * (-1)), comment, $scope.players[uid]);
+                Finance.newCredit($scope.teamId, uid, (val * (-1)), comment, $scope.players[uid],$scope.creditDate);
                 //console.log("debet");
             }
             else {
-                Finance.newCredit($scope.teamId, uid, (val), comment, $scope.players[uid]);
+                Finance.newCredit($scope.teamId, uid, (val), comment, $scope.players[uid],$scope.creditDate);
                 //console.log("credit");
             }
 

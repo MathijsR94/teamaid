@@ -8,6 +8,9 @@
                             <span class="input-label">Speler</span>
                             <select ng-model="selectedPlayer" ng-options="key as (player.firstName +nbsp+ player.insertion +nbsp+ player.lastName) for (key,player) in players"></select>
                         </label>
+						<ionic-datepicker name="date" idate="creditDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+							<button class="button button-block button-stable"> {{ creditDate | date:'dd - MMMM - yyyy' }} </button>
+						</ionic-datepicker>
                         <ion-toggle ng-model="debetCredit">
 							<span class="input-label" ng-if="debetCredit === true">Credit</span>
 							<span class="input-label" ng-if="debetCredit !== true">Debet</span>

@@ -390,7 +390,7 @@ angular.module('starter.services', [])
 				});
 				return deferred.promise;
 			},
-			newCredit: function( teamId, uid, value, comment, player ) {
+			newCredit: function( teamId, uid, value, comment, player, creditDate ) {
 				var balance = 0;
 				var playerRef = financeRef.child(teamId).child(uid);
 				var credits = $firebaseArray(playerRef.child("credits"));
@@ -417,9 +417,8 @@ angular.module('starter.services', [])
 				
 				
 				// add credit to the list
-				var timestamp = new Date();
 				credits.$add({
-					timestamp : timestamp.toString(),
+					timestamp : Date.parse(creditDate),
 					value : value,
 					comment : comment
 				});	
