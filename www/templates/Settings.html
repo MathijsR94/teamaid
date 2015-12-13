@@ -50,6 +50,25 @@
 			</div>		
 		</ion-item>
 		</div>
+		<div ng-if="isAdmin == true">
+		<ion-item class="item-stable" ng-click="toggleGroup('Admins')" ng-class="{active: isGroupShown('Admins')}">
+			  <i class="icon" ng-class="isGroupShown('Admins') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			beheer admins
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('Admins')">
+			<ion-list>
+				<ion-item ng-repeat="(key,admin) in admins">
+					<h2>{{players[key].firstName}} {{players[key].insertion}} {{players[key].lastName}}</h2>
+					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivateAdmin(key)">Deactivate</ion-option-button>
+				</ion-item>
+			</ion-list>
+			<select class="button button-block center" ng-model="selectedPlayer" ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<div class="buttons">
+					<button class="button button-bq" ng-click="addAdmin(selectedPlayer)">Add Admin!</button>
+			</div>		
+		</ion-item>
+		</div>
 	 </ion-list>
   </ion-content>
 </ion-view>
