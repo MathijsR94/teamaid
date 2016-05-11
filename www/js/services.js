@@ -203,6 +203,10 @@ angular.module('starter.services', [])
 				var admin={};
 				admin[uid] = true;
 				teamAdminsRef.update(admin);
+			},
+			unlinkAdmin: function(teamId,uid) {
+				var teamAdminsRef = adminsRef.child(teamId).child(uid);
+				teamAdminsRef.remove();
 			}
         }
     })

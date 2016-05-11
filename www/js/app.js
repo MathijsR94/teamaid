@@ -174,7 +174,7 @@ var app = angular.module('starter', ['ionic',
             })
             .state('app.playerDetail', {
                 cache: false,
-                url: "/:playerId",
+                url: "/player/:playerId",
                 views: {
                     'menuContent': {
                         templateUrl: "templates/player_detail.html",
