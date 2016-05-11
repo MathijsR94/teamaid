@@ -1,11 +1,13 @@
-body, .ionic-body {
+
+html, body, .ionic-body {
     font-family : 'Open Sans', sans-serif;
     font-size : 1em;
     color: #555;
 }
 h1, h2, h3, h4, h5, h6 {
-    color: #333;
+    color: #fff;
 }
+
 .center {
     text-align : center;
     display: block;
@@ -23,16 +25,19 @@ img {
     height : 40px;
 }
 .menu-bar-side {
-    background: #ae0f11;
+    background: #455a64;
     color: #fff;
 }
 .menu-bar {
-    background: #a10e10;
+    background: #455a64;
     color: #fff;
 }
 
 .menu-bar .button-clear {
     color: #fff;
+}
+.bar-header {
+    border: none;
 }
 
 .bar.bar-stable {
@@ -42,7 +47,12 @@ img {
     box-shadow: none !important;
     border-color: #ccc;
 }
-
+.bar .title {
+    font-weight: bold;
+}
+.grade-b .menu-content, .grade-c .menu-content {
+    border: none;
+}
 .col-40 {
 -webkit-box-flex: 0;
 -webkit-flex: 0 0 40%;
@@ -64,4 +74,34 @@ max-width: 40%;
 
 .whitespace {
     white-space: pre;
+}
+
+.soccer-field {
+    background: url(../img/speelveld.svg) no-repeat;
+    background-size: 100% 100%;
+
+}
+
+.player {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    float: left;
+    text-align: center;
+}
+
+.goalkeeper {
+    background: red;
+}
+
+.defender {
+    background: black;
+}
+
+.midfielder {
+    background: green;
+}
+
+.forward {
+    background: purple;
 }

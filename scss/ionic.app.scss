@@ -20,4 +20,144 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
+@import "globals/variables";
 
+html, body, .ionic-body {
+  font-family : 'Open Sans', sans-serif;
+  font-size : 1em;
+  color: $primary-text;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: $primary-text;
+}
+
+.center {
+  text-align : center;
+  display: block;
+  margin: 0 auto;
+}
+img {
+  max-width : 100%;
+}
+.float-left {
+  float : left;
+}
+.divider {
+  width : 100%;
+  clear : both;
+  height : 40px;
+}
+.menu-bar-side {
+  background: #455a64;
+  color: #fff;
+}
+.menu-bar {
+  background: $main-color-dark;
+  color: $text-color;
+}
+
+.menu-bar .button-clear {
+  color: $text-color;
+}
+.bar-header {
+  border: none;
+}
+
+//.bar.bar-stable {
+//  background-image: linear-gradient(0deg, #b2b2b2, #b2b2b2 50%, transparent 50%);
+//  background: transparent;
+//  color: #444;
+//  box-shadow: none !important;
+//  border-color: #ccc;
+//}
+.bar .title {
+  font-weight: bold;
+}
+.grade-b .menu-content, .grade-c .menu-content {
+  border: none;
+}
+.col-40 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 40%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 40%;
+  -ms-flex: 0 0 40%;
+  flex: 0 0 40%;
+  max-width: 40%;
+}
+.col-30{
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 30%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 30%;
+  -ms-flex: 0 0 30%;
+  flex: 0 0 30%;
+  max-width: 30%;
+}
+
+.whitespace {
+  white-space: pre;
+}
+
+.soccer-field {
+  background: url(../img/speelveld.svg) no-repeat;
+  background-size: 100% 100%;
+
+}
+
+.player {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  float: left;
+  text-align: center;
+}
+
+.goalkeeper {
+  background: red;
+}
+
+.defender {
+  background: black;
+}
+
+.midfielder {
+  background: green;
+}
+
+.forward {
+  background: purple;
+}
+
+.header {
+  background: $main-color;
+  width: 100%;
+  max-height: 300px;
+  padding: 40px 20px;
+  color: $text-color;
+  line-height: 1.5em;
+  box-shadow: 0px 2px 4px #B6B6B6;
+}
+.header h1, .header h2, .header h3 {
+  color: $text-color;
+}
+
+.item {
+  span.highlight {
+    color: $main-color-dark;
+    text-transform: uppercase;
+    i {
+      color: $main-color-dark
+    }
+  }
+
+
+
+}
+
+.float-left {
+  float: left;
+}
+.float-right {
+  float: right;
+}

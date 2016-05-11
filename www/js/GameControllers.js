@@ -520,7 +520,7 @@ angular.module('starter.GameControllers', [])
                     // main event interation loop
                     if (typeof stats.GameLog !== 'undefined') {
                         // loop trough each event in the gameLog
-                        for (key in stats.GameLog) {
+                        for (var key in stats.GameLog) {
                             //console.log(stats.GameLog[key].statsType);
                             switch (stats.GameLog[key].statsType) {
 

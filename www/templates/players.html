@@ -1,7 +1,7 @@
 <ion-view view-title="Spelers">
   <ion-content>
     <ion-list>
-      <ion-item  class="item item-thumbnail-left" href="#" ng-repeat="(key,player) in players | toArray: true | orderBy : 'lastName'" ng-click="ShowPlayerDetails(player)">
+      <ion-item  class="item item-thumbnail-left" ng-repeat="(key,player) in players | toArray: true | orderBy : 'lastName'" ng-click="ShowPlayerDetails(player)">
 		<img src="../img/cover.jpg" alt="Geen afbeelding" />
         <h2>{{player.firstName}} {{player.insertion}} {{player.lastName}}</h2>
         <p><!--Bijnaam--></p>
@@ -10,7 +10,7 @@
     </ion-list>
 	<ion-list>
         <div class="item item-divider">Inactief</div>
-      <ion-item class="item item-thumbnail-left item-inactive" href="#" ng-repeat="(key,player) in inactivePlayers">
+      <ion-item class="item item-thumbnail-left item-inactive" ng-repeat="(key,player) in inactivePlayers">
           <img src="../img/cover.jpg" alt="Geen afbeelding" />
           <h2>{{player.firstName}} {{player.insertion}} {{player.lastName}}</h2>
         <p><!--Bijnaam--></p>
