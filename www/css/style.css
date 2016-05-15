@@ -65,3 +65,8 @@ max-width: 40%;
 .whitespace {
     white-space: pre;
 }
+#playing-field {
+    position: fixed;
+    top: 100px;
+    left: 100px;
+}

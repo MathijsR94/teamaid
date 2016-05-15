@@ -82,7 +82,7 @@ angular.module('starter.GameControllers', [])
         }
     })
 
-    .controller('Games_DetailCtrl', function ($scope, Games, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
+    .controller('Games_DetailCtrl', function ($scope, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
         $scope.gameId = $stateParams.gameId;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
@@ -119,14 +119,14 @@ angular.module('starter.GameControllers', [])
 
                 var stats = statsSnap.val();
                 if (stats !== null) {
-                    //console.log(stats);
+
                     if (typeof stats.Basis !== 'undefined') {
 
                         if (typeof stats.externalPlayers !== 'undefined') {
                             $scope.fieldPlayers = angular.extend($scope.fieldPlayers, stats.externalPlayers);
                         }
                         for (key in stats.Basis) {
-                            $scope.basis[stats.Basis[key]] = key;
+                            $scope.basis[stats.Basis[key]] = {value: key, x: 0, y: 0};
                         }
                         ;
                         $scope.tactic = stats.tactic;
@@ -220,6 +220,124 @@ angular.module('starter.GameControllers', [])
                     break;
             }
         }
+
+        $ionicSideMenuDelegate.canDragContent(false);
+
+        var elem = document.getElementById("playing-field");
+        var context;
+
+        var WIDTH = 800;
+        var HEIGHT = 600;
+        var dragOk = false;
+
+        var playerDown = -1;
+        var playerUp = -1;
+        var gridSize = 50;
+
+        function collides(rects, x, y) {
+            var isCollision = -1;
+            for (var key in rects) {
+                if (!rects.hasOwnProperty(key)) continue;
+
+                //var obj = rects[key];
+                var left = rects[key].x, right = rects[key].x + gridSize;
+                var top = rects[key].y, bottom = rects[key].y + gridSize;
+                if (right >= x
+                    && left <= x
+                    && bottom >= y
+                    && top <= y && key != playerDown) {
+                    isCollision = key;
+                }
+            }
+            return isCollision;
+        }
+
+        function clear() {
+            context.clearRect(0, 0, WIDTH, HEIGHT);
+        }
+
+        function myMove(e) {
+            if (dragOk) {
+                $scope.basis[playerDown].x = e.pageX - elem.offsetLeft;
+                $scope.basis[playerDown].y = e.pageY - elem.offsetTop;
+            }
+        }
+
+        function myDown(e) {
+            playerDown = collides($scope.basis, e.offsetX, e.offsetY);
+            if (playerDown != -1) {
+                elem.onmousemove = myMove;
+                dragOk = true;
+            }
+        }
+
+        Object.size = function (obj) {
+            var size = 0, key;
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) size++;
+            }
+            return size;
+        };
+
+
+        function draw() {
+            clear();
+            if (context) {
+                for (var key in $scope.basis) {
+                    // skip loop if the property is from prototype
+                    if (!$scope.basis.hasOwnProperty(key)) continue;
+
+                    var obj = $scope.basis[key];
+
+                    context.fillRect(obj.x, obj.y, gridSize, gridSize);
+                }
+
+            }
+            //drawGrid(50);
+        }
+
+        function drawGrid() {
+            context.fillStyle = '#FF0000';
+            for (var y = gridSize; y < elem.height; y += gridSize) {
+                context.fillRect(0, y, elem.width, 1);
+            }
+            for (var x = gridSize; x < elem.width; x += gridSize) {
+                context.fillRect(x, 0, 1, elem.height);
+            }
+        }
+
+        function myUp(e) {
+            dragOk = false;
+            elem.onmousemove = null;
+            playerUp = collides($scope.basis, e.offsetX, e.offsetY);
+            if (playerUp != -1) {
+
+            } else if(playerDown != -1) {
+                console.log(playerDown, playerUp);
+                $scope.basis[playerDown].x = (e.offsetX - (e.offsetX % gridSize));
+                $scope.basis[playerDown].y = (e.offsetY - (e.offsetY % gridSize));
+            }
+            else {
+
+            }
+
+            playerDown = -1;
+            playerUp = -1;
+        }
+
+        function init() {
+            // list of rectangles to render
+            //rects = $scope.fieldPlayers;
+            context = elem.getContext("2d");
+            return setInterval(draw, 10);
+        }
+
+        init();
+
+
+        elem.onmousedown = myDown;
+        elem.onmouseup = myUp;
+
     })
 
     .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory) {
@@ -577,7 +695,7 @@ angular.module('starter.GameControllers', [])
                     }
 
                     // make actual positions
-                    console.log($scope.actualPlayers);
+                    //console.log($scope.actualPlayers);
                     $scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 
                 }
