@@ -91,7 +91,7 @@ angular.module('starter.GameControllers', [])
         source.src = fieldImg;
 		$scope.image = fieldImg;
 		
-		var WIDTH = image.width;
+		var WIDTH = canvas.width;
         var HEIGHT = source.height/(source.width/WIDTH);
 		console.log( WIDTH , HEIGHT);
 		
