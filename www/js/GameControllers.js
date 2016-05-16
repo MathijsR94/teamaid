@@ -83,27 +83,29 @@ angular.module('starter.GameControllers', [])
     })
 
     .controller('Games_DetailCtrl', function ($scope, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
-        var fieldImg = "../img/Field.jpg";
+        
+		var originX = 600;
+		var originY = 1500;
+		var fieldImg = "../img/Field.svg";
 		var canvas = document.getElementById("playing-field");
 		var image = document.getElementById("background");
         var context;
-		var source =  new Image();
-        source.src = fieldImg;
+		var source = new Image();
+		source.src =fieldImg;
 		$scope.image = fieldImg;
 		
-		var WIDTH = canvas.width;
-        var HEIGHT = source.height/(source.width/WIDTH);
+		var WIDTH;// = image.width;
+        var HEIGHT;// = originY/(originX/WIDTH);
 		console.log( WIDTH , HEIGHT);
+		var offsetX;// = (WIDTH*0.07);
+		var offsetY;// = (HEIGHT*0.05);
+        var gridSizeX;// = (WIDTH - offsetX*2)/9;
+		var gridSizeY;
+	
 		
-        var dragOk = false;
+		var dragOk = false;
         var playerDown = -1;
         var playerUp = -1;
-		var offsetX = (WIDTH*0.07);
-		var offsetY = (HEIGHT*0.05);
-		
-        var gridSizeX = (WIDTH - offsetX*2)/9;
-		var gridSizeY = (HEIGHT - offsetY*2)/15;
-		
 		$scope.gameId = $stateParams.gameId;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
@@ -296,6 +298,8 @@ angular.module('starter.GameControllers', [])
         function draw() {
             clear();
             if (context) {
+							canvas.width = WIDTH;
+			canvas.height = HEIGHT;
 				context.drawImage(source,0,0,WIDTH,HEIGHT);
                 for (var key in $scope.drawPlayers) {
                     // skip loop if the property is from prototype
@@ -343,15 +347,25 @@ angular.module('starter.GameControllers', [])
             // list of rectangles to render
             //rects = $scope.fieldPlayers;
             context = canvas.getContext("2d");
+			sizeCalc();
 			canvas.width = WIDTH;
 			canvas.height = HEIGHT;
-			image.style = "display: none";
             return setInterval(draw, 10);
         }
 
         init();
 
+		function sizeCalc(){			
+			WIDTH = window.innerWidth;
+			HEIGHT = originY/(originX/WIDTH);
+			console.log( WIDTH , HEIGHT);
+			offsetX = (WIDTH*0.07);
+			offsetY = (HEIGHT*0.05);
+			gridSizeX = (WIDTH - offsetX*2)/9;
+			gridSizeY = (HEIGHT - offsetY*2)/15;
+		}
 
+		window.addEventListener("resize",sizeCalc);
         canvas.onmousedown = myDown;
         canvas.onmouseup = myUp;
 
