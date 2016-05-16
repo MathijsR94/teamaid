@@ -84,8 +84,8 @@ angular.module('starter.GameControllers', [])
 
     .controller('Games_DetailCtrl', function ($scope, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
         
-		var originX = 600;
-		var originY = 1500;
+		var originX = 100;
+		var originY = 150;
 		var fieldImg = "../img/Field.svg";
 		var canvas = document.getElementById("playing-field");
 		var image = document.getElementById("background");
@@ -316,10 +316,10 @@ angular.module('starter.GameControllers', [])
 
         function drawGrid(sizeX,sizeY) {
             context.fillStyle = '#FF0000';
-            for (var y = (HEIGHT *0.05); y < canvas.height; y += sizeY) {
+            for (var y = (offsetY); y < canvas.height; y += sizeY) {
                 context.fillRect(0, y, canvas.width, 1);
             }
-            for (var x = (WIDTH * 0.07); x < canvas.width; x += sizeX) {
+            for (var x = (offsetX); x < canvas.width; x += sizeX) {
                 context.fillRect(x, 0, 1, canvas.height);
             }
         }
@@ -359,8 +359,8 @@ angular.module('starter.GameControllers', [])
 			WIDTH = window.innerWidth;
 			HEIGHT = originY/(originX/WIDTH);
 			console.log( WIDTH , HEIGHT);
-			offsetX = (WIDTH*0.07);
-			offsetY = (HEIGHT*0.05);
+			offsetX = (WIDTH*0.027); // tuning parameters
+			offsetY = (HEIGHT*0.036); // tuning parameters
 			gridSizeX = (WIDTH - offsetX*2)/9;
 			gridSizeY = (HEIGHT - offsetY*2)/15;
 		}
