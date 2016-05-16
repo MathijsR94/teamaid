@@ -82,7 +82,6 @@ app.directive('dateTime', function () {
         },
         template: "<strong>{{date}}</strong>",
         link: function (scope, elem, attrs) {
-
             scope.date = dateParser(scope.sdate, 'MM-DD-YYYY');
 
             function dateParser(val, format) {
@@ -125,11 +124,13 @@ app.directive('playingField', function () {
             drawPlayers: '=playerarray',
             type: '=type',
             grid: '=grid',
-            drawSpeed: '=drawSpeed',
+            drawSpeed: '=drawspeed',
             players: '=players'
         },
         template: "<canvas id=\"playing-field\">",
         link: function (scope, elem, attrs) {
+            console.log(scope);
+
             var originX = 77;
             var originY = 100;
             var fieldImg = "../img/Field.svg";
@@ -272,7 +273,6 @@ app.directive('playingField', function () {
                 sizeCalc();
                 canvas.width = WIDTH;
                 canvas.height = HEIGHT;
-
                 return setInterval(draw, scope.drawSpeed);
             }
 

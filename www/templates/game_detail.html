@@ -1,204 +1,204 @@
 <ion-view view-title="Wedstrijd info">
     <ion-content scroll="false">
-        <ion-list>
-            <div class="header">
-                <h3 class="center">{{game.home}} vs {{game.away}}</h3>
+        <!--<ion-list>-->
+            <!--<div class="header">-->
+                <!--<h3 class="center">{{game.home}} vs {{game.away}}</h3>-->
 
-                <h3 class="center">{{homeScore}} - {{awayScore}}</h3>
-                <span class="center">Datum: {{ game.date | date:'dd - MM - yyyy' }}</span>
-        <span class="center">Aanvang wedstrijd: <standard-time-no-meridian
-                etime='game.time'></standard-time-no-meridian></span>
-        <span class="center">Verzameltijd: <standard-time-no-meridian
-                etime='game.collect'></standard-time-no-meridian></span>
+                <!--<h3 class="center">{{homeScore}} - {{awayScore}}</h3>-->
+                <!--<span class="center">Datum: {{ game.date | date:'dd - MM - yyyy' }}</span>-->
+        <!--<span class="center">Aanvang wedstrijd: <standard-time-no-meridian-->
+                <!--etime='game.time'></standard-time-no-meridian></span>-->
+        <!--<span class="center">Verzameltijd: <standard-time-no-meridian-->
+                <!--etime='game.collect'></standard-time-no-meridian></span>-->
 
-                <div ng-if="settings.dutyGames === true">
-                    <span ng-repeat="(id,value) in game.Duty" class="center">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
-                </div>
-            </div>
-            <div ng-show="!isPast">
-                <h3 class="center">Geef hier je beschikbaarheid op</h3>
-                <span class="center">Ik ben</span>
+                <!--<div ng-if="settings.dutyGames === true">-->
+                    <!--<span ng-repeat="(id,value) in game.Duty" class="center">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div ng-show="!isPast">-->
+                <!--<h3 class="center">Geef hier je beschikbaarheid op</h3>-->
+                <!--<span class="center">Ik ben</span>-->
 
-                <div class="button-bar">
-                    <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }"
-                       ng-click="changeAttendance('present');">aanwezig</a>
-                    <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }"
-                       ng-click="changeAttendance('absent');">afwezig</a>
-                    <!--<a ng-class="{ 'button button-royal' : unknown , 'button button-stable' : !unknown}">onbekend</a>-->
-                </div>
-            </div>
-            <br>
-            <ion-item class="item-stable" ng-click="toggleGroup('attendance')"
-                      ng-class="{active: isGroupShown('attendance')}">
-                <i class="icon"
-                   ng-class="isGroupShown('attendance') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-                &nbsp;
-                Aanwezigheid
-            </ion-item>
-            <ion-item class="item-accordion" ng-show="isGroupShown('attendance')">
-                <div class="row responsive-sm">
-                    <div class="col">
-                        <div class="item item-divider">
-                            <span>Aanwezig</span>
-                        </div>
-                        <ion-item ng-repeat="(id,value) in game.Present">
-                            {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
-                            <!-- <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> -->
-                            <ion-option-button class="button-assertive" ng-if="isAdmin"
-                                               ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A
-                            </ion-option-button>
-                            <ion-option-button class="button-royal" ng-if="isAdmin"
-                                               ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U
-                            </ion-option-button>
-                        </ion-item>
-                    </div>
-                    <div class="col">
-                        <div class="item item-divider">
-                            <span>Afwezig</span>
-                        </div>
-                        <ion-item ng-repeat="(id,value) in game.Absent">
-                            {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
-                            <ion-option-button class="button-balanced" ng-if="isAdmin"
-                                               ng-click="$event.stopPropagation(); forceAttendance('present',id)">P
-                            </ion-option-button>
-                            <!-- <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button> -->
-                            <ion-option-button class="button-royal" ng-if="isAdmin"
-                                               ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U
-                            </ion-option-button>
-                        </ion-item>
-                    </div>
-                    <div class="col">
-                        <div class="item item-divider">
-                            <span>Onbekend</span>
-                        </div>
+                <!--<div class="button-bar">-->
+                    <!--<a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }"-->
+                       <!--ng-click="changeAttendance('present');">aanwezig</a>-->
+                    <!--<a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }"-->
+                       <!--ng-click="changeAttendance('absent');">afwezig</a>-->
+                    <!--&lt;!&ndash;<a ng-class="{ 'button button-royal' : unknown , 'button button-stable' : !unknown}">onbekend</a>&ndash;&gt;-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<br>-->
+            <!--<ion-item class="item-stable" ng-click="toggleGroup('attendance')"-->
+                      <!--ng-class="{active: isGroupShown('attendance')}">-->
+                <!--<i class="icon"-->
+                   <!--ng-class="isGroupShown('attendance') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>-->
+                <!--&nbsp;-->
+                <!--Aanwezigheid-->
+            <!--</ion-item>-->
+            <!--<ion-item class="item-accordion" ng-show="isGroupShown('attendance')">-->
+                <!--<div class="row responsive-sm">-->
+                    <!--<div class="col">-->
+                        <!--<div class="item item-divider">-->
+                            <!--<span>Aanwezig</span>-->
+                        <!--</div>-->
+                        <!--<ion-item ng-repeat="(id,value) in game.Present">-->
+                            <!--{{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}-->
+                            <!--&lt;!&ndash; <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> &ndash;&gt;-->
+                            <!--<ion-option-button class="button-assertive" ng-if="isAdmin"-->
+                                               <!--ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A-->
+                            <!--</ion-option-button>-->
+                            <!--<ion-option-button class="button-royal" ng-if="isAdmin"-->
+                                               <!--ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U-->
+                            <!--</ion-option-button>-->
+                        <!--</ion-item>-->
+                    <!--</div>-->
+                    <!--<div class="col">-->
+                        <!--<div class="item item-divider">-->
+                            <!--<span>Afwezig</span>-->
+                        <!--</div>-->
+                        <!--<ion-item ng-repeat="(id,value) in game.Absent">-->
+                            <!--{{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}-->
+                            <!--<ion-option-button class="button-balanced" ng-if="isAdmin"-->
+                                               <!--ng-click="$event.stopPropagation(); forceAttendance('present',id)">P-->
+                            <!--</ion-option-button>-->
+                            <!--&lt;!&ndash; <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button> &ndash;&gt;-->
+                            <!--<ion-option-button class="button-royal" ng-if="isAdmin"-->
+                                               <!--ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U-->
+                            <!--</ion-option-button>-->
+                        <!--</ion-item>-->
+                    <!--</div>-->
+                    <!--<div class="col">-->
+                        <!--<div class="item item-divider">-->
+                            <!--<span>Onbekend</span>-->
+                        <!--</div>-->
 
-                        <ion-list>
-                            <ion-item ng-repeat="(key,player) in unknownPlayers">
-                                {{player.firstName}} {{player.insertion}} {{player.lastName}}
-                                <ion-option-button class="button-balanced" ng-if="isAdmin"
-                                                   ng-click="$event.stopPropagation(); forceAttendance('present',key)">P
-                                </ion-option-button>
-                                <ion-option-button class="button-assertive" ng-if="isAdmin"
-                                                   ng-click="$event.stopPropagation(); forceAttendance('absent',key)">A
-                                </ion-option-button>
-                                <!-- <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',key)">U</ion-option-button> -->
+                        <!--<ion-list>-->
+                            <!--<ion-item ng-repeat="(key,player) in unknownPlayers">-->
+                                <!--{{player.firstName}} {{player.insertion}} {{player.lastName}}-->
+                                <!--<ion-option-button class="button-balanced" ng-if="isAdmin"-->
+                                                   <!--ng-click="$event.stopPropagation(); forceAttendance('present',key)">P-->
+                                <!--</ion-option-button>-->
+                                <!--<ion-option-button class="button-assertive" ng-if="isAdmin"-->
+                                                   <!--ng-click="$event.stopPropagation(); forceAttendance('absent',key)">A-->
+                                <!--</ion-option-button>-->
+                                <!--&lt;!&ndash; <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',key)">U</ion-option-button> &ndash;&gt;-->
 
-                            </ion-item>
-                        </ion-list>
-                    </div>
-                </div>
-            </ion-item>
-            <ion-item class="item-stable" ng-click="toggleGroup('gameLog')"
-                      ng-class="{active: isGroupShown('gameLog')}">
-                <i class="icon"
-                   ng-class="isGroupShown('gameLog') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-                &nbsp;
-                Wedstrijd verslag
-            </ion-item>
-            <ion-item class="item-accordion" ng-repeat="event in gameLog | orderObjectBy:'time'"
-                      ng-show="isGroupShown('gameLog')">
-                <standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
-                <span ng-if="event.statsType === 'GameEvents'"> Event </span>
-                <span ng-if="event.statsType === 'OurGoals'"> Goal voor, {{(fieldPlayers[event.player].firstName +nbsp+ fieldPlayers[event.player].insertion +nbsp+ fieldPlayers[event.player].lastName)}}</span>
-                <span ng-if="event.statsType === 'TheirGoals'"> Goal tegen </span>
-        <span ng-if="event.statsType === 'Cards'"> Kaart
-        <span ng-if="event.type === 'red'">Rood,  </span>
-        <span ng-if="event.type === 'yellow'">Geel,  </span>
-        <span ng-if="event.type === 'yellow2'">Tweede geel,  </span>
-        {{(fieldPlayers[event.player].firstName +nbsp+ fieldPlayers[event.player].insertion +nbsp+ fieldPlayers[event.player].lastName)}}
-        </span>
-        <span ng-if="event.statsType === 'Changes'"> Wissel
-        <span ng-if="event.type === 'Position'">Positie,  {{(fieldPlayers[event.player1].firstName +nbsp+ fieldPlayers[event.player1].insertion +nbsp+ fieldPlayers[event.player1].lastName)}} voor {{(fieldPlayers[event.player2].firstName +nbsp+ fieldPlayers[event.player2].insertion +nbsp+ fieldPlayers[event.player2].lastName)}} </span>
-        <span ng-if="event.type === 'In/Out'">,  {{(fieldPlayers[event.playerIn].firstName +nbsp+ fieldPlayers[event.playerIn].insertion +nbsp+ fieldPlayers[event.playerIn].lastName)}} voor {{(fieldPlayers[event.playerOut].firstName +nbsp+ fieldPlayers[event.playerOut].insertion +nbsp+ fieldPlayers[event.playerOut].lastName)}} </span>
-        </span>
-                , {{event.comment}}
-            </ion-item>
-            <ion-item class="item-stable" ng-click="toggleGroup('BasisTeam')"
-                      ng-class="{active: isGroupShown('BasisTeam')}">
-                <i class="icon"
-                   ng-class="isGroupShown('BasisTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-                &nbsp;
-                basis opstelling
-            </ion-item>
-            <ion-item class="item-accordion" ng-show="isGroupShown('BasisTeam')">
-                <!-- 4-4-2 -->
-                <div ng-if="tactic !== 0 && tactic !== undefined">
-                    <div name="goalkeeper" class="row">
-                        <div class="col-33"></div>
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[1]].firstName}}
-                                {{fieldPlayers[basis[1]].insertion}} {{fieldPlayers[basis[1]].lastName}}
-                            </button>
-                        </div>
-                        <div class="col-33"></div>
-                    </div>
-                    <div name="defense" class="row">
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[2]].firstName}}
-                                {{fieldPlayers[basis[2]].insertion}} {{fieldPlayers[basis[2]].lastName}}
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[3]].firstName}}
-                                {{fieldPlayers[basis[3]].insertion}} {{fieldPlayers[basis[3]].lastName}}
-                            </button>
-                            <button class="button button-block">{{fieldPlayers[basis[4]].firstName}}
-                                {{fieldPlayers[basis[4]].insertion}} {{fieldPlayers[basis[4]].lastName}}
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[5]].firstName}}
-                                {{fieldPlayers[basis[5]].insertion}} {{fieldPlayers[basis[5]].lastName}}
-                            </button>
-                        </div>
-                    </div>
-                    <div name="midfield" class="row">
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[6]].firstName}}
-                                {{fieldPlayers[basis[6]].insertion}} {{fieldPlayers[basis[6]].lastName}}
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[7]].firstName}}
-                                {{fieldPlayers[basis[7]].insertion}} {{fieldPlayers[basis[7]].lastName}}
-                            </button>
-                            <button ng-if="tactic === '4-4-2'" class="button button-block">
-                                {{fieldPlayers[basis[10]].firstName}} {{fieldPlayers[basis[10]].insertion}}
-                                {{fieldPlayers[basis[10]].lastName}}
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[8]].firstName}}
-                                {{fieldPlayers[basis[8]].insertion}} {{fieldPlayers[basis[8]].lastName}}
-                            </button>
-                        </div>
-                    </div>
-                    <div name="attack" class="row">
-                        <div class="col-10" ng-if="tactic === '4-4-2'"></div>
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[9]].firstName}}
-                                {{fieldPlayers[basis[9]].insertion}} {{fieldPlayers[basis[9]].lastName}}
-                            </button>
-                        </div>
-                        <div class="col" ng-if="tactic === '4-3-3'">
-                            <button class="button button-block">{{fieldPlayers[basis[10]].firstName}}
-                                {{fieldPlayers[basis[10]].insertion}} {{fieldPlayers[basis[10]].lastName}}
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button class="button button-block">{{fieldPlayers[basis[11]].firstName}}
-                                {{fieldPlayers[basis[11]].insertion}} {{fieldPlayers[basis[11]].lastName}}
-                            </button>
-                        </div>
-                        <div class="col-10" ng-if="tactic === '4-4-2'"></div>
-                    </div>
-                </div>
-                <div ng-if="tactic === 0 || tactic === undefined">
-                    De basis opstelling is nog niet bekend
-                </div>
-            </ion-item>
-        </ion-list>
-        <canvas id="playing-field"></canvas>
-        <playing-field playerarray="basis" type="1" grid="true" drawSpeed="10"></playing-field>
+                            <!--</ion-item>-->
+                        <!--</ion-list>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</ion-item>-->
+            <!--<ion-item class="item-stable" ng-click="toggleGroup('gameLog')"-->
+                      <!--ng-class="{active: isGroupShown('gameLog')}">-->
+                <!--<i class="icon"-->
+                   <!--ng-class="isGroupShown('gameLog') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>-->
+                <!--&nbsp;-->
+                <!--Wedstrijd verslag-->
+            <!--</ion-item>-->
+            <!--<ion-item class="item-accordion" ng-repeat="event in gameLog | orderObjectBy:'time'"-->
+                      <!--ng-show="isGroupShown('gameLog')">-->
+                <!--<standard-time-no-meridian etime='event.time'></standard-time-no-meridian>-->
+                <!--<span ng-if="event.statsType === 'GameEvents'"> Event </span>-->
+                <!--<span ng-if="event.statsType === 'OurGoals'"> Goal voor, {{(fieldPlayers[event.player].firstName +nbsp+ fieldPlayers[event.player].insertion +nbsp+ fieldPlayers[event.player].lastName)}}</span>-->
+                <!--<span ng-if="event.statsType === 'TheirGoals'"> Goal tegen </span>-->
+        <!--<span ng-if="event.statsType === 'Cards'"> Kaart-->
+        <!--<span ng-if="event.type === 'red'">Rood,  </span>-->
+        <!--<span ng-if="event.type === 'yellow'">Geel,  </span>-->
+        <!--<span ng-if="event.type === 'yellow2'">Tweede geel,  </span>-->
+        <!--{{(fieldPlayers[event.player].firstName +nbsp+ fieldPlayers[event.player].insertion +nbsp+ fieldPlayers[event.player].lastName)}}-->
+        <!--</span>-->
+        <!--<span ng-if="event.statsType === 'Changes'"> Wissel-->
+        <!--<span ng-if="event.type === 'Position'">Positie,  {{(fieldPlayers[event.player1].firstName +nbsp+ fieldPlayers[event.player1].insertion +nbsp+ fieldPlayers[event.player1].lastName)}} voor {{(fieldPlayers[event.player2].firstName +nbsp+ fieldPlayers[event.player2].insertion +nbsp+ fieldPlayers[event.player2].lastName)}} </span>-->
+        <!--<span ng-if="event.type === 'In/Out'">,  {{(fieldPlayers[event.playerIn].firstName +nbsp+ fieldPlayers[event.playerIn].insertion +nbsp+ fieldPlayers[event.playerIn].lastName)}} voor {{(fieldPlayers[event.playerOut].firstName +nbsp+ fieldPlayers[event.playerOut].insertion +nbsp+ fieldPlayers[event.playerOut].lastName)}} </span>-->
+        <!--</span>-->
+                <!--, {{event.comment}}-->
+            <!--</ion-item>-->
+            <!--<ion-item class="item-stable" ng-click="toggleGroup('BasisTeam')"-->
+                      <!--ng-class="{active: isGroupShown('BasisTeam')}">-->
+                <!--<i class="icon"-->
+                   <!--ng-class="isGroupShown('BasisTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>-->
+                <!--&nbsp;-->
+                <!--basis opstelling-->
+            <!--</ion-item>-->
+            <!--<ion-item class="item-accordion" ng-show="isGroupShown('BasisTeam')">-->
+                <!--&lt;!&ndash; 4-4-2 &ndash;&gt;-->
+                <!--<div ng-if="tactic !== 0 && tactic !== undefined">-->
+                    <!--<div name="goalkeeper" class="row">-->
+                        <!--<div class="col-33"></div>-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[1]].firstName}}-->
+                                <!--{{fieldPlayers[basis[1]].insertion}} {{fieldPlayers[basis[1]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col-33"></div>-->
+                    <!--</div>-->
+                    <!--<div name="defense" class="row">-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[2]].firstName}}-->
+                                <!--{{fieldPlayers[basis[2]].insertion}} {{fieldPlayers[basis[2]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[3]].firstName}}-->
+                                <!--{{fieldPlayers[basis[3]].insertion}} {{fieldPlayers[basis[3]].lastName}}-->
+                            <!--</button>-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[4]].firstName}}-->
+                                <!--{{fieldPlayers[basis[4]].insertion}} {{fieldPlayers[basis[4]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[5]].firstName}}-->
+                                <!--{{fieldPlayers[basis[5]].insertion}} {{fieldPlayers[basis[5]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div name="midfield" class="row">-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[6]].firstName}}-->
+                                <!--{{fieldPlayers[basis[6]].insertion}} {{fieldPlayers[basis[6]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[7]].firstName}}-->
+                                <!--{{fieldPlayers[basis[7]].insertion}} {{fieldPlayers[basis[7]].lastName}}-->
+                            <!--</button>-->
+                            <!--<button ng-if="tactic === '4-4-2'" class="button button-block">-->
+                                <!--{{fieldPlayers[basis[10]].firstName}} {{fieldPlayers[basis[10]].insertion}}-->
+                                <!--{{fieldPlayers[basis[10]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[8]].firstName}}-->
+                                <!--{{fieldPlayers[basis[8]].insertion}} {{fieldPlayers[basis[8]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div name="attack" class="row">-->
+                        <!--<div class="col-10" ng-if="tactic === '4-4-2'"></div>-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[9]].firstName}}-->
+                                <!--{{fieldPlayers[basis[9]].insertion}} {{fieldPlayers[basis[9]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col" ng-if="tactic === '4-3-3'">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[10]].firstName}}-->
+                                <!--{{fieldPlayers[basis[10]].insertion}} {{fieldPlayers[basis[10]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col">-->
+                            <!--<button class="button button-block">{{fieldPlayers[basis[11]].firstName}}-->
+                                <!--{{fieldPlayers[basis[11]].insertion}} {{fieldPlayers[basis[11]].lastName}}-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col-10" ng-if="tactic === '4-4-2'"></div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div ng-if="tactic === 0 || tactic === undefined">-->
+                    <!--De basis opstelling is nog niet bekend-->
+                <!--</div>-->
+            <!--</ion-item>-->
+        <!--</ion-list>-->
+        <!--<canvas id="playing-field"></canvas>-->
+        <playing-field playerarray="basis" players="players" type="1" grid="false" drawspeed="30"></playing-field>
     </ion-content>
 </ion-view>
