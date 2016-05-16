@@ -121,7 +121,7 @@ app.directive('playingField', function () {
         restrict: 'AE',
         replace: true,
         scope: {
-            drawPlayers: '=playerarray',
+            drawPlayers: '=lineup',
             type: '=type',
             grid: '=grid',
             drawSpeed: '=drawspeed',
