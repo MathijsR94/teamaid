@@ -83,7 +83,28 @@ angular.module('starter.GameControllers', [])
     })
 
     .controller('Games_DetailCtrl', function ($scope, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
-        $scope.gameId = $stateParams.gameId;
+        var fieldImg = "../img/Field.jpg";
+		var canvas = document.getElementById("playing-field");
+		var image = document.getElementById("background");
+        var context;
+		var source =  new Image();
+        source.src = fieldImg;
+		$scope.image = fieldImg;
+		
+		var WIDTH = image.width;
+        var HEIGHT = source.height/(source.width/WIDTH);
+		console.log( WIDTH , HEIGHT);
+		
+        var dragOk = false;
+        var playerDown = -1;
+        var playerUp = -1;
+		var offsetX = (WIDTH*0.07);
+		var offsetY = (HEIGHT*0.05);
+		
+        var gridSizeX = (WIDTH - offsetX*2)/9;
+		var gridSizeY = (HEIGHT - offsetY*2)/15;
+		
+		$scope.gameId = $stateParams.gameId;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.teamId = localStorageFactory.getTeamId();
@@ -96,7 +117,7 @@ angular.module('starter.GameControllers', [])
 
         $scope.gameLog = {};
         $scope.basis = {};
-
+		$scope.drawPlayers = {};
 
         if (typeof $scope.inactivePlayers !== 'undefined') {
             $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
@@ -125,8 +146,9 @@ angular.module('starter.GameControllers', [])
                         if (typeof stats.externalPlayers !== 'undefined') {
                             $scope.fieldPlayers = angular.extend($scope.fieldPlayers, stats.externalPlayers);
                         }
+						$scope.basis = stats.Basis;
                         for (key in stats.Basis) {
-                            $scope.basis[stats.Basis[key]] = {value: key, x: 0, y: 0};
+							$scope.drawPlayers[key] = { id:stats.Basis[key],x:(0*gridSizeX)+offsetX,y:(0*gridSizeY)+offsetY}
                         }
                         ;
                         $scope.tactic = stats.tactic;
@@ -221,18 +243,8 @@ angular.module('starter.GameControllers', [])
             }
         }
 
+		
         $ionicSideMenuDelegate.canDragContent(false);
-
-        var elem = document.getElementById("playing-field");
-        var context;
-
-        var WIDTH = 800;
-        var HEIGHT = 600;
-        var dragOk = false;
-
-        var playerDown = -1;
-        var playerUp = -1;
-        var gridSize = 50;
 
         function collides(rects, x, y) {
             var isCollision = -1;
@@ -240,8 +252,8 @@ angular.module('starter.GameControllers', [])
                 if (!rects.hasOwnProperty(key)) continue;
 
                 //var obj = rects[key];
-                var left = rects[key].x, right = rects[key].x + gridSize;
-                var top = rects[key].y, bottom = rects[key].y + gridSize;
+                var left = rects[key].x, right = rects[key].x + gridSizeX;
+                var top = rects[key].y, bottom = rects[key].y + gridSizeY;
                 if (right >= x
                     && left <= x
                     && bottom >= y
@@ -253,20 +265,21 @@ angular.module('starter.GameControllers', [])
         }
 
         function clear() {
+			
             context.clearRect(0, 0, WIDTH, HEIGHT);
         }
 
         function myMove(e) {
             if (dragOk) {
-                $scope.basis[playerDown].x = e.pageX - elem.offsetLeft;
-                $scope.basis[playerDown].y = e.pageY - elem.offsetTop;
+                $scope.drawPlayers[playerDown].x = e.pageX - canvas.offsetLeft;
+                $scope.drawPlayers[playerDown].y = e.pageY - canvas.offsetTop;
             }
         }
 
         function myDown(e) {
-            playerDown = collides($scope.basis, e.offsetX, e.offsetY);
+            playerDown = collides($scope.drawPlayers, e.offsetX, e.offsetY);
             if (playerDown != -1) {
-                elem.onmousemove = myMove;
+                canvas.onmousemove = myMove;
                 dragOk = true;
             }
         }
@@ -283,39 +296,40 @@ angular.module('starter.GameControllers', [])
         function draw() {
             clear();
             if (context) {
-                for (var key in $scope.basis) {
+				context.drawImage(source,0,0,WIDTH,HEIGHT);
+                for (var key in $scope.drawPlayers) {
                     // skip loop if the property is from prototype
-                    if (!$scope.basis.hasOwnProperty(key)) continue;
+                    if (!$scope.drawPlayers.hasOwnProperty(key)) continue;
 
-                    var obj = $scope.basis[key];
+                    var obj = $scope.drawPlayers[key];
 
-                    context.fillRect(obj.x, obj.y, gridSize, gridSize);
+                    context.fillRect(obj.x, obj.y, gridSizeX, gridSizeY);
                 }
 
             }
-            //drawGrid(50);
+            drawGrid(gridSizeX,gridSizeY);
         }
 
-        function drawGrid() {
+        function drawGrid(sizeX,sizeY) {
             context.fillStyle = '#FF0000';
-            for (var y = gridSize; y < elem.height; y += gridSize) {
-                context.fillRect(0, y, elem.width, 1);
+            for (var y = (HEIGHT *0.05); y < canvas.height; y += sizeY) {
+                context.fillRect(0, y, canvas.width, 1);
             }
-            for (var x = gridSize; x < elem.width; x += gridSize) {
-                context.fillRect(x, 0, 1, elem.height);
+            for (var x = (WIDTH * 0.07); x < canvas.width; x += sizeX) {
+                context.fillRect(x, 0, 1, canvas.height);
             }
         }
 
         function myUp(e) {
             dragOk = false;
-            elem.onmousemove = null;
-            playerUp = collides($scope.basis, e.offsetX, e.offsetY);
+            canvas.onmousemove = null;
+            playerUp = collides($scope.drawPlayers, e.offsetX, e.offsetY);
             if (playerUp != -1) {
-
+				// wissel spelers
             } else if(playerDown != -1) {
                 console.log(playerDown, playerUp);
-                $scope.basis[playerDown].x = (e.offsetX - (e.offsetX % gridSize));
-                $scope.basis[playerDown].y = (e.offsetY - (e.offsetY % gridSize));
+                $scope.drawPlayers[playerDown].x = (e.offsetX - (e.offsetX % gridSizeX))+ offsetX;
+                $scope.drawPlayers[playerDown].y = (e.offsetY - (e.offsetY % gridSizeY))+ offsetY;
             }
             else {
 
@@ -328,15 +342,18 @@ angular.module('starter.GameControllers', [])
         function init() {
             // list of rectangles to render
             //rects = $scope.fieldPlayers;
-            context = elem.getContext("2d");
+            context = canvas.getContext("2d");
+			canvas.width = WIDTH;
+			canvas.height = HEIGHT;
+			image.style = "display: none";
             return setInterval(draw, 10);
         }
 
         init();
 
 
-        elem.onmousedown = myDown;
-        elem.onmouseup = myUp;
+        canvas.onmousedown = myDown;
+        canvas.onmouseup = myUp;
 
     })
 
