@@ -125,7 +125,8 @@ app.directive('playingField', function () {
             drawPlayers: '=playerarray',
             type: '=type',
             grid: '=grid',
-            drawSpeed: '=drawSpeed'
+            drawSpeed: '=drawSpeed',
+            players: '=players'
         },
         template: "<canvas id=\"playing-field\">",
         link: function (scope, elem, attrs) {
@@ -138,6 +139,10 @@ app.directive('playingField', function () {
             var contextSubs;
             var source = new Image();
             source.src = fieldImg;
+
+            var shirt = new Image();
+            shirt.src = "../img/shirt.svg";
+
 
             var WIDTH;// = image.width;
             var HEIGHT;// = originY/(originX/WIDTH);
@@ -230,17 +235,20 @@ app.directive('playingField', function () {
                     canvas.width = WIDTH;
                     canvas.height = HEIGHT;
                     context.drawImage(source, 0, 0, WIDTH, HEIGHT);
+                    context.lineWidth = 0.1;
                     for (var key in scope.drawPlayers) {
                         // skip loop if the property is from prototype
                         if (!scope.drawPlayers.hasOwnProperty(key)) continue;
-
-                        //console.log(scope.drawPlayers["simplelogin:99"]);
-
                         if (key != playerDown) {
                             var obj = scope.drawPlayers[key];
-                            context.fillRect(obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+                            //context.fillRect(obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+                            context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY * 3.3));
                         } else {
-                            context.fillRect(moveX, moveY, gridSizeX, gridSizeY);
+                            //context.fillRect(moveX, moveY, gridSizeX, gridSizeY);
+                            context.drawImage(shirt,moveX, moveY, gridSizeX, gridSizeY);
+                            context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, moveX, moveY + (offsetY * 2.3));
+
                         }
                     }
 
@@ -265,9 +273,6 @@ app.directive('playingField', function () {
                 canvas.width = WIDTH;
                 canvas.height = HEIGHT;
 
-                context.rect(10, 10, 50, 50);
-                context.stroke();
-
                 return setInterval(draw, scope.drawSpeed);
             }
 
@@ -285,6 +290,8 @@ app.directive('playingField', function () {
             window.addEventListener("resize", sizeCalc);
             canvas.onmousedown = myDown;
             canvas.onmouseup = myUp;
+            canvas.touchstart = myDown;
+            canvas.touchend = myDown;
         }
     }
 });
