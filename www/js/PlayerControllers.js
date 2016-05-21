@@ -83,15 +83,29 @@ angular.module('starter.PlayerControllers', [])
 
     })
 	
-    .controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, localStorageFactory, firebaseRef, Admins) {
+    .controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins) {
 
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.settings = localStorageFactory.getSettings();
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.players = localStorageFactory.getPlayers();
+		$scope.availableNumbers = {};
         $scope.externalList = {};
         $scope.nbsp = " ";
-
+		$scope.showNumbers = false;
+		
+		// create available numbers
+		for(var x = 1;x <= 45;x++){
+			$scope.availableNumbers[x] = x;
+		}
+		// now remove already taken numbers based on the  player array
+		for(key in $scope.players){
+			console.log($scope.players[key]);	
+			if (typeof $scope.players[key].defaultNumber !== 'undefined') {
+				delete $scope.availableNumbers[$scope.players[key].defaultNumber];
+			}
+		}
+			
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
                 Settings.getRef().child($scope.teamId).child("Settings").on("value", function (settingsSnap) {
@@ -148,6 +162,36 @@ angular.module('starter.PlayerControllers', [])
 		$scope.deactivateAdmin = function(id){
 			Admins.unlinkAdmin($scope.teamId,id);
 		}
+		
+		$scope.playerSelected = function (player) {
+            $scope.selectedNumber = $scope.players[player].defaultNumber;
+			if($scope.selectedNumber == -1)
+				$scope.selectedNumber = null;
+			//console.log($scope.selectedNumber);
+			$scope.showNumbers = true;
+        }
+		$scope.changeNumber = function (player, newNumber) {
+			if (typeof player === 'undefined' || typeof newNumber === -1 ){
+                alert("vul beide velden in");
+            }
+			alert("rugnummer wordt gewijzigd van "+ $scope.players[player].defaultNumber + " naar " + newNumber);
+			
+			// update local player and scope variable for available numbers
+			$scope.availableNumbers[$scope.players[player].defaultNumber] = $scope.players[player].defaultNumber;
+			$scope.players[player].defaultNumber = newNumber;
+			delete $scope.availableNumbers[newNumber];
+			
+			// update firebase
+			Teams.updatePlayer($scope.teamId,player,$scope.players[player].firstName,$scope.players[player].insertion,$scope.players[player].lastName,$scope.players[player].defaultNumber,$scope.players[player].nickName);
+			
+			// update local storage
+			localStorageFactory.setPlayers($scope.players);
+			$scope.showNumbers = false;
+			$scope.selectedPlayer = {};
+			
+			
+		}
+		
         $scope.changeExtInt = function (playerExt, playerInt) {
             if (typeof playerExt === 'undefined' || typeof playerInt === 'undefined') {
                 alert("vul beide velden in");

@@ -51,6 +51,24 @@
 		</ion-item>
 		</div>
 		<div ng-if="isAdmin == true">
+		<ion-item class="item-stable" ng-click="toggleGroup('defaultNumbers')" ng-class="{active: isGroupShown('defaultNumbers')}">
+			  <i class="icon" ng-class="isGroupShown('defaultNumbers') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			Standaard rugnummers
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('defaultNumbers')">
+			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<div ng-if="showNumbers == true">
+				huidige rugnummer: {{selectedNumber}}
+				<select class="button button-block center" ng-model="number" ng-options="item for item in availableNumbers"></select>
+
+				<div class="buttons">
+						<button class="button button-bq" ng-click="changeNumber(selectedPlayer,number)">Update!</button>
+			</div>	
+			</div>			
+		</ion-item>
+		</div>
+		<div ng-if="isAdmin == true">
 		<ion-item class="item-stable" ng-click="toggleGroup('Admins')" ng-class="{active: isGroupShown('Admins')}">
 			  <i class="icon" ng-class="isGroupShown('Admins') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 			&nbsp;

@@ -152,10 +152,23 @@ angular.module('starter.services', [])
             },
 			linkPlayer: function(teamId, firstName, ins, lastName, uid) {
 				var playersRef = teamsRef.child(teamId).child("Players").child(uid);
+				var nickname = firstName.substr(0,1)+".";
+				if(ins != ""){
+					var a;
+					var sections = ins.split(" "); // take  first letter of each section of ins
+					for(a=0;a<sections.length;a++){
+						console.log(sections[a].substr(0,1));
+						nickname += sections[a].substr(0,1);
+					}
+					nickname += ".";
+				}
+				nickname += lastName;
 				playersRef.update({
                         firstName: firstName,
                         insertion: ins,
-                        lastName: lastName
+                        lastName: lastName,
+						nickName: nickname,
+						defaultNumber: -1
                 });
 			},
             getPlayers: function(teamId) {
@@ -185,7 +198,36 @@ angular.module('starter.services', [])
 					teamsRef.child(teamId).child("InActive").child(uid).update(data.val());
 					teamsRef.child(teamId).child("Players").child(uid).remove();
 				});				
+			},
+			updatePlayer: function(teamId, uid, firstName, ins, lastName, defaultNumber, nickName){
+				if (typeof defaultNumber === 'undefined') {
+					defaultNumber = -1;
+				}
+				if (typeof nickName === 'undefined') {
+					var nickname = firstName.substr(0,1)+".";
+					if(ins != ""){
+						var a;
+						var sections = ins.split(" "); // take  first letter of each section of ins
+						for(a=0;a<sections.length;a++){
+							console.log(sections[a].substr(0,1));
+							nickname += sections[a].substr(0,1);
+						}
+						nickname += ".";
+					}
+					nickname += lastName;
+				}
+				else{
+					nickname = nickName;
+				}
+				teamsRef.child(teamId).child("Players").child(uid).update({
+                        firstName: firstName,
+                        insertion: ins,
+                        lastName: lastName,
+						nickName: nickname,
+						defaultNumber: defaultNumber
+                });
 			}
+			
         }
     })
 	.factory('Admins', function ($firebaseArray, firebaseRef, $q) {
