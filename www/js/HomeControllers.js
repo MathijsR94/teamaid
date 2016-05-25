@@ -160,13 +160,6 @@ angular.module('starter.HomeControllers', [])
 
             ref.child('Admins').child(teamId).once('value', function (admin) {
                 localStorageFactory.setAdmin(admin.val(), uid);
-            })
-
-            User.getName().then(function (data) {
-                var firstName = data.firstName,
-                    insertion = data.insertion,
-                    lastName = data.lastName;
-                $scope.name = firstName + ' ' + insertion + ' ' + lastName;
-            })
+            });
         })
     })

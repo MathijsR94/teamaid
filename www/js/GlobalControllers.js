@@ -1,6 +1,6 @@
 angular.module('starter.GlobalControllers', [])
 
-    .controller('AppCtrl', function ($scope, $ionicModal, $timeout) {
+    .controller('AppCtrl', function ($scope, User) {
 
         // With the new view caching in Ionic, Controllers are only called
         // when they are recreated or on app start, instead of every page change.
@@ -9,6 +9,10 @@ angular.module('starter.GlobalControllers', [])
         //$scope.$on('$ionicView.enter', function(e) {
         //});
 
+        User.getName().then(function (data) {
+            $scope.firstName = data.firstName;
+            $scope.name = data.firstName + " " + data.insertion + " " + data.lastName;
+        })
     })
 
 

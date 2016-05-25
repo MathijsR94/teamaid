@@ -23,42 +23,49 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import "globals/variables";
 
 html, body, .ionic-body {
-  font-family : 'Open Sans', sans-serif;
-  font-size : 1em;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1em;
   color: $primary-text;
 }
+
 h1, h2, h3, h4, h5, h6 {
   color: $primary-text;
 }
 
 .center {
-  text-align : center;
+  text-align: center;
   display: block;
   margin: 0 auto;
 }
+
 img {
-  max-width : 100%;
+  max-width: 100%;
 }
+
 .float-left {
-  float : left;
+  float: left;
 }
+
 .divider {
-  width : 100%;
-  clear : both;
-  height : 40px;
+  width: 100%;
+  clear: both;
+  height: 40px;
 }
+
 .menu-bar-side {
-  background: #455a64;
+  background: $main-color;
   color: #fff;
 }
+
 .menu-bar {
-  background: $main-color-dark;
+  background: $main-color;
   color: $text-color;
 }
 
 .menu-bar .button-clear {
   color: $text-color;
 }
+
 .bar-header {
   border: none;
 }
@@ -73,9 +80,11 @@ img {
 .bar .title {
   font-weight: bold;
 }
+
 .grade-b .menu-content, .grade-c .menu-content {
   border: none;
 }
+
 .col-40 {
   -webkit-box-flex: 0;
   -webkit-flex: 0 0 40%;
@@ -85,7 +94,8 @@ img {
   flex: 0 0 40%;
   max-width: 40%;
 }
-.col-30{
+
+.col-30 {
   -webkit-box-flex: 0;
   -webkit-flex: 0 0 30%;
   -moz-box-flex: 0;
@@ -130,7 +140,7 @@ img {
 }
 
 .header {
-  background: $main-color;
+  background: $main-color-dark;
   width: 100%;
   max-height: 300px;
   padding: 2em;
@@ -139,6 +149,7 @@ img {
   box-shadow: 0px 2px 4px #B6B6B6;
   margin-bottom: 2em;
 }
+
 .header h1, .header h2, .header h3 {
   color: $text-color;
 }
@@ -152,17 +163,112 @@ img {
     }
   }
 
-
-
 }
 
 .float-left {
   float: left;
 }
+
 .float-right {
   float: right;
 }
 
 .no-padding {
   padding: 0 !important;
+}
+
+.navigation-drawer {
+  i {
+    color: #757575;
+    padding-left: 0.5em;
+    width: 1em;
+  }
+  span {
+    color: #212121;
+    padding-left: 1em;
+    font-weight: 500;
+  }
+  .item {
+    border: none;
+    height: 60px;
+  }
+
+  .list {
+    padding-top: 0;
+  }
+
+  .current span, .current i {
+    color: $main-color;
+  }
+
+  .head {
+    background: $main-color-dark;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1em;
+    display: table;
+    width: 100%;
+    height: $menu-height;
+    color: #fff;
+    .avatar {
+      float: left;
+      display: table-cell;
+      height: $menu-height;
+      vertical-align: middle;
+      padding: 1.1em 0.5em 1em 1em;
+      img {
+        border-radius: 50%;
+        max-height: 30px;
+      }
+    }
+    .name {
+      padding: 1.5em 0 0 0;
+      float: left;
+      font-weight: 700;
+      display: table-cell;
+      vertical-align: middle;
+      height: $menu-height;
+    }
+  }
+}
+
+.bar {
+  height: $menu-height;
+  .title {
+    height: $menu-height;
+    line-height: $menu-height;
+  }
+}
+
+.has-header {
+  top: $menu-height;
+}
+
+.menu-bar .button-clear {
+  color: #FFFFFF;
+}
+
+.bar .button.button-clear, .bar button.button-clear {
+  padding-top: 8px;
+}
+
+.bar-subheader {
+  top: 65px;
+  height: 44px !important;
+}
+
+.content-margin {
+  margin-top: 1em;
+}
+
+.menu-open .content-backdrop {
+  position: fixed;
+  top: 44px;
+  left: 0;
+  z-index: 11;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  -webkit-transition: 0.1s opacity linear;
+  -moz-transition: 0.1s opacity linear;
+  transition: 0.1s opacity linear;
 }

@@ -1,74 +1,75 @@
 <ion-side-menus enable-menu-with-back-views="true">
-  <ion-side-menu-content>
-    <ion-nav-bar class="menu-bar">
-      <ion-nav-back-button>
-      </ion-nav-back-button>
+    <ion-side-menu-content>
+        <ion-nav-bar class="menu-bar">
+            <ion-nav-back-button>
+            </ion-nav-back-button>
 
-      <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
-        </button>
-      </ion-nav-buttons>
-    </ion-nav-bar>
-    <ion-nav-view name="menuContent"></ion-nav-view>
-  </ion-side-menu-content>
+            <ion-nav-buttons side="left">
+                <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+                </button>
+            </ion-nav-buttons>
+        </ion-nav-bar>
+        <ion-nav-view name="menuContent"></ion-nav-view>
+    </ion-side-menu-content>
 
-  <ion-side-menu side="left">
-    <ion-header-bar class="menu-bar-side">
+    <ion-side-menu side="left">
+        <ion-content>
+            <ion-list class="navigation-drawer">
+                <div class="head">
+                    <div class="avatar"><img src="../img/cover.jpg" /></div>
+                    <div class="name">{{firstName}}</div>
+                </div>
+                <a ui-sref="app.home"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-ios-home"></i>
+                    <span>Home</span></a>
+                <a ui-sref="app.players"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-ios-people"></i>
+                    <span>Spelers</span></a>
+                <a ui-sref="app.games"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-trophy"></i>
+                    <span>Wedstrijden</span></a>
+                <a ui-sref="app.practises"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-ios-football"></i>
+                    <span>Trainingen</span></a>
+                <a ui-sref="app.events"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-beer"></i>
+                    <span>Evenementen</span></a>
+                <a ui-sref="app.Finance"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-cash"></i>
+                    <span>Teampot</span></a>
+                <a ui-sref="app.Duties"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-speakerphone"></i>
+                    <span>Corvee</span></a>
+                <a ui-sref="app.statistics"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-stats-bars"></i>
+                    <span>Statistieken</span></a>
+                <a ui-sref="app.Settings"
+                   ui-sref-active="current"
+                   class="item" menu-close>
+                    <i class="icon ion-ios-gear"></i>
+                    <span>Settings</span></a>
+                <a ng-click="logout()"
+                   class="item"
+                   ng-controller="LogoutCtrl">
+                    <i class="icon ion-android-exit"></i> <span>Uitloggen</span></a>
 
-    </ion-header-bar>
-    <ion-content>
-      <ion-list>
-          <a ui-sref="app.home"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-ios-home"></i>
-              Home</a>
-          <a ui-sref="app.players"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-ios-people"></i>
-              Spelers</a>
-		  <a ui-sref="app.games"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-trophy"></i>
-              Wedstrijden</a>
-		  <a ui-sref="app.practises"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-ios-football"></i>
-              Trainingen</a>
-		  <a ui-sref="app.events"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-beer"></i>
-              Evenementen</a>
-		  <a ui-sref="app.Finance"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-cash"></i>
-              Teampot</a>
-		  <a ui-sref="app.Duties"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-speakerphone"></i>
-              Corvee</a>
-		  <a ui-sref="app.statistics"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-stats-bars"></i>
-              Statistieken</a>
-		  <a ui-sref="app.Settings"
-             ui-sref-active="current"
-             class="item" menu-close>
-              <i class="icon ion-ios-gear"></i>
-              Settings</a>
-          <a ng-click="logout()"
-             class="item"
-             ng-controller="LogoutCtrl">
-              <i class="icon ion-android-exit"></i> Uitloggen</a>
-
-      </ion-list>
-    </ion-content>
-  </ion-side-menu>
+            </ion-list>
+        </ion-content>
+    </ion-side-menu>
 </ion-side-menus>

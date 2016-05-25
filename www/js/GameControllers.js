@@ -238,10 +238,9 @@ angular.module('starter.GameControllers', [])
 
 
         $scope.isScrollEnabled = function(value) {
-            if(value)
-                $ionicScrollDelegate.getScrollView().options.scrollingY = true;
-            else
+            value ? $ionicScrollDelegate.getScrollView().options.scrollingY = true:
                 $ionicScrollDelegate.getScrollView().options.scrollingY = false;
+
         }
     })
 
