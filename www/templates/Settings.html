@@ -58,7 +58,7 @@
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('defaultNumbers')">
 			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
-			<div ng-if="showNumbers == true">
+			<div ng-if="showData == true">
 				huidige rugnummer: {{selectedNumber}}
 				<select class="button button-block center" ng-model="number" ng-options="item for item in availableNumbers"></select>
 
@@ -68,6 +68,38 @@
 			</div>			
 		</ion-item>
 		</div>
+		<ion-item class="item-stable" ng-click="toggleGroup('UpdatePlayer')" ng-class="{active: isGroupShown('UpdatePlayer')}">
+			  <i class="icon" ng-class="isGroupShown('UpdatePlayer') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			Speler Info
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('UpdatePlayer')">
+			<div ng-if="isAdmin == true" class="buttons">
+					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="updatePlayers()">Refresh all players!</button>
+			</div>
+			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<div ng-if="showData == true">
+				<label class="item item-input">
+					<span class="input-label">Voornaam:</span>
+					<input type="text" ng-model="players[selectedPlayer].firstName" name="firstName" />
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Tussenvoegsel:</span>
+					<input type="text" ng-model="players[selectedPlayer].insertion" name="insertion" />
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Achternaam:</span>
+					<input type="text" ng-model="players[selectedPlayer].lastName" name="lastName" />
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Bijnaam:</span>
+					<input type="text" ng-model="players[selectedPlayer].nickName" name="nickName" />
+				</label>
+				<div class="buttons">
+					<button class="button button-bq" ng-click="updatePlayer(selectedPlayer)">Update</button>
+				</div>
+			</div>			
+		</ion-item>
 		<div ng-if="isAdmin == true">
 		<ion-item class="item-stable" ng-click="toggleGroup('Admins')" ng-class="{active: isGroupShown('Admins')}">
 			  <i class="icon" ng-class="isGroupShown('Admins') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
