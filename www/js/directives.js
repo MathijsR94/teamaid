@@ -125,11 +125,12 @@ app.directive('playingField', function () {
             type: '=type',
             grid: '=grid',
             drawSpeed: '=drawspeed',
-            players: '=players'
+            players: '=players',
+            methodToCall: '&method'
         },
         template: "<canvas id=\"playing-field\">",
         link: function (scope, elem, attrs) {
-            console.log(scope);
+            console.log(scope.xy);
 
             var originX = 77;
             var originY = 100;
@@ -192,40 +193,88 @@ app.directive('playingField', function () {
                 context.clearRect(0, 0, WIDTH, HEIGHT);
             }
 
-            function myMove(e) {
-                if (editEnabled) {
-                    moveX = e.pageX - canvas.offsetLeft - (gridSizeX / 2);
-                    moveY = e.pageY - canvas.offsetTop - (gridSizeY / 2) - 44;   //offset headerbar
-                }
+            //*******************
+            // Down
+            //*******************
+
+            function mDown(e) {
+                var rect = canvas.getBoundingClientRect();
+                down(e.pageX - rect.left, e.pageY - rect.top);
+                if(playerDown != -1)
+                    canvas.onmousemove = mMove;
             }
 
-            function myDown(e) {
+            function tDown(e) {
+                //console.log('tdown', e);
+                var rect = canvas.getBoundingClientRect();
+                down(e.changedTouches[0].pageX - rect.left, e.changedTouches[0].pageY - rect.top);
+                //canvas.touchmove = tMove;
+                if(playerDown != -1)
+                    canvas.addEventListener("touchmove", tMove, true);
+            }
+
+            function down(x, y) {
                 if (editEnabled) {
-                    playerDown = collides(scope.drawPlayers, e.offsetX, e.offsetY);
+                    playerDown = collides(scope.drawPlayers, x, y);
                     if (playerDown != -1) {
-                        myMove(e);
-                        canvas.onmousemove = myMove;
+                        scope.methodToCall({value: false});
+                        move(x, y);
                     }
                 }
             }
 
-            function myUp(e) {
+            //*******************
+            // Up
+            //*******************
+
+            function mUp(e) {
+                var rect = canvas.getBoundingClientRect();
+                up(e.pageX - rect.left, e.pageY - rect.top);
+                canvas.onmousemove = null;
+            }
+
+            function tUp(e) {
+                var rect = canvas.getBoundingClientRect();
+                up(e.changedTouches[0].pageX - rect.left, e.changedTouches[0].pageY - rect.top);
+                canvas.removeEventListener("touchmove", tMove, true);
+            }
+
+            function up(x, y) {
                 if (editEnabled) {
-                    dragOk = false;
-                    canvas.onmousemove = null;
-                    playerUp = collides(scope.drawPlayers, e.offsetX, e.offsetY);
+                    scope.methodToCall({value: true});
+                    playerUp = collides(scope.drawPlayers, x, y);
                     if (playerUp != -1) {
                         // wissel spelers
                     } else if (playerDown != -1) {
-                        scope.drawPlayers[playerDown].gridX = Math.floor((e.offsetX - offsetX) / gridSizeX);
-                        scope.drawPlayers[playerDown].gridY = Math.floor((e.offsetY - offsetY) / gridSizeY);
+                        scope.drawPlayers[playerDown].gridX = Math.floor((x - offsetX) / gridSizeX);
+                        scope.drawPlayers[playerDown].gridY = Math.floor((y - offsetY) / gridSizeY);
                     }
                     else {
 
                     }
-
                     playerDown = -1;
                     playerUp = -1;
+                }
+            }
+
+            //*******************
+            // Move
+            //*******************
+
+            function mMove(e) {
+                var rect = canvas.getBoundingClientRect();
+                move(e.pageX - rect.left, e.pageY - rect.top);
+            }
+
+            function tMove(e) {
+                var rect = canvas.getBoundingClientRect();
+                move(e.changedTouches[0].pageX - rect.left, e.changedTouches[0].pageY - rect.top);
+            }
+
+            function move(x, y) {
+                if (editEnabled) {
+                    moveX = x - (gridSizeX / 2);
+                    moveY = y - (gridSizeY / 2);   //offset headerbar
                 }
             }
 
@@ -247,15 +296,14 @@ app.directive('playingField', function () {
                             context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY * 3.3));
                         } else {
                             //context.fillRect(moveX, moveY, gridSizeX, gridSizeY);
-                            context.drawImage(shirt,moveX, moveY, gridSizeX, gridSizeY);
+                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
                             context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, moveX, moveY + (offsetY * 2.3));
 
                         }
                     }
 
                 }
-                if (scope.grid)
-                    drawGrid(gridSizeX, gridSizeY);
+                if (scope.grid) drawGrid(gridSizeX, gridSizeY);
             }
 
             function drawGrid(sizeX, sizeY) {
@@ -287,11 +335,18 @@ app.directive('playingField', function () {
                 gridSizeY = (HEIGHT - offsetY * 2) / 15;
             }
 
+            scope.$watch('xy', function(newValue, oldValue) {
+                if (newValue) {
+                    console.log('change!');
+                    scope.isScrollEnabled({value : scope.xy});
+                }
+            }, true);
+
             window.addEventListener("resize", sizeCalc);
-            canvas.onmousedown = myDown;
-            canvas.onmouseup = myUp;
-            canvas.touchstart = myDown;
-            canvas.touchend = myDown;
+            canvas.onmousedown = mDown;
+            canvas.onmouseup = mUp;
+            canvas.addEventListener("touchstart", tDown, false);
+            canvas.addEventListener("touchend", tUp, false);
         }
     }
 });

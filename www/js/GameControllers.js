@@ -82,7 +82,7 @@ angular.module('starter.GameControllers', [])
         }
     })
 
-    .controller('Games_DetailCtrl', function ($scope, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
+    .controller('Games_DetailCtrl', function ($scope, $ionicScrollDelegate, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
         $scope.gameId = $stateParams.gameId;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
@@ -97,6 +97,7 @@ angular.module('starter.GameControllers', [])
         $scope.gameLog = {};
         $scope.basis = {};
         $scope.drawPlayers = {};
+        $scope.scrollEnabled = false;
 
         if (typeof $scope.inactivePlayers !== 'undefined') {
             $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
@@ -219,6 +220,7 @@ angular.module('starter.GameControllers', [])
         }
 
 
+
         $ionicSideMenuDelegate.canDragContent(false);
 
         Object.size = function (obj) {
@@ -228,6 +230,19 @@ angular.module('starter.GameControllers', [])
             }
             return size;
         };
+
+
+        $scope.$watch('scrollEnabled', function() {
+            console.log('bla');
+        })
+
+
+        $scope.isScrollEnabled = function(value) {
+            if(value)
+                $ionicScrollDelegate.getScrollView().options.scrollingY = true;
+            else
+                $ionicScrollDelegate.getScrollView().options.scrollingY = false;
+        }
     })
 
     .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory) {
