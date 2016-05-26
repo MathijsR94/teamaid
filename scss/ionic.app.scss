@@ -30,6 +30,8 @@ html, body, .ionic-body {
 
 h1, h2, h3, h4, h5, h6 {
   color: $primary-text;
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
 }
 
 .center {
@@ -177,6 +179,10 @@ img {
   padding: 0 !important;
 }
 
+.no-margin {
+  margin: 0 !important;
+}
+
 .navigation-drawer {
   i {
     color: #757575;
@@ -254,21 +260,44 @@ img {
 .bar-subheader {
   top: 65px;
   height: 44px !important;
+  background: $main-color-dark !important;
+
+  .button {
+    color: #fff;
+  }
+
+  .button:hover {
+    color: #fff;
+  }
 }
 
 .content-margin {
   margin-top: 1em;
 }
 
-.menu-open .content-backdrop {
-  position: fixed;
-  top: 44px;
-  left: 0;
-  z-index: 11;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  -webkit-transition: 0.1s opacity linear;
-  -moz-transition: 0.1s opacity linear;
-  transition: 0.1s opacity linear;
+.smaller {
+  font-size: 0.875em;
 }
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding: 0;
+  max-width: 85%;
+}
+
+.hr-left {
+ margin: 1em 0;
+  max-width: 90%;
+}
+
+.section-heading {
+  color: $main-color-dark;
+}
+
+.item-content, .item {
+  border: none !important;
+}
+
