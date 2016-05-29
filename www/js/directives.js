@@ -122,6 +122,7 @@ app.directive('playingField', function () {
         replace: true,
         scope: {
             drawPlayers: '=lineup',
+			drawChanges: '=changes',
             type: '=type',
             grid: '=grid',
             drawSpeed: '=drawspeed',
@@ -130,35 +131,31 @@ app.directive('playingField', function () {
         },
         template: "<canvas id=\"playing-field\">",
         link: function (scope, elem, attrs) {
-            console.log(scope.xy);
-
             var originX = 77;
             var originY = 100;
             var fieldImg = "../img/Field.svg";
             var canvas = document.getElementById("playing-field");
-            var canvasSubs = document.getElementById("subs");
             var context;
-            var contextSubs;
             var source = new Image();
             source.src = fieldImg;
 
             var shirt = new Image();
             shirt.src = "../img/shirt.svg";
 
-
-            var WIDTH;// = image.width;
-            var HEIGHT;// = originY/(originX/WIDTH);
-            var offsetX;// = (WIDTH*0.07);
-            var offsetY;// = (HEIGHT*0.05);
-            var gridSizeX;// = (WIDTH - offsetX*2)/9;
+            var WIDTH;
+            var HEIGHT;
+            var offsetX;
+            var offsetY;
+            var gridSizeX;
             var gridSizeY;
             var moveX;
             var moveY;
 
-
             var dragOk = false;
             var playerDown = -1;
             var playerUp = -1;
+			var changeDown = -1;
+            var changeUp = -1;
             var editEnabled = false;
 
             if (scope.type < 1) {
@@ -167,7 +164,7 @@ app.directive('playingField', function () {
                 editEnabled = true;
             }
 
-            function collides(rects, x, y) {
+            function collides(rects, x, y, downObject) {
                 //console.log(rects, x, y);
                 var isCollision = -1;
                 for (var key in rects) {
@@ -182,7 +179,7 @@ app.directive('playingField', function () {
                     if (right >= x
                         && left <= x
                         && bottom >= y
-                        && top <= y && key != playerDown) {
+                        && top <= y && key != downObject) {
                         isCollision = key;
                     }
                 }
@@ -200,7 +197,7 @@ app.directive('playingField', function () {
             function mDown(e) {
                 var rect = canvas.getBoundingClientRect();
                 down(e.pageX - rect.left, e.pageY - rect.top);
-                if(playerDown != -1)
+                if(playerDown != -1 || changeDown != -1)
                     canvas.onmousemove = mMove;
             }
 
@@ -209,13 +206,14 @@ app.directive('playingField', function () {
                 var rect = canvas.getBoundingClientRect();
                 down(e.changedTouches[0].pageX - rect.left, e.changedTouches[0].pageY - rect.top);
                 //canvas.touchmove = tMove;
-                if(playerDown != -1)
+                if(playerDown != -1 || changeDown != -1)
                     canvas.addEventListener("touchmove", tMove, true);
             }
 
             function down(x, y) {
                 if (editEnabled) {
-                    playerDown = collides(scope.drawPlayers, x, y);
+                    playerDown = collides(scope.drawPlayers, x, y, playerDown);
+					changeDown = collides(scope.drawChanges, x, y, changeDown);
                     if (playerDown != -1) {
                         scope.methodToCall({value: false});
                         move(x, y);
@@ -242,18 +240,29 @@ app.directive('playingField', function () {
             function up(x, y) {
                 if (editEnabled) {
                     scope.methodToCall({value: true});
-                    playerUp = collides(scope.drawPlayers, x, y);
-                    if (playerUp != -1) {
-                        // wissel spelers
-                    } else if (playerDown != -1) {
+                    playerUp = collides(scope.drawPlayers, x, y, playerDown);
+					changeUp = collides(scope.drawChanges, x, y, changeDown);
+                    
+					if (playerUp != -1 && playerDown != -1) {
+                        //positie wissel
+                    } 
+					if (playerDown != -1 && ( playerUp === -1 && changeUp === -1)) {
+						// move player on the field
                         scope.drawPlayers[playerDown].gridX = Math.floor((x - offsetX) / gridSizeX);
                         scope.drawPlayers[playerDown].gridY = Math.floor((y - offsetY) / gridSizeY);
                     }
-                    else {
+					if (changeDown != -1 && ( playerUp === -1 && changeUp === -1)) {
+						if(true){ // check if the max number of players is not exceeded.
+							// place change on the field, can only be used for basis setup
+						}
+					}
+					if ((changeDown != -1 &&  playerUp != -1) || (changeUp != -1 && playerDown != -1)) {
+						// wissel player
+					}
 
-                    }
-                    playerDown = -1;
-                    playerUp = -1;
+					playerDown = -1;
+					playerUp = -1;
+			
                 }
             }
 
@@ -298,7 +307,22 @@ app.directive('playingField', function () {
                             //context.fillRect(moveX, moveY, gridSizeX, gridSizeY);
                             context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
                             context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, moveX, moveY + (offsetY * 2.3));
-
+                        }
+                    }
+					var changeIndex = 0;
+					for (var key in scope.drawChanges) {
+						
+                        // skip loop if the property is from prototype
+                        if (!scope.drawChanges.hasOwnProperty(key)) continue;
+                        if (key != playerDown) {
+                            var obj = scope.drawChanges[key];
+                            //context.fillRect(obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+                            context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY * 3.3));
+                        } else {
+                            //context.fillRect(moveX, moveY, gridSizeX, gridSizeY);
+                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
+                            context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, moveX, moveY + (offsetY * 2.3));
                         }
                     }
 

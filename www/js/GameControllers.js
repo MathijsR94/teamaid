@@ -489,6 +489,7 @@ angular.module('starter.GameControllers', [])
                 var stats = statsSnap.val();
                 if (stats === null) { // no statistics
                     var init = Statistics.initialize($scope.teamId, localStorageFactory.getSelectedGame(), $scope.game.time);
+					$scope.eventTime = init.firstHalfStart;
                     $scope.firstHalfStart = init.firstHalfStart;
                     $scope.firstHalfEnd = init.firstHalfEnd;
                     $scope.secondHalfStart = init.secondHalfStart;
@@ -500,6 +501,7 @@ angular.module('starter.GameControllers', [])
                 }
                 else {
                     $scope.tactic = stats.tactic;
+					$scope.eventTime = stats.firstHalfStart;
                     $scope.firstHalfStart = stats.firstHalfStart;
                     $scope.firstHalfEnd = stats.firstHalfEnd;
                     $scope.secondHalfStart = stats.secondHalfStart;
@@ -623,7 +625,13 @@ angular.module('starter.GameControllers', [])
 
         $scope.updateEventTime = function () {
             var curDate = new Date();
-            $scope.eventTime = (curDate.getHours() * 3600) + (curDate.getMinutes() * 60);
+			var newTime = (curDate.getHours() * 3600) + (curDate.getMinutes() * 60);
+			curDate.setHours(0, 0, 0, 0);
+			if($scope.game.date === curDate.getTime()){
+				if( newTime >= $scope.firstHalfStart && newTime <= $scope.secondHalfEnd ){
+					$scope.eventTime = newTime;
+				}
+			}
             //console.log($scope.eventTime);
         };
         $scope.updatePlayerList = function (externalPlayers) {

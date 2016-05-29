@@ -97,7 +97,8 @@
 			</div>
 			<!-- 4-4-2 -->
 			<div ng-if="tactic !== 0 && tactic !== undefined ">
-				<div name="goalkeeper" class="row">
+				<playing-field lineup="basis" changes="changes" players="players" data-method="isScrollEnabled(value)" type="1" grid="false" drawspeed="30"></playing-field>
+				<!-- <div name="goalkeeper" class="row">
 				  <div class="col"><select class="button button-block center" ng-model="positions[1]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
 				</div>
 				<div name="defense" class="row">
@@ -122,7 +123,7 @@
 					</div>
 					<div class="col"><select class="button button-block center" ng-model="positions[11]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
 					<div class="col-10" ng-if="tactic === '4-4-2'"></div>
-				</div>
+				</div> -->
 				<div class="buttons">
 					<button class="button button-block"  ng-click="storeBasis(tactic)">save opstelling</button>
 				</div>
@@ -275,8 +276,8 @@
 			Actuele opstelling
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('currentTeam')">	
-		
-		<!-- 4-4-2 -->
+			<playing-field lineup="actualPlayers" players="players" data-method="isScrollEnabled(value)" type="1" grid="false" drawspeed="30"></playing-field>
+		<!-- 
 		<div ng-if="tactic !== 0 && tactic !== undefined">
 			<div name="goalkeeper" class="row">
 			  <div class="col-33"></div>
@@ -306,8 +307,7 @@
 				<div class="col"><button class="button button-block">{{players[actualPositions[11]].firstName}} {{players[actualPositions[11]].insertion}} {{players[actualPositions[11]].lastName}}</button></div>
 				<div class="col-10" ng-if="tactic === '4-4-2'"></div>
 			</div>
-		</div>
-
+ -->
 		</ion-item>
 	</ion-list>
     </ion-content>
