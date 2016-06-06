@@ -118,7 +118,7 @@ app.directive('dateTime', function () {
 
 app.directive('playingField', function () {
     return {
-        restrict: 'AE',
+        restrict: 'E',
         replace: true,
         scope: {
             drawPlayers: '=lineup',
@@ -129,19 +129,20 @@ app.directive('playingField', function () {
             players: '=players',
             methodToCall: '&method'
         },
-        template: "<canvas id=\"playing-field\">",
+        template: "<canvas>",
         link: function (scope, elem, attrs) {
             var originX = 77;
             var originY = 100;
+			var gridNoX = 9;
+			var gridNoY = 15;
             var fieldImg = "../img/Field.svg";
-            var canvas = document.getElementById("playing-field");
+            var canvas = elem[0];//document.getElementById("playing-field");
             var context;
             var source = new Image();
             source.src = fieldImg;
-
             var shirt = new Image();
             shirt.src = "../img/shirt.svg";
-
+			
             var WIDTH;
             var HEIGHT;
             var offsetX;
@@ -163,19 +164,35 @@ app.directive('playingField', function () {
             } else if (scope.type >= 1) {
                 editEnabled = true;
             }
+			
+			console.log(scope.drawChanges);
+			
+			
 
-            function collides(rects, x, y, downObject) {
-                //console.log(rects, x, y);
+            function collides(objects, x, y, downObject) {
+                //console.log(objects, x, y);
                 var isCollision = -1;
-                for (var key in rects) {
+                for (var key in objects) {
 
-                    if (!rects.hasOwnProperty(key)) continue;
-
-                    var left = rects[key].gridX * gridSizeX + offsetX;
-                    var right = left + gridSizeX;
-                    var top = rects[key].gridY * gridSizeY + offsetY;
-                    var bottom = top + gridSizeY;
-
+                    if (!objects.hasOwnProperty(key)) continue;
+					var left;
+					var right;
+					var top;
+					var bottom;
+					
+					if(objects[key].gridX < 1){
+						left = objects[key].gridX * gridSizeX;
+						right = left + gridSizeX;
+						top = objects[key].gridY * gridSizeY + offsetY;
+						bottom = top + gridSizeY;
+					}
+					else{
+						left = objects[key].gridX * gridSizeX + offsetX;
+						right = left + gridSizeX;
+						top = objects[key].gridY * gridSizeY + offsetY;
+						bottom = top + gridSizeY;
+					}
+					
                     if (right >= x
                         && left <= x
                         && bottom >= y
@@ -213,8 +230,11 @@ app.directive('playingField', function () {
             function down(x, y) {
                 if (editEnabled) {
                     playerDown = collides(scope.drawPlayers, x, y, playerDown);
+					console.log(scope.drawPlayers);
 					changeDown = collides(scope.drawChanges, x, y, changeDown);
-                    if (playerDown != -1) {
+					console.log(changeDown);
+                    if (playerDown != -1 || changeDown != -1) {
+						console.log(changeDown);
                         scope.methodToCall({value: false});
                         move(x, y);
                     }
@@ -251,17 +271,22 @@ app.directive('playingField', function () {
                         scope.drawPlayers[playerDown].gridX = Math.floor((x - offsetX) / gridSizeX);
                         scope.drawPlayers[playerDown].gridY = Math.floor((y - offsetY) / gridSizeY);
                     }
-					if (changeDown != -1 && ( playerUp === -1 && changeUp === -1)) {
+					if (changeDown != -1 && ( playerUp === -1 && changeUp != -1)) {
 						if(true){ // check if the max number of players is not exceeded.
+							
 							// place change on the field, can only be used for basis setup
+							updateChangePos();
 						}
 					}
 					if ((changeDown != -1 &&  playerUp != -1) || (changeUp != -1 && playerDown != -1)) {
 						// wissel player
+						updateChangePos();
 					}
 
 					playerDown = -1;
 					playerUp = -1;
+					changeDown = -1;
+					changeUp = -1;
 			
                 }
             }
@@ -295,34 +320,51 @@ app.directive('playingField', function () {
                     canvas.height = HEIGHT;
                     context.drawImage(source, 0, 0, WIDTH, HEIGHT);
                     context.lineWidth = 0.1;
+					var nickName = "";
                     for (var key in scope.drawPlayers) {
                         // skip loop if the property is from prototype
                         if (!scope.drawPlayers.hasOwnProperty(key)) continue;
+						
+						if (typeof scope.players[key].nickName !== 'undefined') {
+							nickName = scope.players[key].nickName;
+						}
+						else{
+							nickName = scope.players[key].firstName;
+						}
                         if (key != playerDown) {
                             var obj = scope.drawPlayers[key];
-                            //context.fillRect(obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
-                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
-                            context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY * 3.3));
+                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY*0.8);
+                            context.fillText(nickName, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY) + gridSizeY *0.95 ,gridSizeX);
                         } else {
-                            //context.fillRect(moveX, moveY, gridSizeX, gridSizeY);
-                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
-                            context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, moveX, moveY + (offsetY * 2.3));
+
+                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY*0.8);
+                            context.fillText(nickName, moveX, moveY + gridSizeY *0.95,gridSizeX);
                         }
                     }
-					var changeIndex = 0;
 					for (var key in scope.drawChanges) {
 						
                         // skip loop if the property is from prototype
                         if (!scope.drawChanges.hasOwnProperty(key)) continue;
-                        if (key != playerDown) {
+						
+						if (typeof scope.players[key].nickName !== 'undefined') {
+							nickName = scope.players[key].nickName;
+						}
+						else{
+							nickName = scope.players[key].firstName;
+						}
+                        if (key != changeDown) {
                             var obj = scope.drawChanges[key];
-                            //context.fillRect(obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
-                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
-                            context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY * 3.3));
+							if(obj.gridX < 1){
+								context.drawImage(shirt, obj.gridX * gridSizeX, obj.gridY * (gridSizeY) + offsetY, gridSizeX, gridSizeY*0.8);
+								context.fillText(nickName, obj.gridX * gridSizeX , obj.gridY * (gridSizeY) + (offsetY)+ gridSizeY *0.95,gridSizeX);
+							}else{
+								context.drawImage(shirt, (obj.gridX -1) * gridSizeX + offsetX, obj.gridY * (gridSizeY) + offsetY, gridSizeX, gridSizeY*0.8);
+								context.fillText(nickName, (obj.gridX -1) * gridSizeX + offsetX, obj.gridY * (gridSizeY) + (offsetY)+ gridSizeY *0.95,gridSizeX);
+							}
+                            
                         } else {
-                            //context.fillRect(moveX, moveY, gridSizeX, gridSizeY);
-                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
-                            context.fillText(scope.players[key].firstName[0] + ". " + scope.players[key].lastName, moveX, moveY + (offsetY * 2.3));
+                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY*0.8);
+                            context.fillText(nickName, moveX, moveY + gridSizeY *0.95,gridSizeX);
                         }
                     }
 
@@ -341,6 +383,8 @@ app.directive('playingField', function () {
             }
 
             function init() {
+				// init changes position
+				updateChangePos();
                 context = canvas.getContext("2d");
                 sizeCalc();
                 canvas.width = WIDTH;
@@ -351,12 +395,20 @@ app.directive('playingField', function () {
             init();
 
             function sizeCalc() {
-                WIDTH = window.innerWidth;
+                WIDTH = window.innerWidth *0.95;
                 HEIGHT = originY / (originX / WIDTH);
-                offsetX = (WIDTH * 0.09); // tuning parameters
-                offsetY = (HEIGHT * 0.035); // tuning parameters
-                gridSizeX = (WIDTH - offsetX * 2) / 9;
-                gridSizeY = (HEIGHT - offsetY * 2) / 15;
+                offsetX = (WIDTH * 0.1); // tuning parameters left offset
+                offsetY = (HEIGHT * 0.035); // tuning parameters top offset
+                gridSizeX = (WIDTH - offsetX -(WIDTH * 0.1)) / gridNoX; // tuning parameters right offset
+                gridSizeY = (HEIGHT - offsetY -(HEIGHT * 0.04)) / gridNoY; //tuning parameters bottom offset
+            }
+			
+			function updateChangePos() {
+				var changeIndex = 0;
+				for(player in scope.drawChanges){
+					scope.drawChanges[player] = {gridX:0,gridY:changeIndex}
+					changeIndex += 1;
+				}
             }
 
             scope.$watch('xy', function(newValue, oldValue) {

@@ -238,6 +238,7 @@ angular.module('starter.GameControllers', [])
 
 
         $scope.isScrollEnabled = function(value) {
+			console.log("test");
             value ? $ionicScrollDelegate.getScrollView().options.scrollingY = true:
                 $ionicScrollDelegate.getScrollView().options.scrollingY = false;
 
@@ -523,7 +524,10 @@ angular.module('starter.GameControllers', [])
 
                     // parse the current filled in stats for basic team and statType "wissels"
                     //read this back to the input fields!
+					
                     if (typeof stats.Basis !== 'undefined') {
+						$scope.basis = angular.copy(stats.Basis);
+						
                         for (key in stats.Basis) {
                             $scope.positions[stats.Basis[key]] = key;
                         }
@@ -540,6 +544,8 @@ angular.module('starter.GameControllers', [])
                         }
                         ;
                     }
+					
+					$scope.basisChanges = angular.copy($scope.changes);
 
                     // main event interation loop
                     if (typeof stats.GameLog !== 'undefined') {
@@ -601,7 +607,6 @@ angular.module('starter.GameControllers', [])
                     }
 
                     // make actual positions
-                    //console.log($scope.actualPlayers);
                     $scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
 
                 }
