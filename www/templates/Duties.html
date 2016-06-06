@@ -1,12 +1,12 @@
-<ion-view view-title="Corvee">
+<ion-view view-title="Corvee" has-subheader>
 <ion-header-bar class="bar-stable bar-subheader">
       <div class="buttons">
         <button ng-if="isAdmin" class="button button-icon icon ion-ios-minus-outline" ng-click="showDelete()"></button>
       </div>
       <h1 class="title"></h1>
       <div class="buttons">
-		<button class="button button-bq" ng-if="isAdmin" ng-click="updateDuties()">Update Corvee</button>
-		<button class="button button-bq" ng-if="isAdmin" ng-click="addDuty()">Add corvee</button>
+		<button class="button button-outline" ng-if="isAdmin" ng-click="updateDuties()">Update Corvee</button>
+		<button class="button button-outline" ng-if="isAdmin" ng-click="addDuty()">Add corvee</button>
       </div>
 </ion-header-bar>
   <ion-content>
@@ -19,9 +19,10 @@
 			<ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editDuty(duty)">Edit</ion-option-button>
       </ion-item>
     </ion-list>
-      <ion-item class="item-stable" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
-          <i class="icon" ng-class="isGroupShown('past') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+      <ion-item class="item-light content-margin" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
           Geschiedenis
+          <i class="icon float-right" ng-class="isGroupShown('past') ? 'ion-chevron-up' : 'ion-chevron-down'"></i>
+
       </ion-item>
       <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
           <ion-item ng-repeat="duty in duties | orderBy:'-start' | isPastDuty" class="item-accordion disabled" ng-show="isGroupShown('past')">

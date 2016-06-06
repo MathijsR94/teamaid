@@ -1,20 +1,42 @@
 <ion-view view-title="Teampot">
-  <ion-content>
-      <div class="row">
-          <div class="col">
-              <h3 class="center" ng-if="credits.length == 0">Wat een voorbeeldige spelers! Niemand heeft een boete...</h3>
-              <ion-list ng-repeat="player in credits" ng-if="credits != null">
-                  <ion-item class="item-stable" ng-click="toggleGroup(player.$id)" ng-class="{active: isGroupShown(player.$id)}">
-                      <i class="icon" ng-class="isGroupShown(player.$id) ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-                      {{players[player.$id].firstName}} {{players[player.$id].insertion}} {{players[player.$id].lastName}} : €{{player.balance}}
-                  </ion-item>
-                  <ion-item class="item-accordion" ng-repeat="credit in player.credits" ng-show="isGroupShown(player.$id)">
-                      <date-Time sdate='credit.timestamp'></date-Time>  €{{credit.value}}  , {{credit.comment}}
-                  </ion-item>
-              </ion-list>
-              <button ng-if="isAdmin == true" class="button button-block button-stable" ng-click="addCredit()">Add Credit</button>
-          </div>
-      </div>
+    <ion-header-bar class="bar-stable bar-subheader">
+        <h1 class="title"></h1>
+        <div class="buttons">
+            <button class="button button-outline" ng-if="isAdmin == true" ng-click="addCredit()">Add credit</button>
+        </div>
+    </ion-header-bar>
+    <ion-content class="content-margin">
+        <div class="row">
+            <div class="col">
+                <h3 class="center" ng-if="credits.length == 0">Wat een voorbeeldige spelers! Niemand heeft een
+                    boete...</h3>
+                <ion-list ng-repeat="player in credits" ng-if="credits != null">
+                    <ion-item class="item-light" ng-click="toggleGroup(player.$id)"
+                              ng-class="{active: isGroupShown(player.$id)}">
 
-  </ion-content>
+                        <div class="row">
+                            <div class="col-25">{{players[player.$id].firstName}} {{players[player.$id].insertion}}
+                                {{players[player.$id].lastName}} :
+                            </div>
+                            <div class="col-75"><span class="tab" ng-class="player.balance < 0 ? 'assertive' : 'balanced'">€{{player.balance}}</span>
+                            </div>
+
+                            <i class="icon float-right"
+                               ng-class="isGroupShown(player.$id) ? 'ion-chevron-up' : 'ion-chevron-down'"></i>
+
+                        </div>
+                    </ion-item>
+                    <ion-item class="item-accordion" ng-repeat="credit in player.credits"
+                              ng-show="isGroupShown(player.$id)">
+                        <div class="row">
+                            <div class="col-25"><date-Time sdate='credit.timestamp'></date-Time></div>
+                            <div class="col-25"><span class="tab" ng-class="credit.value < 0 ? 'assertive' : 'balanced'">€{{credit.value}}</span></div>
+                            <div class="col-50">{{credit.comment}}</div>
+                        </div>
+                    </ion-item>
+                </ion-list>
+            </div>
+        </div>
+
+    </ion-content>
 </ion-view>

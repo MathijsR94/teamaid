@@ -5,5 +5,48 @@
                 <h3 class="center">Welkom {{name}}</h3>
             </div>
         </div>
+
+        <h4 class="center">Statistieken</h4>
+
+        <div class="row">
+            <div class="col col-50">
+                <strong>Speelminuten</strong>
+            </div>
+            <div class="col col-50">
+                {{stats.totGameTime}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" ng-repeat="game in stats.gametimeList">
+                <p ng-repeat="(key, time) in game">
+                    {{key}} {{time}}
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-50">
+                <strong>Goals</strong>
+            </div>
+            <div class="col col-50">
+                {{stats.totGoals}}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col col-50">
+                <strong>Gele kaarten</strong>
+            </div>
+            <div class="col col-50">
+                {{stats.totYellow}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-50">
+                <strong>Rode kaarten</strong>
+            </div>
+            <div class="col col-50">
+                {{stats.totRed}}
+            </div>
+        </div>
     </ion-content>
 </ion-view>

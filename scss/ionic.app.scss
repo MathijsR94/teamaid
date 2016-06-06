@@ -8,7 +8,9 @@ $light:                           #fff !default;
 $stable:                          #f8f8f8 !default;
 $positive:                        #387ef5 !default;
 $calm:                            #11c1f3 !default;
+
 $balanced:                        #33cd5f !default;
+
 $energized:                       #ffc900 !default;
 $assertive:                       #ef473a !default;
 $royal:                           #886aea !default;
@@ -261,7 +263,7 @@ img {
   top: 65px;
   height: 44px !important;
   background: $main-color-dark !important;
-
+  color: #fff !important;
   .button {
     color: #fff;
   }
@@ -283,13 +285,13 @@ hr {
   display: block;
   height: 1px;
   border: 0;
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0;
   max-width: 85%;
 }
 
 .hr-left {
- margin: 1em 0;
+  margin: 1em 0;
   max-width: 90%;
 }
 
@@ -299,5 +301,37 @@ hr {
 
 .item-content, .item {
   border: none !important;
+}
+
+.item-light i {
+  color: $main-color;
+}
+
+.item-light {
+  border-bottom: 1px solid #ddd !important;
+}
+
+.item-light.active {
+  border-bottom: 1px solid $main-color-light !important;
+  background: $main-color-light !important;
+}
+
+.tab {
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+.balanced input {
+  color: $balanced;
+  font-weight: 700;
+}
+
+.assertive input {
+  color: $assertive;
+  font-weight: 700;
+}
+
+.item.activated {
+  background: #f9f9f9;
 }
 

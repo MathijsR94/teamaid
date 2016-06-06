@@ -6,15 +6,15 @@
                     <div class="list">
 						<label class="item item-input item-select">
                             <span class="input-label">Speler</span>
-                            <select ng-model="selectedPlayer" ng-options="key as (player.firstName +nbsp+ player.insertion +nbsp+ player.lastName) for (key,player) in players"></select>
+                            <select class="item-select" ng-model="selectedPlayer" ng-options="key as (player.firstName +nbsp+ player.insertion +nbsp+ player.lastName) for (key,player) in players"></select>
                         </label>
                         <ion-toggle ng-model="debetCredit">
 							<span class="input-label" ng-if="debetCredit === true">Credit</span>
 							<span class="input-label" ng-if="debetCredit !== true">Debet</span>
 						</ion-toggle>
-                        <label class="item item-input">
-                            <span class="input-label">Bedrag</span> € &nbsp <span ng-if="debetCredit !== true"> - &nbsp </span>
-                            <input type="tel" ng-model="value" required/>
+                        <label class="item item-input" ng-class="debetCredit !== true ? 'assertive' : 'balanced'">
+                            <span class="input-label">Bedrag</span>€ &nbsp <span ng-if="debetCredit !== true" class="assertive"> - &nbsp </span>
+                            <input type="number" ng-model="value" ng-class="debetCredit !== true ? 'assertive' : 'balanced'" required/>
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Comment</span>

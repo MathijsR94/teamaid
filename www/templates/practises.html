@@ -5,7 +5,7 @@
         </div>
         <h1 class="title"></h1>
         <div class="buttons">
-            <button class="button button-stable" ng-if="isAdmin" ng-click="addPractise()">Add training</button>
+            <button class="button button-outline" ng-if="isAdmin" ng-click="addPractise()">Add training</button>
         </div>
 
     </ion-header-bar>
@@ -23,9 +23,9 @@
             <ion-item class="center"><div ng-click="loadMore()" ng-show="limit == 3">Meer laden</div><div ng-click="loadLess()" ng-show="limit != 3 ">Minder laden</div></ion-item>
         </ion-list>
 
-        <ion-item class="item-stable" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
-            <i class="icon" ng-class="isGroupShown('past') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-            Geschiedenis
+        <ion-item class="item-light" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
+            Geschiedenis             <i class="icon float-right" ng-class="isGroupShown('past') ? 'ion-chevron-up' : 'ion-chevron-down'"></i>
+
         </ion-item>
         <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
             <ion-item ng-repeat="practise in practises | orderBy:'-date'  | isPast"  ng-click="getDetail(practise)" class="item-accordion disabled" ng-show="isGroupShown('past')">

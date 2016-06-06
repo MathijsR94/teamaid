@@ -97,7 +97,7 @@
 			</div>
 			<!-- 4-4-2 -->
 			<div ng-if="tactic !== 0 && tactic !== undefined ">
-				<playing-field lineup="basis" changes="basisChanges" players="players" data-method="isScrollEnabled(value)" type="1" grid="false" drawspeed="50"></playing-field>
+				<playing-field draw-players="basis" draw-changes="basisChanges" players="players" scroll-enabled="isScrollEnabled(value)" event-function="eventDelegator(type, basis, eventData)" type="1" grid="false" drawspeed="50"></playing-field>
 				<!-- <div name="goalkeeper" class="row">
 				  <div class="col"><select class="button button-block center" ng-model="positions[1]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
 				</div>

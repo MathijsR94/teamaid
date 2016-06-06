@@ -1,6 +1,6 @@
 angular.module('starter.GlobalControllers', [])
 
-    .controller('AppCtrl', function ($scope, User) {
+    .controller('AppCtrl', function ($scope, User, $ionicBackdrop, $ionicSideMenuDelegate) {
 
         // With the new view caching in Ionic, Controllers are only called
         // when they are recreated or on app start, instead of every page change.

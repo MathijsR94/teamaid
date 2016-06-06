@@ -5,10 +5,10 @@
         </div>
         <h1 class="title"></h1>
         <div class="buttons">
-            <button class="button button-stable" ng-if="isAdmin" ng-click="addEvent()">Add event</button>
+            <button class="button button-outline" ng-if="isAdmin" ng-click="addEvent()">Add event</button>
         </div>
     </ion-header-bar>
-    <ion-content>
+    <ion-content >
         <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
             <ion-item ng-repeat="event in events | orderBy:'date'" ng-click="getDetail(event)">
                 <span>{{event.date | date: 'dd-MM-yyyy'}}</span> <standard-time-no-meridian etime='event.time'></standard-time-no-meridian> {{event.location}}

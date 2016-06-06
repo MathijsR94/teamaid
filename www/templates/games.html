@@ -54,16 +54,20 @@
         <!--<ion-item class="item-stable" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">-->
         <!--<i class="icon" ng-class="isGroupShown('past') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>-->
 
-        <div class="row content-margin">
-            <div class="col">
-                <h4 class="section-heading">Geschiedenis</h4>
-                <hr class="hr-left">
-            </div>
-        </div>
+        <!--<div class="row content-margin">-->
+            <!--<div class="col">-->
+                <!--<h4 class="section-heading">Geschiedenis</h4>-->
+                <!--<hr class="hr-left">-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <ion-item class="item-light" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
+            <b>Geschiedenis</b>  <i class="icon float-right" ng-class="isGroupShown('past') ? 'ion-chevron-up' : 'ion-chevron-down'"></i>
+        </ion-item>
         <!--</ion-item>-->
         <ion-list class="card item-text-wrap no-margin" show-delete="ShowDelete" can-swipe="isAdmin">
             <ion-item ng-repeat="game in games | orderBy: '-date' | isPast" ng-click="getDetail(game)"
-                      class="item-accordion no-padding">
+                      class="item-accordion no-padding" ng-show="isGroupShown('past')">
                 <div class="row no-padding">
                     <div class="col-25 no-padding"><span class="smaller">{{game.date | date: 'dd-MM-yyyy'}}</span> <br/>
                         <standard-time-no-meridian etime='game.time'></standard-time-no-meridian>
@@ -83,3 +87,4 @@
         </ion-list>
     </ion-content>
 </ion-view>
+

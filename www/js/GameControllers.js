@@ -232,17 +232,13 @@ angular.module('starter.GameControllers', [])
         };
 
 
-        $scope.$watch('scrollEnabled', function() {
-            console.log('bla');
-        })
 
 
-        $scope.isScrollEnabled = function(value) {
-			console.log("test");
-            value ? $ionicScrollDelegate.getScrollView().options.scrollingY = true:
-                $ionicScrollDelegate.getScrollView().options.scrollingY = false;
-
-        }
+        //
+        //$scope.isScrollEnabled = function(value) {
+        //    value ? $ionicScrollDelegate.getScrollView().options.scrollingY = true:
+        //        $ionicScrollDelegate.getScrollView().options.scrollingY = false;
+        //}
     })
 
     .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory) {
@@ -350,7 +346,7 @@ angular.module('starter.GameControllers', [])
         };
     })
 
-    .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, firebaseRef, localStorageFactory, $ionicHistory) {
+    .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, firebaseRef, localStorageFactory, $ionicSideMenuDelegate, $ionicScrollDelegate) {
         $scope.gameId = $stateParams.gameId;
         $scope.selectedType = "";
         $scope.typeStats = ["wissel", "positie wissel", "goal voor", "goal tegen", "gele kaart", "rode kaart", "event"]
@@ -366,7 +362,9 @@ angular.module('starter.GameControllers', [])
         $scope.positions = [];
         $scope.actualPositions = [];
         $scope.ShowDelete = true;
+        $scope.scrollEnabled = false;
 
+        $ionicSideMenuDelegate.canDragContent(false);
         $scope.getGameLog = Statistics.getGameLogArray($scope.teamId, $scope.gameId).then(function (gameLog) {
             $scope.gameLog = gameLog;
             //console.log(gameLog);
@@ -531,7 +529,6 @@ angular.module('starter.GameControllers', [])
                         for (key in stats.Basis) {
                             $scope.positions[stats.Basis[key]] = key;
                         }
-                        ;
                     }
 
                     $scope.actualPlayers = angular.copy(stats.Basis);
@@ -542,9 +539,8 @@ angular.module('starter.GameControllers', [])
                             //console.log(key);
                             delete $scope.changes[key];
                         }
-                        ;
                     }
-					
+
 					$scope.basisChanges = angular.copy($scope.changes);
 
                     // main event interation loop
@@ -653,23 +649,21 @@ angular.module('starter.GameControllers', [])
                 //$scope.players["external"+i] = {firstName : "external"+i, insertion: "", lastName: ""};
                 //console.log($scope.players);
             }
-            ;
             $scope.externalPlayers = externalPlayers;
         };
 
+
         $scope.storeExternalNames = function () {
             Statistics.storeExternals($scope.teamId, $scope.gameId, $scope.externalPlayerNames);
-        }
-        $scope.storeBasis = function (tactic) {
-            $scope.tactic = tactic;
+        };
+        $scope.storeBasis = function () {
             var basis = {};
-            for (key in $scope.positions) {
-                basis[$scope.positions[key]] = key;
-            }
-            ;
-            Statistics.updateBasis($scope.teamId, $scope.gameId, basis, $scope.tactic, $scope.externalPlayers);
+            //for (key in $scope.positions) {
+            //    basis[$scope.positions[key]] = key;
+            //}
+            Statistics.updateBasis($scope.teamId, $scope.gameId, $scope.basis, $scope.basisChanges, $scope.tactic);
             //$scope.actualPositions = Statistics.updateActualTeam(basis); no need since we reload th whole page after this, else external players and basis  update  becomes alot more complicated, since all arrays  need to be rebuild
-            $state.go($state.current, {}, {reload: true});
+            //$state.go($state.current, {}, {reload: true});
         };
         $scope.saveChange = function (playerIn, playerOut, time, comment) {
             var pos = $scope.actualPlayers[playerOut]; // position of player going out
@@ -686,13 +680,14 @@ angular.module('starter.GameControllers', [])
             $scope.toggleGroup(null);
         };
         $scope.savePosChange = function (player1, player2, time, comment) {
-            var pos1 = $scope.actualPlayers[player1]; // position of player1
-            var pos2 = $scope.actualPlayers[player2]; // position of player2
-
             if (typeof comment === 'undefined') { // protect against undefined
                 comment = " ";
             }
-            Statistics.newPosChange($scope.teamId, $scope.gameId, player1, player2, pos1, pos2, time, comment);
+
+            comment = $scope.players[player1].nickName + " wisselt van positie met " + $scope.players[player2].nickName;
+
+            console.log(player1, player2, time, comment);
+            Statistics.newPosChange($scope.teamId, $scope.gameId, player1, player2, time, comment);
             $scope.selectedType = "";
             $scope.toggleGroup(null);
         };
@@ -752,6 +747,55 @@ angular.module('starter.GameControllers', [])
                 $scope.gameLog.$remove(item);
             }
         };
+
+        $scope.isScrollEnabled = function(value) {
+            value ? $ionicScrollDelegate.getScrollView().options.scrollingY = true:
+                $ionicScrollDelegate.getScrollView().options.scrollingY = false;
+
+        }
+
+
+        $scope.$watch('basis', function(newValue, oldValue) {
+            console.log(newValue, oldValue);
+        })
+
+
+        $scope.eventDelegator = function(type, basis, eventData) {
+            if(basis) {
+                switch (type) {
+                    case "posChange":
+                        console.log($scope.basisChanges);
+                        if(eventData.player1 != -1)
+                            $scope.basis[eventData.player1] = eventData.pos1;
+                        if(eventData.player2 != -1)
+                            $scope.basis[eventData.player2] = eventData.pos2;
+                        break;
+                    case "change":
+                        if(eventData.player1 != -1) {// must be substitute!
+                            $scope.basis[eventData.player1] = eventData.pos1;
+                            delete $scope.basisChanges[eventData.player1];
+                        }
+                        if(eventData.player2 != -1) {
+                            $scope.basisChanges[eventData.player2] = true;
+                            delete $scope.basis[eventData.player2];
+                        }
+                        break;
+                    default:
+                        console.log("default");
+                        break;
+
+                }
+            } else {
+                switch(type) {
+                    case "posChange":
+                        $scope.savePosChange(eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
+                        break;
+                    default:
+                        console.log("default");
+                        break;
+                }
+            }
+        }
     })
 
     .controller('Games_StatsEditCtrl', function ($scope, Statistics, $stateParams, localStorageFactory, firebaseRef, $ionicHistory) {

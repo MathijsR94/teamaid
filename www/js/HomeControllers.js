@@ -1,5 +1,5 @@
 angular.module('starter.HomeControllers', [])
-    .controller('HomeCtrl', function ($scope, User, Teams,Statistics, localStorageFactory, firebaseRef) {
+    .controller('HomeCtrl', function ($scope, User, Teams,Statistics, localStorageFactory, firebaseRef, Games) {
         var ref = firebaseRef.ref();
 		var playerStats = {};
         var uid = User.getUID();
@@ -33,9 +33,9 @@ angular.module('starter.HomeControllers', [])
                     else{
                         localStorageFactory.setSettings({});
 					}
-					
+
 					// initialize  statistics! ( PlayerStats )--------------------------------------
-					
+
 					if (typeof inactivePlayers !== 'undefined') {
 						players = angular.extend(players, inactivePlayers);
 					}
@@ -50,7 +50,7 @@ angular.module('starter.HomeControllers', [])
 								totGoals: 0
 							};
 					}
-						
+
 					Statistics.getRef().child(teamId).once('value', function (statsSnap) {
 						for (var key in statsSnap.val()) { // walk trough each game
 							var gameStats = statsSnap.val()[key];
@@ -148,8 +148,30 @@ angular.module('starter.HomeControllers', [])
 								}
 							}
 						}
-						console.log(playerStats);
 						localStorageFactory.setStatistics(playerStats);
+						$scope.stats = playerStats[uid];
+
+                        Games.getGamesArray(teamId).then(function(games) {
+                            var games = games;
+                            var gameIds = [];
+
+                            for(var key in $scope.stats.gametimeList) {
+                                gameIds.push(key);
+                            }
+
+                            console.log(gameIds);
+                            for(var i = 0; i < games.length; i++) {
+                                console.log(games[i].$id);
+                                if(gameIds[i] == games[i].$id)
+                                    console.log('test');
+                            }
+                        });
+
+
+
+
+                            console.log($scope.stats);
+
 					});
 					//-------------------
                 }
@@ -161,5 +183,6 @@ angular.module('starter.HomeControllers', [])
             ref.child('Admins').child(teamId).once('value', function (admin) {
                 localStorageFactory.setAdmin(admin.val(), uid);
             });
+
         })
     })

@@ -4,9 +4,9 @@
 	<ion-list>
 		<div ng-if="isAdmin == true">
 			<ion-item class="item-stable" ng-click="toggleGroup('corvee')" ng-class="{active: isGroupShown('corvee')}">
-				  <i class="icon" ng-class="isGroupShown('corvee') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 				&nbsp;
 				Corvee Settings
+				<i class="icon" ng-class="isGroupShown('corvee') ? 'ion-chevron-up' : 'ion-chevron-down'"></i>
 			</ion-item>
 			<ion-item class="item-accordion" ng-show="isGroupShown('corvee')">
 				<ion-toggle ng-model="settings.dutyGames" ng-change="changeSetting('dutyGames',settings.dutyGames)">Wedstrijden</ion-toggle>
