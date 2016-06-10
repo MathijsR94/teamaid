@@ -605,6 +605,81 @@ angular.module('starter.services', [])
                 statsRef.child(teamId).child(gameId).set(stats);
                 return stats;
             },
+			makeActual: function( basisLineUp, basisChanges, GameLog, playingHome) {
+				var actualResult = {actualPlayers: basisLineUp, changes: basisChanges,homeScore: 0,awayScore: 0,error: false};
+				// main event interation loop
+				if (typeof GameLog !== 'undefined') {
+					// loop trough each event in the gameLog
+					for (key in GameLog) {
+						switch (GameLog[key].statsType) {
+							
+							case "Changes":
+								switch (GameLog[key].type) { //change type, in/out or  position
+									case "In/Out":
+										;
+										if( typeof actualResult.actualPlayers[GameLog[key].playerOut] === 'undefined' ){
+											actualResult.error = true;
+											console.log(GameLog[key].type);
+										}
+										actualResult.actualPlayers[GameLog[key].playerIn] = actualResult.actualPlayers[GameLog[key].playerOut]; // transfer position
+										delete actualResult.actualPlayers[GameLog[key].playerOut];
+										// he is already changed so he cannot be changed in again
+										delete actualResult.changes[GameLog[key].playerIn];
+										break;
+
+									case "Position":
+										var pos1 = actualResult.actualPlayers[GameLog[key].player1]; // position of player1
+										var pos2 = actualResult.actualPlayers[GameLog[key].player2]; // position of player2
+										if( typeof actualResult.actualPlayers[GameLog[key].player1] === 'undefined' || typeof actualResult.actualPlayers[GameLog[key].player2] === 'undefined'){
+											actualResult.error = true;
+											console.log(GameLog[key].type);
+										}
+										actualResult.actualPlayers[GameLog[key].player1] = pos2; // transfer position
+										actualResult.actualPlayers[GameLog[key].player2] = pos1; // transfer position
+										break;
+								}
+								break;
+
+							case "Cards":
+								var player = actualResult.actualPlayers[GameLog[key].player];
+								if( typeof actualResult.actualPlayers[GameLog[key].player] === 'undefined' ){
+									actualResult.error = true;
+									console.log(GameLog[key].type);
+								}
+								if (GameLog[key].type === 'red') {
+									delete actualResult.actualPlayers[GameLog[key].player]; // remove from actual players
+								}
+								if (GameLog[key].type === 'yellow2') {
+									delete actualResult.actualPlayers[GameLog[key].player]; // remove from actual players
+								}
+								break;
+
+							case "OurGoals":
+								if (playingHome) {
+									actualResult.homeScore++;
+								}
+								else {
+									actualResult.awayScore++;
+								}
+								break;
+
+							case "TheirGoals":
+								if (!playingHome) {
+									actualResult.homeScore++;
+								}
+								else {
+									actualResult.awayScore++;
+								}
+								break;
+							case "GameEvents":
+								break; // nothing
+							default:
+								break;
+						}
+					}
+				}					
+				return actualResult;
+			},
             updateActualTeam: function (actualPlayers) {
                 var newActual = {};
                 for (key in actualPlayers) {
@@ -614,11 +689,9 @@ angular.module('starter.services', [])
                 return newActual;
 
             },
-            updateBasis: function (teamId, gameId, basisTeam, basisChanges, tactic) {
+            updateBasis: function (teamId, gameId, basisTeam) {
                 statsRef.child(teamId).child(gameId).update({
-                    basis: basisTeam,
-                    tactic: tactic,
-                    basisChanges: basisChanges
+                    basis: basisTeam
                 });
 
             },
@@ -629,6 +702,28 @@ angular.module('starter.services', [])
                     type: "In/Out",
                     statsType: "Changes",
                     playerIn: playerIn,
+                    playerOut: playerOut,
+                    position: pos,
+                    comment: comment
+                });
+            },
+			addPlayer: function (teamId, gameId, player, pos, time, comment) {
+                var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+                changes.$add({
+                    time: time,
+                    type: "In",
+                    statsType: "Changes",
+                    playerIn: player,
+                    position: pos,
+                    comment: comment
+                });
+            },
+			removePlayer: function (teamId, gameId, player, pos, time, comment) {
+                var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+                changes.$add({
+                    time: time,
+                    type: "Out",
+                    statsType: "Changes",
                     playerOut: playerOut,
                     position: pos,
                     comment: comment
@@ -686,6 +781,10 @@ angular.module('starter.services', [])
                     deferred.resolve(gameLog);
                 });
                 return deferred.promise;
+            },
+			clearGameLog: function (teamId, gameId) {
+				var gameLog = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+                gameLog.remove();
             },
             storeExternals: function (teamId, gameId, externalPlayers) {
                 statsRef.child(teamId).child(gameId).update({

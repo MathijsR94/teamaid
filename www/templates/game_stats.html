@@ -65,13 +65,13 @@
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('basisTeam')">
 			basis elftal:
-			<label class="item item-input item-select">
+			<!-- <label class="item item-input item-select">
 				<span class="input-label">Opstelling</span>
 				<select ng-model="tactic">
 					<option value="4-4-2">4-4-2</option>
 					<option value="4-3-3">4-3-3</option>
 				</select>
-			</label>
+			</label> -->
 			<label class="item item-input item-select">
 				<span class="input-label">externe spelers</span>
 				<select ng-model="externalPlayers" ng-change="updatePlayerList(externalPlayers)">
@@ -95,35 +95,9 @@
 			<div ng-if="externalPlayers > 0">
 					<button class="button button-block" ng-click="storeExternalNames()">save names</button>
 			</div>
-			<!-- 4-4-2 -->
-			<div ng-if="tactic !== 0 && tactic !== undefined ">
-				<playing-field draw-players="basis" draw-changes="basisChanges" players="players" scroll-enabled="isScrollEnabled(value)" event-function="eventDelegator(type, basis, eventData)" type="1" grid="false" drawspeed="50"></playing-field>
-				<!-- <div name="goalkeeper" class="row">
-				  <div class="col"><select class="button button-block center" ng-model="positions[1]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-				</div>
-				<div name="defense" class="row">
-					<div class="col"><select class="button button-block center" ng-model="positions[2]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-					<div class="col"><select class="button button-block center" ng-model="positions[3]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
-									 <select class="button button-block center" ng-model="positions[4]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
-					</div>
-					<div class="col"><select class="button button-block center" ng-model="positions[5]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-				</div>
-				<div name="midfield" class="row">
-					<div class="col"><select class="button button-block center" ng-model="positions[6]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-					<div class="col"><select class="button button-block center" ng-model="positions[7]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
-									 <select ng-if="tactic === '4-4-2'" class="button button-block center"ng-model="positions[10]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
-					</div>
-					<div class="col"><select class="button button-block center" ng-model="positions[8]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-				</div>
-				<div name="attack" class="row">
-					<div class="col-10" ng-if="tactic === '4-4-2'"></div>
-					<div class="col"><select class="button button-block center" ng-model="positions[9]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-					<div class="col" ng-if="tactic === '4-3-3'">
-						<select class="button button-block center" ng-model="positions[10]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
-					</div>
-					<div class="col"><select class="button button-block center" ng-model="positions[11]" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select></div>
-					<div class="col-10" ng-if="tactic === '4-4-2'"></div>
-				</div> -->
+			<div ng-if="isGroupShown('basisTeam')">
+				<playing-field draw-players="basisLineUp" draw-changes="basisChanges" players="players" scroll-enabled="isScrollEnabled(value)" event-function="eventDelegator(type, basis, eventData)" type="3" grid="false" drawspeed="50"></playing-field>
+				
 				<div class="buttons">
 					<button class="button button-block"  ng-click="storeBasis(tactic)">save opstelling</button>
 				</div>
@@ -276,38 +250,9 @@
 			Actuele opstelling
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('currentTeam')">	
-			<playing-field lineup="actualPlayers" players="players" data-method="isScrollEnabled(value)" type="1" grid="false" drawspeed="30"></playing-field>
-		<!-- 
-		<div ng-if="tactic !== 0 && tactic !== undefined">
-			<div name="goalkeeper" class="row">
-			  <div class="col-33"></div>
-			  <div class="col"><button class="button button-block">{{players[actualPositions[1]].firstName}} {{players[actualPositions[1]].insertion}} {{players[actualPositions[1]].lastName}}</button></div>
-			  <div class="col-33"></div>
+		<div ng-if="isGroupShown('currentTeam')">
+			<playing-field draw-players="actualPlayers" draw-changes="changes" players="players" scroll-enabled="isScrollEnabled(value)" event-function="eventDelegator(type, basis, eventData)" type="4" grid="false" drawspeed="50"></playing-field>	
 			</div>
-			<div name="defense" class="row">
-				<div class="col"><button class="button button-block">{{players[actualPositions[2]].firstName}} {{players[actualPositions[2]].insertion}} {{players[actualPositions[2]].lastName}}</button></div>
-				<div class="col"><button class="button button-block">{{players[actualPositions[3]].firstName}} {{players[actualPositions[3]].insertion}} {{players[actualPositions[3]].lastName}}</button>
-								 <button class="button button-block">{{players[actualPositions[4]].firstName}} {{players[actualPositions[4]].insertion}} {{players[actualPositions[4]].lastName}}</button>
-				</div>
-				<div class="col"><button class="button button-block">{{players[actualPositions[5]].firstName}} {{players[actualPositions[5]].insertion}} {{players[actualPositions[5]].lastName}}</button></div>
-			</div>
-			<div name="midfield" class="row">
-				<div class="col"><button class="button button-block">{{players[actualPositions[6]].firstName}} {{players[actualPositions[6]].insertion}} {{players[actualPositions[6]].lastName}}</button></div>
-				<div class="col"><button class="button button-block">{{players[actualPositions[7]].firstName}} {{players[actualPositions[7]].insertion}} {{players[actualPositions[7]].lastName}}</button>
-								 <button ng-if="tactic === '4-4-2'" class="button button-block">{{players[actualPositions[10]].firstName}} {{players[actualPositions[10]].insertion}} {{players[actualPositions[10]].lastName}}</button>
-				</div>
-				<div class="col"><button class="button button-block">{{players[actualPositions[8]].firstName}} {{players[actualPositions[8]].insertion}} {{players[actualPositions[8]].lastName}}</button></div>
-			</div>
-			<div name="attack" class="row">
-				<div class="col-10" ng-if="tactic === '4-4-2'"></div>
-				<div class="col"><button class="button button-block">{{players[actualPositions[9]].firstName}} {{players[actualPositions[9]].insertion}} {{players[actualPositions[9]].lastName}}</button></div>
-				<div class="col" ng-if="tactic === '4-3-3'">
-					<button class="button button-block">{{players[actualPositions[10]].firstName}} {{players[actualPositions[10]].insertion}} {{players[actualPositions[10]].lastName}}</button>
-				</div>
-				<div class="col"><button class="button button-block">{{players[actualPositions[11]].firstName}} {{players[actualPositions[11]].insertion}} {{players[actualPositions[11]].lastName}}</button></div>
-				<div class="col-10" ng-if="tactic === '4-4-2'"></div>
-			</div>
- -->
 		</ion-item>
 	</ion-list>
     </ion-content>
