@@ -107,11 +107,6 @@ app.directive('dateTime', function () {
                     }
                 }
             }
-
-            //scope.$watch('sdate', function(newValue, oldValue) {
-            //scope.date = dateParser(scope.sdate,'MM-DD-YYYY');
-            //});
-
         }
     };
 });
@@ -477,4 +472,39 @@ app.directive('playingField', function () {
             canvas.addEventListener("touchend", tUp, false);
         }
     }
+});
+
+app.directive('playerName', function () {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            player: '=',
+			nickName: '='
+        },
+        template: "<text>{{name}}</text>",
+        link: function (scope, elem, attrs) {
+            scope.name = nameParser(scope.player, scope.nickName);
+
+			console.log(scope.name,scope.player, scope.nickName);
+            function nameParser(player, useNickName) {
+                if (typeof player === 'undefined') {
+                    return "invalid player";
+                }
+                else {
+					if(useNickName){
+						return player.nickName;			
+					}else{
+						var fullName = "";
+						fullName += player.firstName + " ";
+						if(player.insertion !== ""){
+							fullName += player.insertion + " ";
+						}
+						fullName += player.lastName;
+						return fullName; 
+					}
+                }
+            }
+        }
+    };
 });

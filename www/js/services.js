@@ -199,7 +199,7 @@ angular.module('starter.services', [])
                     teamsRef.child(teamId).child("Players").child(uid).remove();
                 });
             },
-            updatePlayer: function (teamId, uid, firstName, ins, lastName, defaultNumber, nickName) {
+            updatePlayer: function (teamId, uid, firstName, ins, lastName, defaultNumber, nickName, type) {
                 if (typeof defaultNumber === 'undefined') {
                     defaultNumber = -1;
                 }
@@ -219,7 +219,7 @@ angular.module('starter.services', [])
                 else {
                     nickname = nickName;
                 }
-                teamsRef.child(teamId).child("Players").child(uid).update({
+                teamsRef.child(teamId).child(type).child(uid).update({
                     firstName: firstName,
                     insertion: ins,
                     lastName: lastName,

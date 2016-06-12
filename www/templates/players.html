@@ -3,17 +3,17 @@
     <ion-list>
       <ion-item  class="item item-thumbnail-left" ng-repeat="(key,player) in players | toArray: true | orderBy : 'lastName'" ng-click="ShowPlayerDetails(player)">
 		<img src="../img/cover.jpg" alt="Geen afbeelding" />
-        <h2>{{player.firstName}} {{player.insertion}} {{player.lastName}}</h2>
-        <p><!--Bijnaam--></p>
+        <h2><player-name player='player' nick-name=false></player-name></h2>
+        <p>aka: <player-name player='player' nick-name=true></player-name></p>
 		<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivatePlayer(key)">Deactivate</ion-option-button>
       </ion-item>
     </ion-list>
 	<ion-list>
         <div class="item item-divider">Inactief</div>
-      <ion-item class="item item-thumbnail-left item-inactive" ng-repeat="(key,player) in inactivePlayers">
+		<ion-item  class="item item-thumbnail-left" ng-repeat="(key,player) in inactivePlayers | toArray: true | orderBy : 'lastName'"">
           <img src="../img/cover.jpg" alt="Geen afbeelding" />
-          <h2>{{player.firstName}} {{player.insertion}} {{player.lastName}}</h2>
-        <p><!--Bijnaam--></p>
+          <h2><player-name player='player' nick-name=false></player-name></h2>
+          <p>aka: <player-name player='player' nick-name=true></player-name></p>
 		<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); activatePlayer(key)">Activate</ion-option-button>
       </ion-item>
     </ion-list>
