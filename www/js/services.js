@@ -866,7 +866,7 @@ angular.module('starter.services', [])
             },
             linkEvents: function (teamId, events, duty) {
                 Object.keys(events).forEach(function (type) {
-                    //onsole.log(type);
+                    //console.log(type);
                     var typeRef = ref.child(type).child(teamId);
                     //console.log(typeRef);
                     switch (type) {
@@ -893,18 +893,18 @@ angular.module('starter.services', [])
             },
             unlinkEvents: function (teamId, events) {
                 Object.keys(events).forEach(function (type) {
-                    console.log(type);
-                    console.log(events);
+                    //console.log(type);
+                    //console.log(events);
                     var typeRef = ref.child(type).child(teamId);
                     switch (type) {
                         case "Games":
-                            console.log(events.Games);
+                            //console.log(events.Games);
                             Object.keys(events.Games).forEach(function (event) {
                                 typeRef.child(event).child("Duty").remove();
                             });
                             break;
                         case "Practises":
-                            console.log(events.Practises);
+                            //console.log(events.Practises);
                             Object.keys(events.Practises).forEach(function (event) {
                                 typeRef.child(event).child("Duty").remove();
                             });
@@ -929,11 +929,12 @@ angular.module('starter.services', [])
                     var endDate = new Date(occurence.end);
                     //console.log(endDate);
                     if (eventDate > startDate && eventDate <= endDate) {
-                        console.log("hit");
+                        //console.log("hit");
                         result[event.$id] = true;
+						console.log(result);
                     }
                 });
-                console.log(result);
+                //console.log(result);
                 return result;
             }
         };

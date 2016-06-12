@@ -10,6 +10,12 @@
       </div>
 </ion-header-bar>
   <ion-content>
+	<div class="row content-margin">
+		<div class="col content-margin">
+			<h4 class="section-heading">Aankomend</h4>
+			<hr class="hr-left">
+		</div>
+	</div>
     <ion-list show-delete="ShowDelete" can-swipe="isAdmin">
       <ion-item ng-repeat="duty in duties | orderBy:'start' | isFutureDuty | limitTo: limit">
             <date-Time sdate='duty.start'></date-Time> tot <date-Time sdate='duty.end'></date-Time> <span ng-repeat="(id,value) in duty.Duty">{{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
@@ -18,6 +24,10 @@
 			</ion-delete-button>
 			<ion-option-button class="button-dark" ng-if="isAdmin" ng-click="$event.stopPropagation(); editDuty(duty)">Edit</ion-option-button>
       </ion-item>
+	  <ion-item class="center smaller">
+			<div ng-click="loadMore()" ng-show="limit == 3">Meer laden</div>
+			<div ng-click="loadLess()" ng-show="limit != 3 ">Minder laden</div>
+		</ion-item>
     </ion-list>
       <ion-item class="item-light content-margin" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
           Geschiedenis

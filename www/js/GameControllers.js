@@ -537,8 +537,8 @@ angular.module('starter.GameControllers', [])
 					$scope.changes = angular.copy($scope.basisChanges);					
 					var actual = Statistics.makeActual($scope.actualPlayers,$scope.changes,$scope.liveGameLog,$scope.game.home === $scope.teamName);
 					//console.log(actual);
-					$scope.actualPlayers = angular.copy(actual.actualPlayers);
-					$scope.changes = angular.copy(actual.changes);
+					$scope.actualPlayers = actual.actualPlayers;
+					$scope.changes = actual.changes;
 					$scope.homeScore = actual.homeScore;
 					$scope.awayScore = actual.awayScore;
 					
