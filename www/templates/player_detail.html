@@ -1,8 +1,7 @@
 <ion-view view-title="Statistieken">
     <ion-content>
         <div class="header">
-            <h1 class="center"> {{players[playerId].firstName}} {{players[playerId].insertion}}
-                {{players[playerId].lastName}} </h1>
+            <h1 class="center"><player-name player='players[playerId]' nick-name='useNickNames'></player-name></h1>
         </div>
         <ion-list>
             <div class="item" ng-click="toggleGroup('gameTime')"

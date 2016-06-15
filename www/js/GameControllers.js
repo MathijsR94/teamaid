@@ -1,6 +1,7 @@
 angular.module('starter.GameControllers', [])
     .controller('GamesCtrl', function ($scope, Games, User, $filter, $state, Attendance, Statistics, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
         $scope.ShowDelete = false;
+		$scope.useNickNames = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.games = localStorageFactory.getGames();
@@ -84,6 +85,7 @@ angular.module('starter.GameControllers', [])
 
     .controller('Games_DetailCtrl', function ($scope, $ionicScrollDelegate, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
         $scope.gameId = $stateParams.gameId;
+		$scope.useNickNames = false;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.teamId = localStorageFactory.getTeamId();
@@ -244,7 +246,7 @@ angular.module('starter.GameControllers', [])
     .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory) {
         $scope.gameId = $stateParams.gameId;
         $scope.teamName = localStorageFactory.getTeamName();
-
+		$scope.useNickNames = false;
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 
@@ -363,6 +365,7 @@ angular.module('starter.GameControllers', [])
 		$scope.basisChanges = {}
 		$scope.actualPlayers = {};
 		$scope.changes = {};
+		$scope.useNickNames = false;
         $scope.ShowDelete = true;
         $scope.scrollEnabled = false;
 
@@ -737,7 +740,8 @@ angular.module('starter.GameControllers', [])
         $scope.gameId = $stateParams.gameId;
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.nbsp = " ";
-
+		$scope.useNickNames = false;
+		
         var presentRef = firebaseRef.ref().child("Games").child($scope.teamId).child($scope.gameId).child("Present");
         presentRef.once('value', function (PresentSnap) {
             if (typeof PresentSnap.val() !== 'undefined') {

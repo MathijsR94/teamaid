@@ -6,7 +6,7 @@
             <span class="center">Locatie: {{practise.location}}</span>
 
             <div ng-if="settings.dutyPractises === true">
-                <span ng-repeat="(id,value) in practise.Duty" class="center">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+                <span ng-repeat="(id,value) in practise.Duty" class="center">Corvee: <player-name player='players[id]' nick-name='useNickNames'></player-name></span>
             </div>
         </div>
         <div ng-show="!isPast">
@@ -26,7 +26,7 @@
                     <span>Aanwezig</span>
                 </div>
                 <ion-item ng-repeat="(id,value) in practise.Present">
-                    {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+                    <player-name player='players[id]' nick-name='useNickNames'></player-name><
                     <!-- <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> -->
                     <ion-option-button class="button-assertive" ng-if="isAdmin"
                                        ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A
@@ -41,7 +41,7 @@
                     <span>Afwezig</span>
                 </div>
                 <ion-item ng-repeat="(id,value) in practise.Absent">
-                    {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+                    <player-name player='players[id]' nick-name='useNickNames'></player-name><
                     <ion-option-button class="button-balanced" ng-if="isAdmin"
                                        ng-click="$event.stopPropagation(); forceAttendance('present',id)">P
                     </ion-option-button>
@@ -57,7 +57,7 @@
                 </div>
                 <ion-list>
                     <ion-item ng-repeat="(key,player) in unknownPlayers">
-                        {{player.firstName}} {{player.insertion}} {{player.lastName}}
+                        <player-name player='player' nick-name='useNickNames'></player-name><
                         <ion-option-button class="button-balanced" ng-if="isAdmin"
                                            ng-click="$event.stopPropagation(); forceAttendance('present',key)">P
                         </ion-option-button>

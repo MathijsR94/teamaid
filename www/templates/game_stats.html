@@ -16,17 +16,17 @@
 		<ion-item class="item-accordion" ng-repeat="event in gameLog | orderBy:'time'" ng-show="isGroupShown('gameLog')">
 			<standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
 			<span ng-if="event.statsType === 'GameEvents'"> Event </span>
-			<span ng-if="event.statsType === 'OurGoals'"> Goal voor, {{(players[event.player].firstName +nbsp+ players[event.player].insertion +nbsp+ players[event.player].lastName)}}</span>
+			<span ng-if="event.statsType === 'OurGoals'"> Goal voor, <player-name player='players[event.player]' nick-name='useNickNames'></player-name></span>
 			<span ng-if="event.statsType === 'TheirGoals'"> Goal tegen </span>
 			<span ng-if="event.statsType === 'Cards'"> Kaart 
 				<span ng-if="event.type === 'red'">Rood,  </span>
 				<span ng-if="event.type === 'yellow'">Geel,  </span>
 				<span ng-if="event.type === 'yellow2'">Tweede geel,  </span>
-				{{(players[event.player].firstName +nbsp+ players[event.player].insertion +nbsp+ players[event.player].lastName)}}
+				<player-name player='players[event.player]' nick-name='useNickNames'></player-name>
 			</span>
 			<span ng-if="event.statsType === 'Changes'"> Wissel 
-				<span ng-if="event.type === 'Position'">Positie,  {{(players[event.player1].firstName +nbsp+ players[event.player1].insertion +nbsp+ players[event.player1].lastName)}} voor {{(players[event.player2].firstName +nbsp+ players[event.player2].insertion +nbsp+ players[event.player2].lastName)}} </span>
-				<span ng-if="event.type === 'In/Out'">,  {{(players[event.playerIn].firstName +nbsp+ players[event.playerIn].insertion +nbsp+ players[event.playerIn].lastName)}} voor {{(players[event.playerOut].firstName +nbsp+ players[event.playerOut].insertion +nbsp+ players[event.playerOut].lastName)}} </span>
+				<span ng-if="event.type === 'Position'">Positie, <player-name player='players[event.player1]' nick-name='useNickNames'></player-name> voor <player-name player='players[event.player2]' nick-name='useNickNames'></player-name> </span>
+				<span ng-if="event.type === 'In/Out'">,  <player-name player='players[event.playerIn]' nick-name='useNickNames'></player-name> voor <player-name player='players[event.playerOut]' nick-name='useNickNames'></player-name> </span>
 			</span>
 			, {{event.comment}}
 			<ion-option-button class="button-assertive" ng-click="$event.stopPropagation(); onItemDelete(event)">Delete</ion-option-button>
@@ -65,13 +65,6 @@
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('basisTeam')">
 			basis elftal:
-			<!-- <label class="item item-input item-select">
-				<span class="input-label">Opstelling</span>
-				<select ng-model="tactic">
-					<option value="4-4-2">4-4-2</option>
-					<option value="4-3-3">4-3-3</option>
-				</select>
-			</label> -->
 			<label class="item item-input item-select">
 				<span class="input-label">externe spelers</span>
 				<select ng-model="externalPlayers" ng-change="updatePlayerList(externalPlayers)">

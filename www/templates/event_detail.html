@@ -4,7 +4,7 @@
 		<span class="center">{{ eventDate | date:'dd - MM - yyyy' }} <standard-time-no-meridian etime='event.time'></standard-time-no-meridian></span>
 		<span class="center">Locatie: {{event.location}}</span>
 		<div ng-if="settings.dutyEvents === true">
-			<span ng-repeat="(id,value) in event.Duty">Corvee: {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+			<span ng-repeat="(id,value) in event.Duty">Corvee: <player-name player='players[id]' nick-name='useNickNames'></player-name></span>
 		</div>
 
 		<h3 class="center">Geef hier je beschikbaarheid op</h3>
@@ -16,7 +16,7 @@
 		<div class="row responsive-sm">
 			<div class="col"><span>aanwezig</span>
 				<ion-item ng-repeat="(id,value) in event.Present">
-						   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+				<player-name player='players[id]' nick-name='useNickNames'></player-name>
 				<!-- <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> -->
 				<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button>
 				<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U</ion-option-button>		   
@@ -24,7 +24,7 @@
 			</div>
 			<div class="col"><span>afwezig</span>
 				<ion-item ng-repeat="(id,value) in event.Absent">
-						   {{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}
+				<player-name player='players[id]' nick-name='useNickNames'></player-name>
 				<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button>
 				<!-- <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button> -->
 				<ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U</ion-option-button>
@@ -33,7 +33,7 @@
 			<div class="col"><span>onbekend</span>
 				<ion-list>
 				   <ion-item ng-repeat="(key,player) in unknownPlayers">
-					   {{player.firstName}} {{player.insertion}} {{player.lastName}}
+					   <player-name player='player' nick-name='useNickNames'></player-name>
 					<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',key)">P</ion-option-button>
 					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',key)">A</ion-option-button>
 					<!-- <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',key)">U</ion-option-button> -->

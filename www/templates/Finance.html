@@ -15,8 +15,7 @@
                               ng-class="{active: isGroupShown(player.$id)}">
 
                         <div class="row">
-                            <div class="col-25">{{players[player.$id].firstName}} {{players[player.$id].insertion}}
-                                {{players[player.$id].lastName}} :
+                            <div class="col-25"><player-name player='players[player.$id]' nick-name='useNickNames'></player-name>:
                             </div>
                             <div class="col-75"><span class="tab" ng-class="player.balance < 0 ? 'assertive' : 'balanced'">€{{player.balance}}</span>
                             </div>

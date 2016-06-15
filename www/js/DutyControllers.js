@@ -1,6 +1,7 @@
 angular.module('starter.DutyControllers', [])
     .controller('DutiesCtrl', function ($scope, Teams, Games, Practises, Events, Settings, User, Duties, $state, firebaseRef, localStorageFactory) {
         $scope.ShowDelete = false;
+		$scope.useNickNames = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.settings = localStorageFactory.getSettings();
@@ -265,6 +266,7 @@ angular.module('starter.DutyControllers', [])
 
     .controller('Duties_EditCtrl', function ($scope, Duties, Settings, $ionicHistory, localStorageFactory, $stateParams) {
         $scope.dutyId = $stateParams.dutyId;
+		$scope.useNickNames = false;
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.players = localStorageFactory.getPlayers();
         $scope.settings = localStorageFactory.getSettings();
@@ -322,6 +324,7 @@ angular.module('starter.DutyControllers', [])
 
     .controller('newDutiesCtrl', function ($scope, User, Duties, localStorageFactory, $ionicHistory) {
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.useNickNames = false;
         $scope.players = localStorageFactory.getPlayers();
         $scope.settings = localStorageFactory.getSettings();
         $scope.duties = Duties.getDutiesArray($scope.teamId);

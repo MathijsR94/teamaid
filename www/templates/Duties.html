@@ -18,7 +18,7 @@
 	</div>
     <ion-list show-delete="ShowDelete" can-swipe="isAdmin">
       <ion-item ng-repeat="duty in duties | orderBy:'start' | isFutureDuty | limitTo: limit">
-            <date-Time sdate='duty.start'></date-Time> tot <date-Time sdate='duty.end'></date-Time> <span ng-repeat="(id,value) in duty.Duty">{{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+            <date-Time sdate='duty.start'></date-Time> tot <date-Time sdate='duty.end'></date-Time> <span ng-repeat="(id,value) in duty.Duty"><player-name player='players[id]' nick-name='useNickNames'></player-name></span>
 			<ion-delete-button class="ion-minus-circled"
 							   ng-click="onItemDelete(duty)">
 			</ion-delete-button>
@@ -36,7 +36,7 @@
       </ion-item>
       <ion-list class="card item-text-wrap" show-delete="ShowDelete" can-swipe="isAdmin">
           <ion-item ng-repeat="duty in duties | orderBy:'-start' | isPastDuty" class="item-accordion disabled" ng-show="isGroupShown('past')">
-              <date-Time sdate='duty.start'></date-Time> tot <date-Time sdate='duty.end'></date-Time> <span ng-repeat="(id,value) in duty.Duty">{{players[id].firstName}} {{players[id].insertion}} {{players[id].lastName}}</span>
+              <date-Time sdate='duty.start'></date-Time> tot <date-Time sdate='duty.end'></date-Time> <span ng-repeat="(id,value) in duty.Duty"><player-name player='players[id]' nick-name='useNickNames'></player-name></span>
               <ion-delete-button class="ion-minus-circled"
                                  ng-click="onItemDelete(duty)">
               </ion-delete-button>
