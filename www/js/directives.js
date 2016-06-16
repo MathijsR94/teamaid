@@ -486,7 +486,7 @@ app.directive('playerName', function () {
         link: function (scope, elem, attrs) {
             scope.name = nameParser(scope.player, scope.nickName);
 
-			console.log(scope.name,scope.player, scope.nickName);
+			//console.log(scope.name,scope.player, scope.nickName);
             function nameParser(player, useNickName) {
                 if (typeof player === 'undefined') {
                     return "invalid player";
