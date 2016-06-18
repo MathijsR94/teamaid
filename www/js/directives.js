@@ -477,16 +477,15 @@ app.directive('playingField', function () {
 app.directive('playerName', function () {
     return {
         restrict: 'AE',
-        replace: true,
         scope: {
             player: '=',
 			nickName: '='
         },
-        template: "<text>{{name}}</text>",
+        template: "{{name}}",
         link: function (scope, elem, attrs) {
             scope.name = nameParser(scope.player, scope.nickName);
 
-			//console.log(scope.name,scope.player, scope.nickName);
+			console.log(scope.name,scope.player, scope.nickName);
             function nameParser(player, useNickName) {
                 if (typeof player === 'undefined') {
                     return "invalid player";
