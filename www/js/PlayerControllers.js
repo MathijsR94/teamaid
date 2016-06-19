@@ -84,9 +84,10 @@ angular.module('starter.PlayerControllers', [])
 
     })
 	
-.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins) {
+.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins, Seasons) {
 
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.settings = localStorageFactory.getSettings();
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.players = localStorageFactory.getPlayers();

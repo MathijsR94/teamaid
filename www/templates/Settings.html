@@ -115,7 +115,7 @@
 		<ion-item class="item-accordion" ng-show="isGroupShown('Admins')">
 			<ion-list>
 				<ion-item ng-repeat="(key,admin) in admins">
-					<h2><player-name player='players[key]' nick-name='useNickNames'></player-name><</h2>
+					<h2><player-name player='players[key]' nick-name='useNickNames'></player-name></h2>
 					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivateAdmin(key)">Deactivate</ion-option-button>
 				</ion-item>
 			</ion-list>
@@ -124,6 +124,42 @@
 			</select>
 			<div class="buttons">
 					<button class="button button-bq" ng-click="addAdmin(selectedPlayer)">Add Admin!</button>
+			</div>		
+		</ion-item>
+		</div>
+		<div ng-if="isAdmin == true">
+		<ion-item class="item-stable" ng-click="toggleGroup('Seasons')" ng-class="{active: isGroupShown('Seasons')}">
+			  <i class="icon" ng-class="isGroupShown('Seasons') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			Seizoenen
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('Seasons')">
+			<ion-list>
+				<ion-item ng-repeat="(id,value) in seasons">
+					<h2>Season.title</h2>
+					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deleteSeason(id)">Delete</ion-option-button>
+				</ion-item>
+			</ion-list>
+			
+			Add new Season:
+			<label class="item item-input">
+				<span class="input-label">Title:</span>
+				<input type="text" ng-model="newTitle" name="title" />
+			</label>
+			<label class="item item-input">
+				<span class="input-label">Start:</span>
+				<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+				<button class="button button-block button-stable"> {{ newStart | date:'dd - MMMM - yyyy' }} </button>
+				</ionic-datepicker>
+			</label>
+			<label class="item item-input">
+				<span class="input-label">End:</span>
+				<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+				<button class="button button-block button-stable"> {{ newEnd | date:'dd - MMMM - yyyy' }} </button>
+				</ionic-datepicker>
+			</label>
+			<div class="buttons">
+				<button class="button button-bq" ng-click="addSeason()">Add Season!</button>
 			</div>		
 		</ion-item>
 		</div>
