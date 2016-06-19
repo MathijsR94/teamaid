@@ -84,7 +84,7 @@ angular.module('starter.PlayerControllers', [])
 
     })
 	
-.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins, Seasons) {
+.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins, Seasons, ionicDatePicker) {
 
         $scope.teamId = localStorageFactory.getTeamId();
 		$scope.seasonId = localStorageFactory.getSeasonId();
@@ -97,7 +97,71 @@ angular.module('starter.PlayerControllers', [])
         $scope.nbsp = " ";
 		$scope.showData = false;
 		$scope.selectedPlayer;
+		$scope.newStart = new Date();
+		$scope.newEnd = new Date();
+		$scope.newEnd.setFullYear($scope.newStart.getFullYear() + 1);
 		
+		console.log($scope.newEnd  );
+		var startObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.newEnd = val;
+                }
+            },
+            // disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            // ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: $scope.newEnd,      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
+        };
+		
+		var endObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.newStart = val;
+                }
+            },
+            // disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            // ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: $scope.newStart,      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
+        };
+
+        $scope.openDatePicker = function(type){
+			if(type == "start"){
+				ionicDatePicker.openDatePicker(startObj);
+			}
+			else if(type == "end"){
+				ionicDatePicker.openDatePicker(endObj);
+			}
+        }
 		
 		// create available numbers
 		for(var x = 1;x <= 45;x++){
@@ -278,7 +342,11 @@ angular.module('starter.PlayerControllers', [])
             }
 
         }
-    })
+		
+		$scope.addSeason = function(title){
+			Seasons.addSeason($scope.teamId,title, Date.parse($scope.newStart), Date.parse($scope.newEnd));
+		}
+	})
 .controller('InvitesCtrl', function ($scope, User, Teams, Mail, $state, $ionicHistory, $stateParams) {
         $scope.teamId = $stateParams.teamId;
         //console.log( $scope.teamId);

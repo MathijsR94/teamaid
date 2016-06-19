@@ -148,18 +148,14 @@
 			</label>
 			<label class="item item-input">
 				<span class="input-label">Start:</span>
-				<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
-				<button class="button button-block button-stable"> {{ newStart | date:'dd - MMMM - yyyy' }} </button>
-				</ionic-datepicker>
+				<button class="button button-block button-stable" ng-click="openDatePicker('start')"> {{ newStart | date:'dd - MMMM - yyyy' }} </button>
 			</label>
 			<label class="item item-input">
 				<span class="input-label">End:</span>
-				<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
-				<button class="button button-block button-stable"> {{ newEnd | date:'dd - MMMM - yyyy' }} </button>
-				</ionic-datepicker>
+				<button class="button button-block button-stable" ng-click="openDatePicker('end')"> {{ newEnd | date:'dd - MMMM - yyyy' }} </button>
 			</label>
 			<div class="buttons">
-				<button class="button button-bq" ng-click="addSeason()">Add Season!</button>
+				<button class="button button-bq" ng-click="addSeason(newTitle)">Add Season!</button>
 			</div>		
 		</ion-item>
 		</div>

@@ -957,17 +957,11 @@ angular.module('starter.services', [])
                 return deferred.promise;
             },
             addSeason: function (teamId,seasonTitle,start,end) {
-                seasons = allSeasons[teamId];
-				seasons.$add({
-                    title: seasonTitle,
+                seasonsRef.child(teamId).push({
+				    title: seasonTitle,
 					start: start,
 					end : end
                 });
-                var deferred = $q.defer();
-                seasons.$loaded(function () {
-                    deferred.resolve(seasons[seasons.length - 1]);
-                });
-                return deferred.promise;
             }
         }
     })
