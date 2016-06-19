@@ -6,7 +6,9 @@
                     <div class="list">
 						<label class="item item-input item-select">
                             <span class="input-label">Speler</span>
-                            <select class="item-select" ng-model="selectedPlayer" ng-options="key as (player.firstName +nbsp+ player.insertion +nbsp+ player.lastName) for (key,player) in players"></select>
+                            <select class="item-select" ng-model="selectedPlayer">
+								<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+							</select>
                         </label>
                         <ion-toggle ng-model="debetCredit">
 							<span class="input-label" ng-if="debetCredit === true">Credit</span>

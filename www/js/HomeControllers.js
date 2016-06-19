@@ -2,8 +2,8 @@ angular.module('starter.HomeControllers', [])
     .controller('HomeCtrl', function ($scope, User, Teams,Statistics, localStorageFactory, firebaseRef, Games) {
         var ref = firebaseRef.ref();
 		var playerStats = {};
-        var uid = User.getUID();
-        ref.child('Users').child(uid).child('Teams').once('value', function (teams) {
+        $scope.uid = User.getUID();
+        ref.child('Users').child($scope.uid).child('Teams').once('value', function (teams) {
             localStorageFactory.setTeams(teams.val());
             var teamId = localStorageFactory.getTeamId();
 
@@ -12,7 +12,7 @@ angular.module('starter.HomeControllers', [])
                     localStorageFactory.setTeamName(teamData.val());
 
                     if (typeof teamData.val().Players !== 'undefined'){
-						var players = teamData.val().Players;
+						$scope.players = teamData.val().Players;
                         localStorageFactory.setPlayers(teamData.val().Players);
 					}
                     else{
@@ -37,9 +37,9 @@ angular.module('starter.HomeControllers', [])
 					// initialize  statistics! ( PlayerStats )--------------------------------------
 
 					if (typeof inactivePlayers !== 'undefined') {
-						players = angular.extend(players, inactivePlayers);
+						$scope.players = angular.extend($scope.players, inactivePlayers);
 					}
-					for (player in players) {
+					for (player in $scope.players) {
 							playerStats[player] = {
 								gametimeList: {},
 								goalsList: {},
@@ -149,7 +149,7 @@ angular.module('starter.HomeControllers', [])
 							}
 						}
 						localStorageFactory.setStatistics(playerStats);
-						$scope.stats = playerStats[uid];
+						$scope.stats = playerStats[$scope.uid];
 
                         Games.getGamesArray(teamId).then(function(games) {
                             var games = games;
@@ -181,7 +181,7 @@ angular.module('starter.HomeControllers', [])
             })
 
             ref.child('Admins').child(teamId).once('value', function (admin) {
-                localStorageFactory.setAdmin(admin.val(), uid);
+                localStorageFactory.setAdmin(admin.val(), $scope.uid);
             });
 
         })

@@ -44,7 +44,9 @@
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('LinkExt')">
 			<select class="button button-block center" ng-model="selectedExt" ng-options="id as value for (id,value) in externalList"></select>
-			<select class="button button-block center" ng-model="selectedInt" ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<select class="button button-block center" ng-model="selectedInt">
+				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+			</select>
 			<div class="buttons">
 					<button class="button button-bq" ng-click="changeExtInt(selectedExt,selectedInt)">Update!</button>
 			</div>		
@@ -57,7 +59,9 @@
 			Standaard rugnummers
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('defaultNumbers')">
-			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"> 
+				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+			</select>
 			<div ng-if="showData == true">
 				huidige rugnummer: {{selectedNumber}}
 				<select class="button button-block center" ng-model="number" ng-options="item for item in availableNumbers"></select>
@@ -77,7 +81,9 @@
 			<div ng-if="isAdmin == true" class="buttons">
 					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="updatePlayers()">Refresh all players!</button>
 			</div>
-			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)" 
+				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+			</select>
 			<div ng-if="showData == true">
 				<label class="item item-input">
 					<span class="input-label">Voornaam:</span>
@@ -109,13 +115,51 @@
 		<ion-item class="item-accordion" ng-show="isGroupShown('Admins')">
 			<ion-list>
 				<ion-item ng-repeat="(key,admin) in admins">
-					<h2><player-name player='players[key]' nick-name='useNickNames'></player-name><</h2>
+					<h2><player-name player='players[key]' nick-name='useNickNames'></player-name></h2>
 					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivateAdmin(key)">Deactivate</ion-option-button>
 				</ion-item>
 			</ion-list>
-			<select class="button button-block center" ng-model="selectedPlayer" ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<select class="button button-block center" ng-model="selectedPlayer">
+				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+			</select>
 			<div class="buttons">
 					<button class="button button-bq" ng-click="addAdmin(selectedPlayer)">Add Admin!</button>
+			</div>		
+		</ion-item>
+		</div>
+		<div ng-if="isAdmin == true">
+		<ion-item class="item-stable" ng-click="toggleGroup('Seasons')" ng-class="{active: isGroupShown('Seasons')}">
+			  <i class="icon" ng-class="isGroupShown('Seasons') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+			&nbsp;
+			Seizoenen
+		</ion-item>
+		<ion-item class="item-accordion" ng-show="isGroupShown('Seasons')">
+			<ion-list>
+				<ion-item ng-repeat="(id,value) in seasons">
+					<h2>Season.title</h2>
+					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deleteSeason(id)">Delete</ion-option-button>
+				</ion-item>
+			</ion-list>
+			
+			Add new Season:
+			<label class="item item-input">
+				<span class="input-label">Title:</span>
+				<input type="text" ng-model="newTitle" name="title" />
+			</label>
+			<label class="item item-input">
+				<span class="input-label">Start:</span>
+				<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+				<button class="button button-block button-stable"> {{ newStart | date:'dd - MMMM - yyyy' }} </button>
+				</ionic-datepicker>
+			</label>
+			<label class="item item-input">
+				<span class="input-label">End:</span>
+				<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+				<button class="button button-block button-stable"> {{ newEnd | date:'dd - MMMM - yyyy' }} </button>
+				</ionic-datepicker>
+			</label>
+			<div class="buttons">
+				<button class="button button-bq" ng-click="addSeason()">Add Season!</button>
 			</div>		
 		</ion-item>
 		</div>

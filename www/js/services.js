@@ -939,7 +939,38 @@ angular.module('starter.services', [])
             }
         };
     })
+	.factory('Seasons', function ($firebaseArray, $firebaseObject, firebaseRef, $q) {
+        var ref = firebaseRef.ref();
+        var seasonsRef = ref.child("Seasons");
+        var allSeasons = $firebaseArray(ref.child("Seasons"));
 
+        return {
+            ref: function () {
+                return seasonsRef;
+            },
+            getSeasonTitle: function (teamId,seasonId) {
+                var deferred = $q.defer();
+                var season = $firebaseObject(seasonsRef.child(teamId).child(seasonId));
+                season.$loaded(function () {
+                    deferred.resolve(season.title);
+                });
+                return deferred.promise;
+            },
+            addSeason: function (teamId,seasonTitle,start,end) {
+                seasons = allSeasons[teamId];
+				seasons.$add({
+                    title: seasonTitle,
+					start: start,
+					end : end
+                });
+                var deferred = $q.defer();
+                seasons.$loaded(function () {
+                    deferred.resolve(seasons[seasons.length - 1]);
+                });
+                return deferred.promise;
+            }
+        }
+    })
     .factory('Utility', function () {
         return {
             deleteItem: function (array, item) {
@@ -998,6 +1029,9 @@ angular.module('starter.services', [])
             setTeams: function (teams) {
                 localStorage.setItem('teams', JSON.stringify(teams));
             },
+			setSeasons: function (seasons) {
+                localStorage.setItem('seasons', JSON.stringify(seasons));
+            },
             setPlayers: function (players) {
                 localStorage.setItem('players', JSON.stringify(players));
             },
@@ -1045,8 +1079,13 @@ angular.module('starter.services', [])
                 return JSON.parse(localStorage.getItem('selectedStat'));
             },
             getTeamId: function () {
-                var test = JSON.parse(localStorage.getItem('teams'));
-                for (var key in test)
+                var teams = JSON.parse(localStorage.getItem('teams'));
+                for (var key in teams)
+                    return key;
+            },
+			getSeasonId: function () {
+                var seasons = JSON.parse(localStorage.getItem('seasons'));
+                for (var key in seasons)
                     return key;
             },
             getPlayers: function () {
