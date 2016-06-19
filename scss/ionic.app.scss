@@ -356,7 +356,7 @@ hr {
 }
 
 .ionic_datepicker_popup .popup-buttons button {
-  background-color: $main-color-dark !important;
+  background-color: $main-color !important;
   margin-right: 0 !important;
 }
 
@@ -367,4 +367,13 @@ hr {
 
 .ionic_datepicker_popup .today {
   border: 1px solid $main-color-dark !important;
+}
+
+.ionic_timepicker_popup .heading {
+  background-color: $main-color !important;
+}
+
+.ionic_timepicker_popup .button_set {
+  background-color: $main-color !important;
+  margin-right: 0 !important;
 }
