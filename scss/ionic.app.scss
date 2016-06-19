@@ -343,3 +343,28 @@ hr {
 .bold {
   font-weight: 900;
 }
+
+.ionic_datepicker_popup .popup-buttons button:nth-of-type(3) {
+  padding: 0 ;
+}
+.ionic_datepicker_popup .popup-buttons button:nth-of-type(1) {
+  padding: 0 ;
+}
+
+.ionic_datepicker_popup .popup-body .selected_date_full {
+  background-color: $main-color !important;
+}
+
+.ionic_datepicker_popup .popup-buttons button {
+  background-color: $main-color-dark !important;
+  margin-right: 0 !important;
+}
+
+.ionic_datepicker_popup .selected_date {
+  background-color: $main-color !important;
+  color: #fff !important;
+}
+
+.ionic_datepicker_popup .today {
+  border: 1px solid $main-color-dark !important;
+}

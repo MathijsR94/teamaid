@@ -296,7 +296,7 @@ angular.module('starter.GameControllers', [])
         }
     })
 
-    .controller('newGamesCtrl', function ($scope, User, Games, Teams, localStorageFactory, $ionicHistory) {
+    .controller('newGamesCtrl', function ($scope, User, Games, Teams, localStorageFactory, $ionicHistory, ionicDatePicker, ionicTimePicker) {
 
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.teamName = localStorageFactory.getTeamName();
@@ -305,24 +305,6 @@ angular.module('starter.GameControllers', [])
         $scope.title = "Selecteer datum";
         $scope.gameTime = 52200;
         $scope.collectTime = 48600;
-
-        $scope.datePickerCallback = function (val) {
-            if (typeof(val) === 'undefined') {
-                //console.log('Date not selected');
-            } else {
-                //console.log('Selected date is : ', val);
-                $scope.gameDate = val;
-            }
-        };
-
-        $scope.timePickerCallbackGameTime = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.gameTime = val;
-            }
-        };
 
         $scope.timePickerCallbackCollectTime = function (val) {
             if (typeof (val) === 'undefined') {
@@ -346,6 +328,58 @@ angular.module('starter.GameControllers', [])
             //console.dir($ionicHistory);
             $ionicHistory.goBack();
         };
+
+
+        var ipObj1 = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.gameDate = val;
+                }
+            },
+            disabledDates: [            //Optional
+                new Date(2016, 2, 16),
+                new Date(2015, 3, 16),
+                new Date(2015, 4, 16),
+                new Date(2015, 5, 16),
+                new Date('Wednesday, August 12, 2015'),
+                new Date("08-16-2016"),
+                new Date(1439676000000)
+            ],
+            from: new Date(2012, 1, 1), //Optional
+            to: new Date(2016, 10, 30), //Optional
+            inputDate: new Date(),      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
+        };
+
+        $scope.openDatePicker = function(){
+            ionicDatePicker.openDatePicker(ipObj1);
+        };
+
+
+        var ipObj2 = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.gameTime = val;
+                }
+            },
+            inputTime: 50400,   //Optional
+            format: 24,         //Optional
+            step: 15,           //Optional
+            setLabel: 'Set2'    //Optional
+        };
+
+        $scope.openTimePicker = function() {
+            ionicTimePicker.openTimePicker(ipObj2);
+        }
+
     })
 
     .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, firebaseRef, localStorageFactory, $ionicSideMenuDelegate, $ionicScrollDelegate) {
