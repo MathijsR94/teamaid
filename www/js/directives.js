@@ -476,14 +476,19 @@ app.directive('playingField', function () {
 
 app.directive('playerName', function () {
     return {
-        restrict: 'AE',
+        restrict: 'E',
         scope: {
             player: '=',
 			nickName: '='
         },
-        template: "{{name}}",
+        template: "<span>{{name}}",
         link: function (scope, elem, attrs) {
-            scope.name = nameParser(scope.player, scope.nickName);
+            //scope.name = nameParser(scope.player, scope.nickName);
+
+            scope.$watch('player', function(newValue, oldValue) {
+                if(newValue)
+                    scope.name = nameParser(scope.player, scope.nickName);
+            })
 
 			console.log(scope.name,scope.player, scope.nickName);
             function nameParser(player, useNickName) {
@@ -504,6 +509,8 @@ app.directive('playerName', function () {
 					}
                 }
             }
+
+
         }
     };
 });
