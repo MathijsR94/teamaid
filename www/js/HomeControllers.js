@@ -6,6 +6,12 @@ angular.module('starter.HomeControllers', [])
         ref.child('Users').child($scope.uid).child('Teams').once('value', function (teams) {
             localStorageFactory.setTeams(teams.val());
             var teamId = localStorageFactory.getTeamId();
+			
+			ref.child('Seasons').child(teamId).once('value', function (seasonsData) {
+				if (typeof seasonsData.val() !== 'undefined') {
+                    localStorageFactory.setSeasons(seasonsData.val());
+				}
+			})
 
             ref.child('Teams').child(teamId).once('value', function (teamData) {
                 if (typeof teamData.val() !== 'undefined') {

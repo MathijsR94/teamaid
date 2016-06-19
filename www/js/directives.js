@@ -476,12 +476,12 @@ app.directive('playingField', function () {
 
 app.directive('playerName', function () {
     return {
-        restrict: 'E',
+        restrict: 'AE',
         scope: {
             player: '=',
 			nickName: '='
         },
-        template: "<span>{{name}}",
+        template: "<span>{{name}}</span>",
         link: function (scope, elem, attrs) {
             //scope.name = nameParser(scope.player, scope.nickName);
 
