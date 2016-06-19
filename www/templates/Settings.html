@@ -44,7 +44,9 @@
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('LinkExt')">
 			<select class="button button-block center" ng-model="selectedExt" ng-options="id as value for (id,value) in externalList"></select>
-			<select class="button button-block center" ng-model="selectedInt" ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<select class="button button-block center" ng-model="selectedInt">
+				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+			</select>
 			<div class="buttons">
 					<button class="button button-bq" ng-click="changeExtInt(selectedExt,selectedInt)">Update!</button>
 			</div>		
@@ -57,7 +59,9 @@
 			Standaard rugnummers
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('defaultNumbers')">
-			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"> 
+				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+			</select>
 			<div ng-if="showData == true">
 				huidige rugnummer: {{selectedNumber}}
 				<select class="button button-block center" ng-model="number" ng-options="item for item in availableNumbers"></select>
@@ -77,7 +81,9 @@
 			<div ng-if="isAdmin == true" class="buttons">
 					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="updatePlayers()">Refresh all players!</button>
 			</div>
-			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)"ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)" 
+				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+			</select>
 			<div ng-if="showData == true">
 				<label class="item item-input">
 					<span class="input-label">Voornaam:</span>
@@ -113,7 +119,9 @@
 					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivateAdmin(key)">Deactivate</ion-option-button>
 				</ion-item>
 			</ion-list>
-			<select class="button button-block center" ng-model="selectedPlayer" ng-options="id as (value.firstName +nbsp+ value.insertion +nbsp+ value.lastName) for (id,value) in players"></select>
+			<select class="button button-block center" ng-model="selectedPlayer">
+				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+			</select>
 			<div class="buttons">
 					<button class="button button-bq" ng-click="addAdmin(selectedPlayer)">Add Admin!</button>
 			</div>		

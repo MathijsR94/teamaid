@@ -10,8 +10,11 @@
         </label>
 		<label ng-repeat="(key,duty) in dutyPlayers" class="item item-input item-select">
 			<span class="input-label">Speler</span>
-			<select ng-model="key" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in players" ng-change="changeKey(key)"></select>
-		</label>
+		 <select ng-model="key" ng-change="changeKey(key)">
+			<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+		 </select>
+		 
+		 </label>
         <button class="button button-block" ng-click="updateDuty()">Opslaan</button>
     </ion-content>
 </ion-view>

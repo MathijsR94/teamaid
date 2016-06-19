@@ -113,11 +113,15 @@
 			<div ng-if="selectedType === 'wissel'"> <!-- this  is  the div  voor wissel-->
 				<label class="item item-input item-select">
 					<span class="input-label">Speler Uit</span>
-					<select ng-model="selectedPlayerOut" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+					<select ng-model="selectedPlayerOut">
+						<option ng-repeat="(id,value) in actualPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+					</select>
 				</label>
 				<label class="item item-input item-select">
 					<span class="input-label">Speler In</span>
-					<select ng-model="selectedPlayerIn" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in changes"></select>
+					<select ng-model="selectedPlayerIn">
+						<option ng-repeat="(id,value) in changes" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+					</select>
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
@@ -135,11 +139,15 @@
 			<div ng-if="selectedType === 'positie wissel'"> <!-- this is the div voor positie wissel-->
 				<label class="item item-input item-select">
 					<span class="input-label">Speler</span>
-					<select ng-model="selectedPlayer1" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+					<select ng-model="selectedPlayer1">
+						<option ng-repeat="(id,value) in actualPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+					</select>
 				</label>
 				<label class="item item-input item-select">
 					<span class="input-label">Speler</span>
-					<select ng-model="selectedPlayer2" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+					<select ng-model="selectedPlayer2">
+						<option ng-repeat="(id,value) in actualPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+					</select>
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
@@ -157,7 +165,9 @@
 			<div ng-if="selectedType === 'goal voor'"> <!-- this is the div voor goals voor-->
 				<label class="item item-input item-select">
 					<span class="input-label">Speler</span>
-					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in actualPlayers"></select>
+					<select ng-model="selectedPlayer">
+						<option ng-repeat="(id,value) in actualPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+					</select>
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
@@ -189,7 +199,9 @@
 			<div ng-if="selectedType === 'gele kaart'"> <!-- this is the div voor gele kaart-->
 				<label class="item item-input item-select">
 					<span class="input-label">Speler</span>
-					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+					<select ng-model="selectedPlayer">
+						<option ng-repeat="(id,value) in presentPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+					</select>
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">
@@ -207,7 +219,9 @@
 			<div ng-if="selectedType === 'rode kaart'"> <!-- this is the div voor rode kaart-->
 				<label class="item item-input item-select">
 					<span class="input-label">Speler</span>
-					<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in presentPlayers"></select>
+					<select ng-model="selectedPlayer">
+						<option ng-repeat="(id,value) in presentPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+					</select>
 				</label>
 				<label class="item item-input">
 				<ionic-timepicker etime="eventTime" format="24" step="1" callback="timePickerCallback">

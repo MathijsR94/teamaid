@@ -14,7 +14,9 @@
 					</label>	
 					<label class="item item-input item-select">
 						<span class="input-label">Speler</span>
-						<select ng-model="selectedPlayer" ng-options="id as (players[id].firstName +nbsp+ players[id].insertion +nbsp+ players[id].lastName) for (id,value) in players"></select>
+						<select ng-model="selectedPlayer">
+							<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+						</select>
 					</label>
                     </div>				
                     <div>

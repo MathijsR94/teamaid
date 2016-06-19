@@ -739,7 +739,6 @@ angular.module('starter.GameControllers', [])
         $scope.statId = $stateParams.statId;
         $scope.gameId = $stateParams.gameId;
         $scope.teamId = localStorageFactory.getTeamId();
-        $scope.nbsp = " ";
 		$scope.useNickNames = false;
 		
         var presentRef = firebaseRef.ref().child("Games").child($scope.teamId).child($scope.gameId).child("Present");
