@@ -1,14 +1,13 @@
 <ion-view view-title="Wedstrijden" has-subheader>
     <ion-header-bar class="bar-stable bar-subheader">
         <div class="buttons">
-            <button ng-if="isAdmin" class="button button-icon icon ion-ios-minus-outline"
-                    ng-click="showDelete()"></button>
+            <button ng-if="isAdmin" class="button button-icon icon"
+                    ng-click="showDelete()" ng-class="ShowDelete ? 'ion-minus-circled' : 'ion-ios-minus-outline'"></button>
         </div>
         <h1 class="title"></h1>
 
         <div class="buttons">
-            <button class="button button-bq button-outline" ng-if="isAdmin" ng-click="addGame()"><i
-                    class="icon ion-plus"></i> Add Game
+            <button class="button button-bq button-outline" ng-if="isAdmin" ng-click="addGame()">Add Game
             </button>
         </div>
     </ion-header-bar>
@@ -62,7 +61,7 @@
         <!--</div>-->
 
         <ion-item class="item-light" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
-            <b>Geschiedenis</b>  <i class="icon float-right" ng-class="isGroupShown('past') ? 'ion-chevron-up' : 'ion-chevron-down'"></i>
+            <b>Geschiedenis</b>  <i class="float-right" ng-class="isGroupShown('past') ? 'dripicons-chevron-up' : 'dripicons-chevron-down'"></i>
         </ion-item>
         <!--</ion-item>-->
         <ion-list class="card item-text-wrap no-margin" show-delete="ShowDelete" can-swipe="isAdmin">

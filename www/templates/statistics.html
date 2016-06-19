@@ -1,31 +1,31 @@
 <ion-view view-title="Statistieken" has-subheader>
   <ion-header-bar class="bar-stable bar-subheader">
     <div class="row">
-      <div class="col-25 float-left center" ng-click="order('lastName')">
-          Naam <span ng-show="orderByField=='lastName'"><span ng-show="selected['lastName']"> &#8593;</span><span ng-hide="selected['lastName']"> &#8595;</span></span>
+      <div class="col-25 float-left center no-padding" ng-click="order('lastName')">
+          Naam <span ng-if="orderByField=='lastName'"><span ng-show="selected['lastName']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['lastName']" class="dripicons-arrow-thin-down"></span></span>
       </div>
       <div class="col-20 float-left center" ng-click="order('totGoals')">
-          Goals <span ng-show="orderByField=='totGoals'"><span ng-show="selected['totGoals']"> &#8593;</span><span ng-hide="selected['totGoals']"> &#8595;</span></span>
+          Goals <span ng-if="orderByField=='totGoals'"><span ng-show="selected['totGoals']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totGoals']" class="dripicons-arrow-thin-down"></span></span>
       </div>
       <div class="col-10 float-left center" ng-click="order('totGameTime')">
-          Min <span ng-show="orderByField=='totGameTime'"><span ng-show="selected['totGameTime']"> &#8593;</span><span ng-hide="selected['totGameTime']"> &#8595;</span></span>
+          Min <span ng-if="orderByField=='totGameTime'"><span ng-show="selected['totGameTime']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totGameTime']" class="dripicons-arrow-thin-down"></span></span>
       </div>
       <div class="col-10 float-left center" ng-click="order('totYellow')">
-          Geel <span ng-show="orderByField=='totYellow'"><span ng-show="selected['totYellow']"> &#8593;</span><span ng-hide="selected['totYellow']"> &#8595;</span></span>
+          Geel <span ng-if="orderByField=='totYellow'"><span ng-show="selected['totYellow']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totYellow']" class="dripicons-arrow-thin-down"></span></span>
       </div>
       <div class=" col-10 float-left center" ng-click="order('totRed')">
-          Rood <span ng-show="orderByField=='totRed'"><span ng-show="selected['totRed']"> &#8593;</span><span ng-hide="selected['totRed']"> &#8595;</span></span>
+          Rood <span ng-if="orderByField=='totRed'"><span ng-show="selected['totRed']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totRed']" class="dripicons-arrow-thin-down"></span></span>
       </div>
     </div>
   </ion-header-bar>
   <ion-content class="content-margin">
 
-      <div class="row item" ng-repeat="player in sortedPlayers track by $index">
-            <div  ng-click="ShowPlayerDetails(player)" class="col col-25 whitespace float-left center">{{player.firstName[0]}}. {{player.insertion}} {{player.lastName}} </div>
-            <div class="col col-20 float-left center">{{player.totGoals}}</div>
-            <div class="col col-10 float-left center">{{player.totGameTime}}</div>
-            <div class="col col-10 float-left center">{{player.totYellow}}</div>
-            <div class="col col-10 float-left center">{{player.totRed}}</div>
+      <div class="row item" ng-repeat="player in sortedPlayers track by $index" ng-click="ShowPlayerDetails(player)" >
+            <div ng-class="orderByField=='lastName' ? 'balanced' : ''" class="col col-25 whitespace float-left">{{player.firstName[0]}}. {{player.insertion}} {{player.lastName}} </div>
+            <div ng-class="orderByField=='totGoals' ? 'balanced' : ''" class="col col-20 float-left center">{{player.totGoals}}</div>
+            <div ng-class="orderByField=='totGameTime' ? 'balanced' : ''" class="col col-10 float-left center">{{player.totGameTime}}</div>
+            <div ng-class="orderByField=='totYellow' ? 'balanced' : ''" class="col col-10 float-left center">{{player.totYellow}}</div>
+            <div ng-class="orderByField=='totRed' ? 'balanced' : ''" class="col col-10 float-left center">{{player.totRed}}</div>
       </div>
   </ion-content>
 </ion-view>
