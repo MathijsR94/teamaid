@@ -1,6 +1,7 @@
 angular.module('starter.DutyControllers', [])
     .controller('DutiesCtrl', function ($scope, Teams, Games, Practises, Events, Settings, User, Duties, $state, firebaseRef, localStorageFactory) {
         $scope.ShowDelete = false;
+		$scope.useNickNames = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.settings = localStorageFactory.getSettings();
@@ -14,9 +15,44 @@ angular.module('starter.DutyControllers', [])
 
         $scope.players = localStorageFactory.getPlayers();
 
+		/*
+		// tijdelijk
+		var dutyRef = firebaseRef.ref().child("Duties");
+        dutyRef.once('value', function (dutySnap) {
+			$scope.all_duty = dutySnap.val();
+			
+			for (teamId in $scope.all_duty) { // team layer
+			console.log(teamId, "TEAM");
+			for (dutyId in $scope.all_duty[teamId]) { // duty layer
+			console.log(dutyId, "DUTY");
+			
+			var newStart = Date.parse($scope.all_duty[teamId][dutyId].start);
+			
+			var newEnd = Date.parse($scope.all_duty[teamId][dutyId].end);
+			
+			
+			if(isNaN(newStart) === false){
+				console.log($scope.all_duty[teamId][dutyId].start,newStart);
+				dutyRef.child(teamId).child(dutyId).update({start:newStart});
+			}
+			if(isNaN(newEnd) === false){
+				console.log($scope.all_duty[teamId][dutyId].end, newEnd);
+				dutyRef.child(teamId).child(dutyId).update({end:newEnd});
+			}
+			
+			}
+			}
+		});
+		
+		////----------------------------- tijdelijk duty crawler ---------------
+		*/
+			
+			
+			
+			
         $scope.limit = 3;
         $scope.loadMore = function () {
-            $scope.limit = $scope.games.length;
+            $scope.limit = $scope.duties.length;
         }
         $scope.loadLess = function () {
             $scope.limit = 3;
@@ -52,14 +88,16 @@ angular.module('starter.DutyControllers', [])
         };
 
         $scope.updateDuties = function () {
-
+			var dutyContext = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[],10:[]}; // context matrix
+			var highestCountContext = 9; // above this value you reach the maximum level and  you are no longer feasible for duty
             var dutyPlayers = new Array();
 
             for (var key in $scope.players) {
                 dutyPlayers.push(key);
             }
             var loopPlayers = dutyPlayers.slice();
-
+			dutyContext[0] = dutyPlayers.slice(); // new
+			
             // create al required occurences ( we take a year by default)
             $scope.dutyOccurrences = new Array();
             var firstDate = new Date($scope.currentDate.getFullYear(), $scope.currentDate.getMonth(), $scope.currentDate.getDate());
@@ -80,7 +118,7 @@ angular.module('starter.DutyControllers', [])
             //backtrack for  no of  players times
             //console.log($scope.duties);
             //console.log($scope.duties.$getRecord(201579));
-            for (var i = 0; i < dutyPlayers.length; i++) {
+            for (var i = 0; i < $scope.duties.length; i++) {
                 //actually make the backtrack go back
 
                 backTrackDate.setDate(backTrackDate.getDate() - 7);
@@ -88,25 +126,31 @@ angular.module('starter.DutyControllers', [])
                 if (typeof $scope.duties.$getRecord([backTrackKey]) === "undefined" || $scope.duties.$getRecord([backTrackKey]) === null) {
                     // no Duty here or this date does not exist
                     console.log("no duty exists");
-                } else {
+                }else {
                     // there is a duty record here, lets see who is listed
-                    //console.log("find history player", backTrackKey);
-                    //console.log($scope.duties.$getRecord(backTrackKey));
                     var foundDuties = Object.keys($scope.duties.$getRecord(backTrackKey).Duty);
-                    //remove from loopPlayers
-                    foundDuties.forEach(function (key) {
+                    //update dutyContext
+					
+					//---- new context matrix
+					foundDuties.forEach(function (key) {
                         //console.log(key);
-                        var index = loopPlayers.indexOf(key);
-                        if (index != -1)
-                            loopPlayers.splice(loopPlayers.indexOf(key), 1);
+						for(var contextLevel = highestCountContext;contextLevel >= 0;contextLevel--){
+							var index = dutyContext[contextLevel].indexOf(key);
+							if (index != -1){
+								dutyContext[contextLevel+1].push(dutyContext[contextLevel][index]);
+								dutyContext[contextLevel].splice(index, 1);
+								break;
+							}
+						}
+                        
                     });
                 }
             }
-
+			//console.log(dutyContext);
             //fill future Occurences
             $scope.dutyOccurrences.forEach(function (occurence) {
                 var occurenceKey = occurence.start.getFullYear() + "" + occurence.start.getMonth() + "" + occurence.start.getDate();
-
+				
                 //check if there are any events planned in this occurence
                 var occurenceEvents = {};
                 var retVal = {};
@@ -130,13 +174,19 @@ angular.module('starter.DutyControllers', [])
                 //check if there are any events in this  returned array
                 if (Object.keys(occurenceEvents).length > 0) {
 
-                    var duty = {}
-                    duty[loopPlayers[0]] = true;
-                    loopPlayers.splice(0, 1);
-                    ;
-                    if (loopPlayers.length <= 1) {
-                        loopPlayers = dutyPlayers.slice(); // reset to the original full array
-                    }
+                    var duty = {};
+					for(var contextLevel = 0;contextLevel <= highestCountContext;contextLevel++){ //assign player from context level 0 first the  1,2,3,4,5 etc.
+						if( dutyContext[contextLevel].length >= 1 ){ // context level is not empty
+							// take out one player and assign it
+							duty[dutyContext[contextLevel][0]] = true;
+							// move player one contextLevel up!
+							console.log("move "+ dutyContext[contextLevel][0] +" from "+ contextLevel + " to " + (contextLevel+1) );
+							dutyContext[contextLevel+1].push(dutyContext[contextLevel][0]);
+							dutyContext[contextLevel].splice(0,1);
+							break; // stop the loop from adding more people
+						}
+					}
+
                     if ($scope.duties.$getRecord(occurenceKey) === null) {
                         // this Duty item does not yet exist lets create it
                         Duties.addDuty($scope.teamId, occurenceKey, occurence.start, occurence.end, duty);
@@ -216,6 +266,7 @@ angular.module('starter.DutyControllers', [])
 
     .controller('Duties_EditCtrl', function ($scope, Duties, Settings, $ionicHistory, localStorageFactory, $stateParams) {
         $scope.dutyId = $stateParams.dutyId;
+		$scope.useNickNames = false;
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.players = localStorageFactory.getPlayers();
         $scope.settings = localStorageFactory.getSettings();
@@ -273,6 +324,7 @@ angular.module('starter.DutyControllers', [])
 
     .controller('newDutiesCtrl', function ($scope, User, Duties, localStorageFactory, $ionicHistory) {
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.useNickNames = false;
         $scope.players = localStorageFactory.getPlayers();
         $scope.settings = localStorageFactory.getSettings();
         $scope.duties = Duties.getDutiesArray($scope.teamId);

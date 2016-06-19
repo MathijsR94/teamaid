@@ -5,6 +5,7 @@ angular.module('starter.PlayerControllers', [])
     $scope.isAdmin = localStorageFactory.getAdmin();
     $scope.teamId = localStorageFactory.getTeamId();
     $scope.players = localStorageFactory.getPlayers();
+	$scope.inactivePlayers = localStorageFactory.getInactivePlayers();
 	$scope.playerStats = localStorageFactory.getStatistics();
 	
 	for (var player in $scope.players) {
@@ -83,12 +84,13 @@ angular.module('starter.PlayerControllers', [])
 
     })
 	
-    .controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins) {
+.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins) {
 
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.settings = localStorageFactory.getSettings();
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.players = localStorageFactory.getPlayers();
+		$scope.inactivePlayers = localStorageFactory.getInactivePlayers();
 		$scope.availableNumbers = {};
         $scope.externalList = {};
         $scope.nbsp = " ";
@@ -206,7 +208,11 @@ angular.module('starter.PlayerControllers', [])
 			for( player in $scope.players ){
 				
 				// update firebase
-				Teams.updatePlayer($scope.teamId,player,$scope.players[player].firstName,$scope.players[player].insertion,$scope.players[player].lastName,$scope.players[player].defaultNumber,$scope.players[player].nickName);
+				Teams.updatePlayer($scope.teamId,player,$scope.players[player].firstName,$scope.players[player].insertion,$scope.players[player].lastName,$scope.players[player].defaultNumber,$scope.players[player].nickName,"Players");
+			}
+			for( player in $scope.inactivePlayers ){
+				// update firebase
+				Teams.updatePlayer($scope.teamId,player,$scope.inactivePlayers[player].firstName,$scope.inactivePlayers[player].insertion,$scope.inactivePlayers[player].lastName,$scope.inactivePlayers[player].defaultNumber,$scope.inactivePlayers[player].nickName,"InActive");
 				
 			}
 			

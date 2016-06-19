@@ -26,6 +26,12 @@
             <div ng-class="orderByField=='totGameTime' ? 'balanced' : ''" class="col col-10 float-left center">{{player.totGameTime}}</div>
             <div ng-class="orderByField=='totYellow' ? 'balanced' : ''" class="col col-10 float-left center">{{player.totYellow}}</div>
             <div ng-class="orderByField=='totRed' ? 'balanced' : ''" class="col col-10 float-left center">{{player.totRed}}</div>
+      <div class="row item" ng-repeat="player in sortedPlayers track by $index">
+            <div  ng-click="ShowPlayerDetails(player)" class="col col-25 whitespace float-left center"><player-name player='player' nick-name='useNickNames'></player-name></div>
+            <div class="col col-20 float-left center">{{player.totGoals}}</div>
+            <div class="col col-10 float-left center">{{player.totGameTime}}</div>
+            <div class="col col-10 float-left center">{{player.totYellow}}</div>
+            <div class="col col-10 float-left center">{{player.totRed}}</div>
       </div>
   </ion-content>
 </ion-view>

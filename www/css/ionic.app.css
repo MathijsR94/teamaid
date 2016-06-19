@@ -9,7 +9,9 @@ $light:                           #fff !default;
 $stable:                          #f8f8f8 !default;
 $positive:                        #387ef5 !default;
 $calm:                            #11c1f3 !default;
+
 $balanced:                        #33cd5f !default;
+
 $energized:                       #ffc900 !default;
 $assertive:                       #ef473a !default;
 $royal:                           #886aea !default;
@@ -8520,7 +8522,8 @@ img {
 .bar-subheader {
   top: 65px;
   height: 44px !important;
-  background: #455A64 !important; }
+  background: #455A64 !important;
+  color: #fff !important; }
   .bar-subheader .button {
     color: #fff; }
   .bar-subheader .button:hover {
@@ -8549,3 +8552,28 @@ hr {
 
 .item-content, .item {
   border: none !important; }
+
+.item-light i {
+  color: #607D8B; }
+
+.item-light {
+  border-bottom: 1px solid #ddd !important; }
+
+.item-light.active {
+  border-bottom: 1px solid #CFD8DC !important;
+  background: #CFD8DC !important; }
+
+.tab {
+  padding-left: 2em;
+  padding-right: 2em; }
+
+.balanced input {
+  color: #33cd5f;
+  font-weight: 700; }
+
+.assertive input {
+  color: #ef473a;
+  font-weight: 700; }
+
+.item.activated {
+  background: #f9f9f9; }

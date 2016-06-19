@@ -1,6 +1,7 @@
 angular.module('starter.GameControllers', [])
     .controller('GamesCtrl', function ($scope, Games, User, $filter, $state, Attendance, Statistics, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
         $scope.ShowDelete = false;
+		$scope.useNickNames = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.games = localStorageFactory.getGames();
@@ -84,6 +85,7 @@ angular.module('starter.GameControllers', [])
 
     .controller('Games_DetailCtrl', function ($scope, $ionicScrollDelegate, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
         $scope.gameId = $stateParams.gameId;
+		$scope.useNickNames = false;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.teamId = localStorageFactory.getTeamId();
@@ -126,7 +128,7 @@ angular.module('starter.GameControllers', [])
                         if (typeof stats.externalPlayers !== 'undefined') {
                             $scope.fieldPlayers = angular.extend($scope.fieldPlayers, stats.externalPlayers);
                         }
-                        $scope.basis = stats.Basis;
+                        $scope.basis = stats.basis;
                         $scope.tactic = stats.tactic;
                     }
                     $scope.homeScore = 0;
@@ -244,7 +246,7 @@ angular.module('starter.GameControllers', [])
     .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory) {
         $scope.gameId = $stateParams.gameId;
         $scope.teamName = localStorageFactory.getTeamName();
-
+		$scope.useNickNames = false;
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.getGame = Games.getGame($scope.teamId).then(function (game) {
 
@@ -359,8 +361,11 @@ angular.module('starter.GameControllers', [])
         $scope.nbsp = " "; // whitespace
         $scope.title = "Selecteer datum";
         $scope.tactic = 0;
-        $scope.positions = [];
-        $scope.actualPositions = [];
+		$scope.basisLineUp = {};
+		$scope.basisChanges = {}
+		$scope.actualPlayers = {};
+		$scope.changes = {};
+		$scope.useNickNames = false;
         $scope.ShowDelete = true;
         $scope.scrollEnabled = false;
 
@@ -496,7 +501,9 @@ angular.module('starter.GameControllers', [])
                     $scope.tactic = 0;
                     $scope.externalPlayers = 0;
                     $scope.actualPlayers = {};
-                    $scope.changes = {};
+					$scope.changes = angular.copy($scope.presentPlayers);
+                    $scope.basisChanges = angular.copy($scope.presentPlayers);
+					$scope.basisLineUp = {};
                 }
                 else {
                     $scope.tactic = stats.tactic;
@@ -514,97 +521,30 @@ angular.module('starter.GameControllers', [])
                         }
                         ;
                         $scope.players = angular.extend($scope.players, stats.externalPlayers);
-                        //console.log($scope.players);
                     }
                     else {
                         $scope.externalPlayers = 0;
                     }
-
-                    // parse the current filled in stats for basic team and statType "wissels"
-                    //read this back to the input fields!
 					
-                    if (typeof stats.Basis !== 'undefined') {
-						$scope.basis = angular.copy(stats.Basis);
-						
-                        for (key in stats.Basis) {
-                            $scope.positions[stats.Basis[key]] = key;
-                        }
-                    }
-
-                    $scope.actualPlayers = angular.copy(stats.Basis);
-                    $scope.changes = angular.copy($scope.presentPlayers);
-
-                    if (typeof stats.Basis !== 'undefined') {
-                        for (key in stats.Basis) {
-                            //console.log(key);
-                            delete $scope.changes[key];
-                        }
-                    }
-
-					$scope.basisChanges = angular.copy($scope.changes);
-
-                    // main event interation loop
-                    if (typeof stats.GameLog !== 'undefined') {
-                        // loop trough each event in the gameLog
-                        for (key in stats.GameLog) {
-                            //console.log(stats.GameLog[key].statsType);
-                            switch (stats.GameLog[key].statsType) {
-
-                                case "Changes":
-                                    switch (stats.GameLog[key].type) { //change type, in/out or  position
-                                        case "In/Out":
-                                            $scope.actualPlayers[stats.GameLog[key].playerIn] = $scope.actualPlayers[stats.GameLog[key].playerOut]; // transfer position
-                                            delete $scope.actualPlayers[stats.GameLog[key].playerOut];
-                                            // he is already changed so he cannot be changed in again
-                                            delete $scope.changes[stats.GameLog[key].playerIn];
-                                            break;
-
-                                        case "Position":
-                                            var pos1 = $scope.actualPlayers[stats.GameLog[key].player1]; // position of player1
-                                            var pos2 = $scope.actualPlayers[stats.GameLog[key].player2]; // position of player2
-                                            $scope.actualPlayers[stats.GameLog[key].player1] = pos2; // transfer position
-                                            $scope.actualPlayers[stats.GameLog[key].player2] = pos1; // transfer position
-                                            break;
-                                    }
-                                    break;
-
-                                case "Cards":
-                                    if (stats.GameLog[key].type === 'red') {
-                                        delete $scope.actualPlayers[stats.GameLog[key].player]; // remove from actual players
-                                    }
-                                    if (stats.GameLog[key].type === 'yellow2') {
-                                        delete $scope.actualPlayers[stats.GameLog[key].player]; // remove from actual players
-                                    }
-                                    break;
-
-                                case "OurGoals":
-                                    if ($scope.game.home === $scope.teamName) {
-                                        $scope.homeScore++;
-                                    }
-                                    else {
-                                        $scope.awayScore++;
-                                    }
-                                    break;
-
-                                case "TheirGoals":
-                                    if ($scope.game.home !== $scope.teamName) {
-                                        $scope.homeScore++;
-                                    }
-                                    else {
-                                        $scope.awayScore++;
-                                    }
-                                    break;
-                                case "GameEvents":
-                                    break; // nothing
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-
-                    // make actual positions
-                    $scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
-
+					$scope.basisChanges = angular.copy($scope.presentPlayers);
+					
+					if (typeof stats.basis !== 'undefined') {
+						 $scope.basisLineUp= angular.copy(stats.basis);
+                    } 
+					console.log($scope.basisLineUp);
+					for( player in $scope.basisLineUp){
+						delete $scope.basisChanges[player];
+                    }		
+					$scope.liveGameLog = angular.copy(stats.GameLog);
+					$scope.actualPlayers = angular.copy($scope.basisLineUp);
+					$scope.changes = angular.copy($scope.basisChanges);					
+					var actual = Statistics.makeActual($scope.actualPlayers,$scope.changes,$scope.liveGameLog,$scope.game.home === $scope.teamName);
+					//console.log(actual);
+					$scope.actualPlayers = actual.actualPlayers;
+					$scope.changes = actual.changes;
+					$scope.homeScore = actual.homeScore;
+					$scope.awayScore = actual.awayScore;
+					
                 }
             })
 
@@ -644,10 +584,6 @@ angular.module('starter.GameControllers', [])
                         lastName: ""
                     };
                 }
-                //add external player to the Present List
-                //$scope.presentPlayers["external"+i]=true;
-                //$scope.players["external"+i] = {firstName : "external"+i, insertion: "", lastName: ""};
-                //console.log($scope.players);
             }
             $scope.externalPlayers = externalPlayers;
         };
@@ -657,25 +593,31 @@ angular.module('starter.GameControllers', [])
             Statistics.storeExternals($scope.teamId, $scope.gameId, $scope.externalPlayerNames);
         };
         $scope.storeBasis = function () {
-            var basis = {};
-            //for (key in $scope.positions) {
-            //    basis[$scope.positions[key]] = key;
-            //}
-            Statistics.updateBasis($scope.teamId, $scope.gameId, $scope.basis, $scope.basisChanges, $scope.tactic);
-            //$scope.actualPositions = Statistics.updateActualTeam(basis); no need since we reload th whole page after this, else external players and basis  update  becomes alot more complicated, since all arrays  need to be rebuild
-            //$state.go($state.current, {}, {reload: true});
-        };
+			// check for conflict!
+			console.log($scope.basisLineUp,$scope.basisChanges,$scope.GameLog);
+
+			var testActual = Statistics.makeActual(angular.copy($scope.basisLineUp),angular.copy($scope.basisChanges),$scope.liveGameLog,$scope.game.home === $scope.teamName);
+			console.log(testActual);
+			if(testActual.error === true){
+				if (confirm("deze wijziging is inconsistent met het betaande GameLog klik op OK om deze te wissen")) {
+					// remove GameLog
+					alert("database change disabled");
+					//Statistics.clearGameLog($scope.teamId, $scope.gameId);
+				} else {
+					// Do nothing!
+				}
+			}
+			else{
+				alert("database change disabled");
+				//Statistics.updateBasis($scope.teamId, $scope.gameId, $scope.basisLineUp);
+			}
+		};
         $scope.saveChange = function (playerIn, playerOut, time, comment) {
             var pos = $scope.actualPlayers[playerOut]; // position of player going out
-            //$scope.actualPlayers[playerIn] = $scope.actualPlayers[playerOut]; // transfer position
-            //delete $scope.actualPlayers[playerOut]; // remove from actual players
-            //delete $scope.changes[playerIn]; // remove from available changeable players
-
             if (typeof comment === 'undefined') { // protect against undefined
                 comment = " ";
             }
             Statistics.newChange($scope.teamId, $scope.gameId, playerIn, playerOut, pos, time, comment);
-            //$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
             $scope.selectedType = "";
             $scope.toggleGroup(null);
         };
@@ -683,7 +625,6 @@ angular.module('starter.GameControllers', [])
             if (typeof comment === 'undefined') { // protect against undefined
                 comment = " ";
             }
-
             comment = $scope.players[player1].nickName + " wisselt van positie met " + $scope.players[player2].nickName;
 
             console.log(player1, player2, time, comment);
@@ -754,30 +695,25 @@ angular.module('starter.GameControllers', [])
 
         }
 
-
-        $scope.$watch('basis', function(newValue, oldValue) {
-            console.log(newValue, oldValue);
-        })
-
-
         $scope.eventDelegator = function(type, basis, eventData) {
+			console.log($scope.eventTime);
             if(basis) {
                 switch (type) {
                     case "posChange":
-                        console.log($scope.basisChanges);
                         if(eventData.player1 != -1)
-                            $scope.basis[eventData.player1] = eventData.pos1;
+                            $scope.basisLineUp[eventData.player1] = eventData.pos1;
                         if(eventData.player2 != -1)
-                            $scope.basis[eventData.player2] = eventData.pos2;
+                            $scope.basisLineUp[eventData.player2] = eventData.pos2;
                         break;
+						
                     case "change":
                         if(eventData.player1 != -1) {// must be substitute!
-                            $scope.basis[eventData.player1] = eventData.pos1;
+                            $scope.basisLineUp[eventData.player1] = eventData.pos1;
                             delete $scope.basisChanges[eventData.player1];
                         }
                         if(eventData.player2 != -1) {
                             $scope.basisChanges[eventData.player2] = true;
-                            delete $scope.basis[eventData.player2];
+                            delete $scope.basisLineUp[eventData.player2];
                         }
                         break;
                     default:
@@ -804,7 +740,8 @@ angular.module('starter.GameControllers', [])
         $scope.gameId = $stateParams.gameId;
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.nbsp = " ";
-
+		$scope.useNickNames = false;
+		
         var presentRef = firebaseRef.ref().child("Games").child($scope.teamId).child($scope.gameId).child("Present");
         presentRef.once('value', function (PresentSnap) {
             if (typeof PresentSnap.val() !== 'undefined') {

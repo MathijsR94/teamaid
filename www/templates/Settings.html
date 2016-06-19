@@ -109,7 +109,7 @@
 		<ion-item class="item-accordion" ng-show="isGroupShown('Admins')">
 			<ion-list>
 				<ion-item ng-repeat="(key,admin) in admins">
-					<h2>{{players[key].firstName}} {{players[key].insertion}} {{players[key].lastName}}</h2>
+					<h2><player-name player='players[key]' nick-name='useNickNames'></player-name><</h2>
 					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivateAdmin(key)">Deactivate</ion-option-button>
 				</ion-item>
 			</ion-list>

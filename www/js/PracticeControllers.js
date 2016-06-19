@@ -1,6 +1,7 @@
 angular.module('starter.PracticeControllers', [])
     .controller('PractisesCtrl', function ($scope, Practises, User, $state, Attendance, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
         $scope.ShowDelete = false;
+		$scope.useNickNames = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.practises = localStorageFactory.getPractises();
@@ -79,7 +80,7 @@ angular.module('starter.PracticeControllers', [])
         $scope.players = localStorageFactory.getPlayers();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.isAdmin = localStorageFactory.getAdmin();
-
+		$scope.useNickNames = false;
         $scope.settings = Settings.getSettings($scope.teamId);
 
         Practises.getPractisesRef($scope.teamId).child($scope.practiseId).on('value', function (practiseSnap) {
