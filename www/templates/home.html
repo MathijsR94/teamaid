@@ -1,4 +1,11 @@
-<ion-view view-title="Home">
+<ion-view view-title="Home" has-subheader>
+	<ion-header-bar class="bar-stable bar-subheader">
+        <h1 class="title"></h1>
+        <div class="buttons">
+			<select class="button button-bq button-outline" ng-model="teamId" ng-change="setTeamId(teamId)" ng-options="id as teams[id].teamName for (id,value) in userTeams"></select>
+			<select class="button button-bq button-outline" ng-model="seasonId" ng-change="setSeasonId(seasonId)" ng-options="id as value.title for (id,value) in seasons"></select>
+        </div>
+    </ion-header-bar>
     <ion-content>
         <div class="row content-margin">
             <div class="col">

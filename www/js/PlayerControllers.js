@@ -39,6 +39,7 @@ angular.module('starter.PlayerControllers', [])
         $scope.playerId = $stateParams.playerId;
         var sourceStats = localStorageFactory.getPlayerStatistics();
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
 
@@ -47,7 +48,7 @@ angular.module('starter.PlayerControllers', [])
             $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
         }
         //console.log(sourceStats);
-        Games.getGamesRef($scope.teamId).once("value", function (gamesSnap) {
+        Games.getGamesRef($scope.teamId,$scope.seasonId).once("value", function (gamesSnap) {
             $scope.games = gamesSnap.val();
 
             if (typeof sourceStats.gametimeList !== 'undefined') {
@@ -97,38 +98,12 @@ angular.module('starter.PlayerControllers', [])
         $scope.nbsp = " ";
 		$scope.showData = false;
 		$scope.selectedPlayer;
-		$scope.newStart = new Date();
+		$scope.newStart = Date.parse(new Date());
 		$scope.newEnd = new Date();
-		$scope.newEnd.setFullYear($scope.newStart.getFullYear() + 1);
-		
-		console.log($scope.newEnd  );
+		$scope.newEnd.setFullYear(new Date().getFullYear() + 1);
+		$scope.newEnd = Date.parse($scope.newEnd);
+
 		var startObj = {
-            callback: function (val) {  //Mandatory
-                if (typeof(val) === 'undefined') {
-                    //console.log('Date not selected');
-                } else {
-                    //console.log('Selected date is : ', val);
-                    $scope.newEnd = val;
-                }
-            },
-            // disabledDates: [            //Optional
-                // new Date(2016, 2, 16),
-                // new Date(2015, 3, 16),
-                // new Date(2015, 4, 16),
-                // new Date(2015, 5, 16),
-                // new Date('Wednesday, August 12, 2015'),
-                // new Date("08-16-2016"),
-                // new Date(1439676000000)
-            // ],
-            //from: new Date(2012, 1, 1), //Optional
-            //to: new Date(2016, 10, 30), //Optional
-            inputDate: $scope.newEnd,      //Optional
-            mondayFirst: true,          //Optional
-            closeOnSelect: false,       //Optional
-            templateType: 'popup'       //Optional
-        };
-		
-		var endObj = {
             callback: function (val) {  //Mandatory
                 if (typeof(val) === 'undefined') {
                     //console.log('Date not selected');
@@ -148,7 +123,33 @@ angular.module('starter.PlayerControllers', [])
             // ],
             //from: new Date(2012, 1, 1), //Optional
             //to: new Date(2016, 10, 30), //Optional
-            inputDate: $scope.newStart,      //Optional
+            inputDate: new Date($scope.newStart),      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
+        };
+		
+		var endObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.newEnd = val;
+                }
+            },
+            // disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            // ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: new Date($scope.newEnd),      //Optional
             mondayFirst: true,          //Optional
             closeOnSelect: false,       //Optional
             templateType: 'popup'       //Optional
@@ -169,7 +170,7 @@ angular.module('starter.PlayerControllers', [])
 		}
 		// now remove already taken numbers based on the  player array
 		for(key in $scope.players){
-			console.log($scope.players[key]);	
+			//console.log($scope.players[key]);	
 			if (typeof $scope.players[key].defaultNumber !== 'undefined') {
 				delete $scope.availableNumbers[$scope.players[key].defaultNumber];
 			}
@@ -181,7 +182,7 @@ angular.module('starter.PlayerControllers', [])
                     $scope.settings = settingsSnap.val();
                     localStorageFactory.setSettings(settingsSnap.val());
                 });
-                firebaseRef.ref().child("Statistics").child($scope.teamId).once('value', function (statsSnap) {
+                firebaseRef.ref().child("Statistics").child($scope.teamId).child($scope.seasonId).once('value', function (statsSnap) {
                     $scope.statistics = statsSnap.val();
                     for (gameId in $scope.statistics) {
                         if (typeof $scope.statistics[gameId].externalPlayers !== 'undefined') {
@@ -191,13 +192,17 @@ angular.module('starter.PlayerControllers', [])
                             }
                         }
                     }
-                    console.log($scope.externalList);
+                    //console.log($scope.externalList);
                 });
             }
         });
 		
 		Admins.ref().child($scope.teamId).on('value', function (adminsSnap) {
 			$scope.admins = adminsSnap.val();
+		});
+		
+		Seasons.ref().child($scope.teamId).on('value', function (seasonsSnap) {
+			$scope.seasons = seasonsSnap.val();
 		});
 		
 		
@@ -283,6 +288,59 @@ angular.module('starter.PlayerControllers', [])
 			
 		}
 		
+		$scope.addSeasons = function () {
+		console.log("updateDB");
+			var totalRef = firebaseRef.ref();
+			totalRef.child('Games').once('value', function (totalSnap) {
+				$scope.data = totalSnap.val();
+				for (teamId in $scope.data) { // team layer
+					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Games");
+					totalRef.child('Games').child(teamId).remove();
+					totalRef.child('Games').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+				}
+			});
+			totalRef.child('Statistics').once('value', function (totalSnap) {
+				$scope.data = totalSnap.val();
+				for (teamId in $scope.data) { // team layer
+					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Games");
+					totalRef.child('Statistics').child(teamId).remove();
+					totalRef.child('Statistics').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+				}
+			});
+			totalRef.child('Practises').once('value', function (totalSnap) {
+				$scope.data = totalSnap.val();
+				for (teamId in $scope.data) { // team layer
+					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Practises");
+					totalRef.child('Practises').child(teamId).remove();
+					totalRef.child('Practises').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+				}
+			});
+			totalRef.child('Events').once('value', function (totalSnap) {
+				$scope.data = totalSnap.val();
+				for (teamId in $scope.data) { // team layer
+					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Events");
+					totalRef.child('Events').child(teamId).remove();
+					totalRef.child('Events').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+				}
+			});			
+			totalRef.child('Duties').once('value', function (totalSnap) {
+				$scope.data = totalSnap.val();
+				for (teamId in $scope.data) { // team layer
+					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Duties");
+					totalRef.child('Duties').child(teamId).remove();
+					totalRef.child('Duties').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+				}
+			});
+			totalRef.child('Finance').once('value', function (totalSnap) {
+				$scope.data = totalSnap.val();
+				for (teamId in $scope.data) { // team layer
+					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Finance");
+					totalRef.child('Finance').child(teamId).remove();
+					totalRef.child('Finance').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+				}
+			});			
+		}
+		
         $scope.changeExtInt = function (playerExt, playerInt) {
             if (typeof playerExt === 'undefined' || typeof playerInt === 'undefined') {
                 alert("vul beide velden in");
@@ -344,8 +402,13 @@ angular.module('starter.PlayerControllers', [])
         }
 		
 		$scope.addSeason = function(title){
-			Seasons.addSeason($scope.teamId,title, Date.parse($scope.newStart), Date.parse($scope.newEnd));
+			//console.log(($scope.newStart), ($scope.newEnd));
+			Seasons.addSeason($scope.teamId,title, $scope.newStart, $scope.newEnd);
 		}
+		$scope.deleteSeason = function(id){
+			Seasons.deleteSeason($scope.teamId,id);
+		}
+		
 	})
 .controller('InvitesCtrl', function ($scope, User, Teams, Mail, $state, $ionicHistory, $stateParams) {
         $scope.teamId = $stateParams.teamId;

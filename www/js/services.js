@@ -260,30 +260,30 @@ angular.module('starter.services', [])
 
 
         return {
-            getGamesRef: function (teamId) {
-                return gamesRef.child(teamId);
+            getGamesRef: function (teamId,seasonId) {
+                return gamesRef.child(teamId).child(seasonId);
             },
-            getGames: function (teamId) {
-                return $firebaseObject(gamesRef.child(teamId));
+            getGames: function (teamId,seasonId) {
+                return $firebaseObject(gamesRef.child(teamId).child(seasonId));
             },
-            getGamesArray: function (teamId) {
+            getGamesArray: function (teamId,seasonId) {
                 var deferred = $q.defer();
-                var games = $firebaseArray(gamesRef.child(teamId));
+                var games = $firebaseArray(gamesRef.child(teamId).child(seasonId));
                 games.$loaded(function () {
                     deferred.resolve(games);
                 });
                 return deferred.promise;
             },
-            getGame: function (teamId) {
+            getGame: function (teamId,seasonId) {
                 var deferred = $q.defer();
-                var game = $firebaseObject(gamesRef.child(teamId).child(selectedGame));
+                var game = $firebaseObject(gamesRef.child(teamId).child(seasonId).child(selectedGame));
                 game.$loaded(function () {
                     deferred.resolve(game);
                 });
                 return deferred.promise;
             },
-            createGame: function (teamId, gameDate, gameTime, collectTime, home, away) {
-                var teamGamesRef = gamesRef.child(teamId);
+            createGame: function (teamId, seasonId, gameDate, gameTime, collectTime, home, away) {
+                var teamGamesRef = gamesRef.child(teamId).child(seasonId);
                 var games = $firebaseArray(teamGamesRef);
 
                 games.$add({
@@ -294,8 +294,8 @@ angular.module('starter.services', [])
                     away: away
                 });
             },
-            updateGame: function (teamId, gameId, date, time, collectTime, home, away) {
-                gamesRef.child(teamId).child(gameId).update({
+            updateGame: function (teamId, seasonId, gameId, date, time, collectTime, home, away) {
+                gamesRef.child(teamId).child(seasonId).child(gameId).update({
                     date: Date.parse(date),
                     time: time,
                     collect: collectTime,
@@ -316,25 +316,25 @@ angular.module('starter.services', [])
         var selectedPractise = localStorage.getItem("selectedPractise");
 
         return {
-            getPractisesRef: function (teamId) {
-                return practisesRef.child(teamId);
+            getPractisesRef: function (teamId, seasonId) {
+                return practisesRef.child(teamId).child(seasonId);
             },
-            getPractises: function (teamId) {
-                return $firebaseObject(practisesRef.child(teamId));
+            getPractises: function (teamId, seasonId) {
+                return $firebaseObject(practisesRef.child(teamId).child(seasonId));
             },
-            getPractisesArray: function (teamId) {
+            getPractisesArray: function (teamId, seasonId) {
                 var deferred = $q.defer();
-                var practises = $firebaseArray(practisesRef.child(teamId));
+                var practises = $firebaseArray(practisesRef.child(teamId).child(seasonId));
                 practises.$loaded(function () {
                     deferred.resolve(practises);
                 });
                 return deferred.promise;
             },
-            getPractise: function (teamId) {
+            getPractise: function (teamId, seasonId) {
                 var deferred = $q.defer();
-                var practises = $firebaseArray(practisesRef.child(teamId));
-                practises.$loaded(function () {
-                    deferred.resolve(practises.$getRecord(selectedPractise));
+                var practise = $firebaseObject(practisesRef.child(teamId).child(seasonId).child(selectedPractise)); //$firebaseArray(practisesRef.child(teamId));
+                practise.$loaded(function () {
+                    deferred.resolve(practise);
                 });
                 return deferred.promise;
             },
@@ -342,8 +342,8 @@ angular.module('starter.services', [])
                 localStorage.setItem("selectedPractise", practiseId);
                 selectedPractise = practiseId;
             },
-            createPractise: function (teamId, date, time, location, repeat) {
-                var teamPractiseRef = practisesRef.child(teamId);
+            createPractise: function (teamId, seasonId, date, time, location, repeat) {
+                var teamPractiseRef = practisesRef.child(teamId).child(seasonId);
                 var practises = $firebaseArray(teamPractiseRef);
                 for (var i = 0; i < repeat; i++) {
                     practises.$add({
@@ -353,14 +353,12 @@ angular.module('starter.services', [])
                     });
                     // increase a week
                     date.setDate(date.getDate() + (7));
-                    //console.log(date);
                 }
                 ;
             },
-            updatePractise: function (teamId, practiseId, date, time, location) {
-                //console.log(teamId);
+            updatePractise: function (teamId, seasonId, practiseId, date, time, location) {
 
-                practisesRef.child(teamId).child(practiseId).update({
+                practisesRef.child(teamId).child(seasonId).child(practiseId).update({
                     date: Date.parse(date),
                     time: time,
                     location: location
@@ -376,23 +374,23 @@ angular.module('starter.services', [])
         var selectedEvent = localStorage.getItem("selectedEvent");
 
         return {
-            getEventsRef: function (teamId) {
-                return eventsRef.child(teamId);
+            getEventsRef: function (teamId, seasonId) {
+                return eventsRef.child(teamId).child(seasonId);
             },
-            getEvents: function (teamId) {
-                return $firebaseObject(eventsRef.child(teamId));
+            getEvents: function (teamId, seasonId) {
+                return $firebaseObject(eventsRef.child(teamId).child(seasonId));
             },
-            getEventsArray: function (teamId) {
+            getEventsArray: function (teamId, seasonId) {
                 var deferred = $q.defer();
-                var events = $firebaseArray(eventsRef.child(teamId));
+                var events = $firebaseArray(eventsRef.child(teamId).child(seasonId));
                 events.$loaded(function () {
                     deferred.resolve(events);
                 });
                 return deferred.promise;
             },
-            getEvent: function (teamId) {
+            getEvent: function (teamId, seasonId) {
                 var deferred = $q.defer();
-                var events = $firebaseArray(eventsRef.child(teamId));
+                var events = $firebaseArray(eventsRef.child(teamId).child(seasonId));
                 events.$loaded(function () {
                     deferred.resolve(events.$getRecord(selectedEvent));
                 });
@@ -402,8 +400,8 @@ angular.module('starter.services', [])
                 localStorage.setItem("selectedEvent", eventId);
                 selectedEvent = eventId;
             },
-            createEvent: function (teamId, date, time, location) {
-                var teamEventRef = eventsRef.child(teamId);
+            createEvent: function (teamId, seasonId, date, time, location) {
+                var teamEventRef = eventsRef.child(teamId).child(seasonId);
                 var events = $firebaseArray(teamEventRef);
                 events.$add({
                     date: Date.parse(date),
@@ -411,10 +409,8 @@ angular.module('starter.services', [])
                     location: location
                 });
             },
-            updateEvent: function (teamId, eventId, date, time, location) {
-                //console.log(teamId);
-
-                eventsRef.child(teamId).child(eventId).update({
+            updateEvent: function (teamId, seasonId, eventId, date, time, location) {
+                eventsRef.child(teamId).child(seasonId).child(eventId).update({
                     date: Date.parse(date),
                     time: time,
                     location: location
@@ -428,18 +424,18 @@ angular.module('starter.services', [])
         var financeRef = firebaseRef.ref().child("Finance");
 
         return {
-            getCredits: function (teamId) {
+            getCredits: function (teamId, seasonId) {
                 var deferred = $q.defer();
-                var credits = $firebaseArray(financeRef.child(teamId));
+                var credits = $firebaseArray(financeRef.child(teamId).child(seasonId));
 
                 credits.$loaded(function () {
                     deferred.resolve(credits);
                 });
                 return deferred.promise;
             },
-            newCredit: function (teamId, uid, value, comment, player) {
+            newCredit: function (teamId, seasonId, uid, value, comment, player) {
                 var balance = 0;
-                var playerRef = financeRef.child(teamId).child(uid);
+                var playerRef = financeRef.child(teamId).child(seasonId).child(uid);
                 var credits = $firebaseArray(playerRef.child("credits"));
 
                 // read old balance
@@ -461,7 +457,6 @@ angular.module('starter.services', [])
                         });
                     }
                 });
-
 
                 // add credit to the list
                 var timestamp = new Date();
@@ -503,7 +498,7 @@ angular.module('starter.services', [])
                     return (uid in attendanceArray);
                 }
             },
-            addAttendance: function (type, source, uid, gameId, teamId, removalArray) {
+            addAttendance: function (type, source, uid, gameId, teamId, seasonId, removalArray) {
                 switch (type) {
                     case "present":
                         var player = {};
@@ -511,9 +506,9 @@ angular.module('starter.services', [])
                         if (this.checkAttendance(removalArray, uid)) {
                             // remove from absent, because it is still listed there
                             delete removalArray[uid];
-                            ref.child(source).child(teamId).child(gameId).child("Absent").set(removalArray);
+                            ref.child(source).child(teamId).child(seasonId).child(gameId).child("Absent").set(removalArray);
                         }
-                        ref.child(source).child(teamId).child(gameId).child("Present").update(player);
+                        ref.child(source).child(teamId).child(seasonId).child(gameId).child("Present").update(player);
                         return true;
                         break;
                     case "absent":
@@ -522,9 +517,9 @@ angular.module('starter.services', [])
                         if (this.checkAttendance(removalArray, uid)) {
                             // remove from present, because it is still listed there
                             delete removalArray[uid]
-                            ref.child(source).child(teamId).child(gameId).child("Present").set(removalArray);
+                            ref.child(source).child(teamId).child(seasonId).child(gameId).child("Present").set(removalArray);
                         }
-                        ref.child(source).child(teamId).child(gameId).child("Absent").update(player);
+                        ref.child(source).child(teamId).child(seasonId).child(gameId).child("Absent").update(player);
                         return true;
                         break;
                     default:
@@ -532,18 +527,18 @@ angular.module('starter.services', [])
                         break;
                 }
             },
-            resetAttendance: function (source, uid, gameId, teamId, present, absent) {
+            resetAttendance: function (source, uid, gameId, teamId, seasonId, present, absent) {
                 var player = {};
                 player[uid] = true;
                 if (this.checkAttendance(present, uid)) {
                     // remove from absent, because it is still listed there
                     delete present[uid];
-                    ref.child(source).child(teamId).child(gameId).child("Present").set(present);
+                    ref.child(source).child(teamId).child(seasonId).child(gameId).child("Present").set(present);
                 }
                 if (this.checkAttendance(absent, uid)) {
                     // remove from present, because it is still listed there
                     delete absent[uid]
-                    ref.child(source).child(teamId).child(gameId).child("Absent").set(absent);
+                    ref.child(source).child(teamId).child(seasonId).child(gameId).child("Absent").set(absent);
                 }
                 return;
             }
@@ -595,14 +590,17 @@ angular.module('starter.services', [])
     .factory('Statistics', function (firebaseRef, $firebaseObject, $firebaseArray, $q) {
         var statsRef = firebaseRef.ref().child("Statistics");
         return {
-            initialize: function (teamId, gameId, gameTime) {
+			getStatisticsRef: function (teamId, seasonId) {
+                return statsRef.child(teamId).child(seasonId);
+            },
+            initialize: function (teamId, seasonId, gameId, gameTime) {
                 var stats = {
                     firstHalfStart: gameTime,
                     firstHalfEnd: gameTime + (45 * 60),
                     secondHalfStart: gameTime + (60 * 60),
                     secondHalfEnd: gameTime + (105 * 60)
                 };
-                statsRef.child(teamId).child(gameId).set(stats);
+                statsRef.child(teamId).child(seasonId).child(gameId).set(stats);
                 return stats;
             },
 			makeActual: function( basisLineUp, basisChanges, GameLog, playingHome) {
@@ -689,14 +687,14 @@ angular.module('starter.services', [])
                 return newActual;
 
             },
-            updateBasis: function (teamId, gameId, basisTeam) {
-                statsRef.child(teamId).child(gameId).update({
-                    basis: basisTeam
+            updateBasis: function (teamId, seasonId, gameId, basisTeam) {
+                statsRef.child(teamId).child(seasonId).child(gameId).update({
+                    Basis: basisTeam
                 });
 
             },
-            newChange: function (teamId, gameId, playerIn, playerOut, pos, time, comment) {
-                var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+            newChange: function (teamId, seasonId, gameId, playerIn, playerOut, pos, time, comment) {
+                var changes = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                 changes.$add({
                     time: time,
                     type: "In/Out",
@@ -707,8 +705,8 @@ angular.module('starter.services', [])
                     comment: comment
                 });
             },
-			addPlayer: function (teamId, gameId, player, pos, time, comment) {
-                var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+			addPlayer: function (teamId, seasonId, gameId, player, pos, time, comment) {
+                var changes = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                 changes.$add({
                     time: time,
                     type: "In",
@@ -718,8 +716,8 @@ angular.module('starter.services', [])
                     comment: comment
                 });
             },
-			removePlayer: function (teamId, gameId, player, pos, time, comment) {
-                var changes = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+			removePlayer: function (teamId, seasonId, gameId, player, pos, time, comment) {
+                var changes = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                 changes.$add({
                     time: time,
                     type: "Out",
@@ -729,8 +727,8 @@ angular.module('starter.services', [])
                     comment: comment
                 });
             },
-            newPosChange: function (teamId, gameId, player1, player2, time, comment) {
-                var posChanges = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+            newPosChange: function (teamId, seasonId, gameId, player1, player2, time, comment) {
+                var posChanges = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                 posChanges.$add({
                     time: time,
                     type: "Position",
@@ -740,9 +738,9 @@ angular.module('starter.services', [])
                     comment: comment
                 });
             },
-            newGoal: function (teamId, gameId, ours, player, time, comment) {
+            newGoal: function (teamId, seasonId, gameId, ours, player, time, comment) {
                 if (ours === true) {
-                    var ourGoals = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+                    var ourGoals = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                     ourGoals.$add({
                         player: player,
                         statsType: "OurGoals",
@@ -751,7 +749,7 @@ angular.module('starter.services', [])
                     });
                 }
                 else {
-                    var theirGoals = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+                    var theirGoals = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                     theirGoals.$add({
                         time: time,
                         statsType: "TheirGoals",
@@ -759,9 +757,9 @@ angular.module('starter.services', [])
                     });
                 }
             },
-            newCard: function (teamId, gameId, type, player, time, comment) {
+            newCard: function (teamId, seasonId, gameId, type, player, time, comment) {
 
-                var cards = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+                var cards = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                 cards.$add({
                     type: type,
                     statsType: "Cards",
@@ -774,44 +772,44 @@ angular.module('starter.services', [])
             getRef: function () {
                 return statsRef;
             },
-            getGameLogArray: function (teamId, gameId) {
+            getGameLogArray: function (teamId, seasonId, gameId) {
                 var deferred = $q.defer();
-                var gameLog = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+                var gameLog = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                 gameLog.$loaded(function () {
                     deferred.resolve(gameLog);
                 });
                 return deferred.promise;
             },
-			clearGameLog: function (teamId, gameId) {
-				var gameLog = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+			clearGameLog: function (teamId, seasonId, gameId) {
+				var gameLog = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                 gameLog.remove();
             },
-            storeExternals: function (teamId, gameId, externalPlayers) {
-                statsRef.child(teamId).child(gameId).update({
+            storeExternals: function (teamId, seasonId, gameId, externalPlayers) {
+                statsRef.child(teamId).child(seasonId).child(gameId).update({
                     externalPlayers: externalPlayers
                 });
             },
-            RemoveStats: function (teamId, gameId) {
-                statsRef.child(teamId).child(gameId).remove();
+            RemoveStats: function (teamId, seasonId, gameId) {
+                statsRef.child(teamId).child(seasonId).child(gameId).remove();
             },
-            newGameEvent: function (teamId, gameId, time, comment) {
-                var gameEvents = $firebaseArray(statsRef.child(teamId).child(gameId).child("GameLog"));
+            newGameEvent: function (teamId, seasonId, gameId, time, comment) {
+                var gameEvents = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                 gameEvents.$add({
                     time: time,
                     statsType: "GameEvents",
                     comment: comment
                 });
             },
-            getStat: function (teamId, gameId, statId) {
+            getStat: function (teamId, seasonId, gameId, statId) {
                 var deferred = $q.defer();
-                var stat = $firebaseObject(statsRef.child(teamId).child(gameId).child("GameLog").child(statId));
+                var stat = $firebaseObject(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog").child(statId));
                 stat.$loaded(function () {
                     deferred.resolve(stat);
                 });
                 return deferred.promise;
             },
-            updateStat: function (teamId, gameId, statId, time, comment) {
-                statsRef.child(teamId).child(gameId).child("GameLog").child(statId).update({
+            updateStat: function (teamId, seasonId, gameId, statId, time, comment) {
+                statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog").child(statId).update({
                     time: time,
                     comment: comment
                 })
@@ -823,18 +821,18 @@ angular.module('starter.services', [])
         var dutyRef = ref.child("Duties");
         var selectedDuty = localStorage.getItem("selectedDuty");
         return {
-            getDuties: function (teamId) {
-                return $firebaseObject(dutyRef.child(teamId));
+            getDuties: function (teamId, seasonId) {
+                return $firebaseObject(dutyRef.child(teamId).child(seasonId));
             },
-            getDutiesArray: function (teamId) {
-                return $firebaseArray(dutyRef.child(teamId));
+            getDutiesArray: function (teamId, seasonId) {
+                return $firebaseArray(dutyRef.child(teamId).child(seasonId));
             },
             setDuty: function (dutyId) {
                 localStorage.setItem("selectedDuty", dutyId);
                 selectedDuty = dutyId;
             },
-            addDuty: function (teamId, key, startValue, endValue, dutyObj) {
-                dutyRef.child(teamId).child(key).set({
+            addDuty: function (teamId, seasonId, key, startValue, endValue, dutyObj) {
+                dutyRef.child(teamId).child(seasonId).child(key).set({
                     start: Date.parse(startValue),
                     end: Date.parse(endValue),
                     Duty: dutyObj
@@ -854,20 +852,20 @@ angular.module('starter.services', [])
                 });
                 return deferred.promise;
             },
-            updateDuty: function (teamId, key, dutyObj) {
+            updateDuty: function (teamId, seasonId, key, dutyObj) {
 
-                dutyRef.child(teamId).child(key).child("Duty").set(dutyObj);
+                dutyRef.child(teamId).child(seasonId).child(key).child("Duty").set(dutyObj);
                 //console.log("update Duty");
             },
-            removeDuty: function (teamId, key) {
+            removeDuty: function (teamId, seasonId, key) {
 
-                dutyRef.child(teamId).child(key).remove();
+                dutyRef.child(teamId).child(seasonId).child(key).remove();
                 //console.log("update Duty");
             },
-            linkEvents: function (teamId, events, duty) {
+            linkEvents: function (teamId, seasonId, events, duty) {
                 Object.keys(events).forEach(function (type) {
                     //console.log(type);
-                    var typeRef = ref.child(type).child(teamId);
+                    var typeRef = ref.child(type).child(teamId).child(seasonId);
                     //console.log(typeRef);
                     switch (type) {
                         case "Games":
@@ -891,11 +889,11 @@ angular.module('starter.services', [])
                 });
 
             },
-            unlinkEvents: function (teamId, events) {
+            unlinkEvents: function (teamId, seasonId, events) {
                 Object.keys(events).forEach(function (type) {
                     //console.log(type);
                     //console.log(events);
-                    var typeRef = ref.child(type).child(teamId);
+                    var typeRef = ref.child(type).child(teamId).child(seasonId);
                     switch (type) {
                         case "Games":
                             //console.log(events.Games);
@@ -962,6 +960,10 @@ angular.module('starter.services', [])
 					start: start,
 					end : end
                 });
+            },
+			deleteSeason: function (teamId, id) {
+                var seasonRef = seasonsRef.child(teamId).child(id);
+                seasonRef.remove();
             }
         }
     })
@@ -1023,8 +1025,14 @@ angular.module('starter.services', [])
             setTeams: function (teams) {
                 localStorage.setItem('teams', JSON.stringify(teams));
             },
+			setTeamId: function (teamId) {
+                localStorage.setItem('teamId', JSON.stringify(teamId));
+            },
 			setSeasons: function (seasons) {
                 localStorage.setItem('seasons', JSON.stringify(seasons));
+            },
+			setSeasonId: function (seasonId) {
+                localStorage.setItem('seasonId', JSON.stringify(seasonId));
             },
             setPlayers: function (players) {
                 localStorage.setItem('players', JSON.stringify(players));
@@ -1073,14 +1081,10 @@ angular.module('starter.services', [])
                 return JSON.parse(localStorage.getItem('selectedStat'));
             },
             getTeamId: function () {
-                var teams = JSON.parse(localStorage.getItem('teams'));
-                for (var key in teams)
-                    return key;
+                return JSON.parse(localStorage.getItem('teamId'));
             },
 			getSeasonId: function () {
-                var seasons = JSON.parse(localStorage.getItem('seasons'));
-                for (var key in seasons)
-                    return key;
+                return JSON.parse(localStorage.getItem('seasonId'));
             },
             getPlayers: function () {
                 return JSON.parse(localStorage.getItem('players'));
