@@ -3,12 +3,12 @@ angular.module('starter.EventControllers', [])
         $scope.ShowDelete = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.events = localStorageFactory.getEvents();
-        $scope.eventsRef = Events.getEventsRef($scope.teamId);
 
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
-                $scope.getEvents = Events.getEventsArray($scope.teamId).then(function (events) {
+                $scope.getEvents = Events.getEventsArray($scope.teamId,$scope.seasonId).then(function (events) {
                     $scope.events = events;
                     //console.log(events);
                     localStorageFactory.setEvents(events);
@@ -43,10 +43,10 @@ angular.module('starter.EventControllers', [])
 
             switch (type) {
                 case "present":
-                    $scope.present = Attendance.addAttendance("present", "Events", User.getUID(), event.$id, $scope.teamId, event.Absent);
+                    $scope.present = Attendance.addAttendance("present", "Events", User.getUID(), event.$id, $scope.teamId, $scope.seasonId, event.Absent);
                     break;
                 case "absent":
-                    $scope.absent = Attendance.addAttendance("absent", "Events", User.getUID(), event.$id, $scope.teamId, event.Present);
+                    $scope.absent = Attendance.addAttendance("absent", "Events", User.getUID(), event.$id, $scope.teamId, $scope.seasonId, event.Present);
                     break;
                 default:
                     //nothing yet
@@ -60,11 +60,12 @@ angular.module('starter.EventControllers', [])
         $scope.eventId = $stateParams.eventId;
         $scope.players = localStorageFactory.getPlayers();
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.isAdmin = localStorageFactory.getAdmin();
 
-        $scope.settings = Settings.getSettings($scope.teamId);
+        $scope.settings = Settings.getSettings($scope.teamId,$scope.seasonId);
 
-        Events.getEventsRef($scope.teamId).child($scope.eventId).on('value', function (eventSnap) {
+        Events.getEventsRef($scope.teamId,$scope.seasonId).child($scope.eventId).on('value', function (eventSnap) {
             $scope.eventDate = new Date(+eventSnap.val().date);
             $scope.event = eventSnap.val();
 
@@ -82,14 +83,14 @@ angular.module('starter.EventControllers', [])
                     if ($scope.present === true) {
                         // already logged, no change needed
                     } else {
-                        $scope.present = Attendance.addAttendance("present", "Events", User.getUID(), $scope.eventId, $scope.teamId, $scope.event.Absent);
+                        $scope.present = Attendance.addAttendance("present", "Events", User.getUID(), $scope.eventId, $scope.teamId, $scope.seasonId, $scope.event.Absent);
                     }
                     break;
                 case "absent":
                     if ($scope.absent === true) {
                         // already logged, no change needed
                     } else {
-                        $scope.absent = Attendance.addAttendance("absent", "Events", User.getUID(), $scope.eventId, $scope.teamId, $scope.event.Present);
+                        $scope.absent = Attendance.addAttendance("absent", "Events", User.getUID(), $scope.eventId, $scope.teamId, $scope.seasonId, $scope.event.Present);
                     }
                     break;
                 default:
@@ -100,14 +101,14 @@ angular.module('starter.EventControllers', [])
         $scope.forceAttendance = function (type, uid) {
             switch (type) {
                 case "present":
-                    Attendance.addAttendance("present", "Events", uid, $scope.eventId, $scope.teamId, $scope.event.Absent);
+                    Attendance.addAttendance("present", "Events", uid, $scope.eventId, $scope.teamId, $scope.seasonId, $scope.event.Absent);
                     break;
                 case "absent":
-                    Attendance.addAttendance("absent", "Events", uid, $scope.eventId, $scope.teamId, $scope.event.Present);
+                    Attendance.addAttendance("absent", "Events", uid, $scope.eventId, $scope.teamId, $scope.seasonId, $scope.event.Present);
                     break;
                 case 'unknown':
                     //remove  attendance, reset to unknown
-                    Attendance.resetAttendance("Events", uid, $scope.eventId, $scope.teamId, $scope.event.Present, $scope.event.Absent);
+                    Attendance.resetAttendance("Events", uid, $scope.eventId, $scope.teamId, $scope.seasonId, $scope.event.Present, $scope.event.Absent);
                     return true;
                     break;
                 default:
@@ -117,68 +118,157 @@ angular.module('starter.EventControllers', [])
         }
     })
 
-    .controller('Events_EditCtrl', function ($scope, Events, User, $stateParams, localStorageFactory, $ionicHistory) {
+    .controller('Events_EditCtrl', function ($scope, Events, User, $stateParams, localStorageFactory, $ionicHistory, ionicDatePicker, ionicTimePicker) {
         $scope.eventId = $stateParams.eventId;
         $scope.teamId = localStorageFactory.getTeamId();
-        $scope.getEvent = Events.getEvent($scope.teamId).then(function (event) {
-            $scope.eventDate = new Date(+event.date);
+		$scope.seasonId = localStorageFactory.getSeasonId();
+		
+        $scope.getEvent = Events.getEvent($scope.teamId,$scope.seasonId).then(function (event) {
+            $scope.eventDate = event.date;
             $scope.title = "Selecteer datum";
             $scope.eventTime = event.time;
             $scope.event = event;
             $scope.location = event.location;
         })
 
-        $scope.datePickerCallback = function (val) {
-            if (typeof(val) === 'undefined') {
-                //console.log('Date not selected');
-            } else {
-                //console.log('Selected date is : ', val);
-                $scope.eventDate = val;
-            }
+		var eventDateObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.eventDate = val;
+                }
+            },
+            disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: new Date($scope.eventDate),      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
         };
 
-        $scope.timePickerCallback = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.eventTime = val;
-            }
+        $scope.openDatePicker = function(type){
+			switch(type){
+				case "eventDate": 
+					eventDateObj.inputDate = new Date($scope.eventDate);
+					ionicDatePicker.openDatePicker(eventDateObj);
+				break;
+			default: break;
+			}
         };
+
+
+        var eventTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.eventTime = val;
+                }
+            },
+            inputTime: $scope.eventTime,   //Optional
+            format: 24,         //Optional
+            step: 1,           //Optional
+            setLabel: 'Set'    //Optional
+        };
+		
+		$scope.openTimePicker = function(type) {
+			switch(type){
+			case "eventTime":
+				eventTimeObj.inputTime = $scope.eventTime;
+				ionicTimePicker.openTimePicker(eventTimeObj);
+				break;
+			default: break;
+			}
+        }
 
         $scope.updateEvent = function (location) {
-            Events.updateEvent($scope.teamId, $scope.eventId, $scope.eventDate, $scope.eventTime, location);
+            Events.updateEvent($scope.teamId, $scope.seasonId, $scope.eventId, $scope.eventDate, $scope.eventTime, location);
             $ionicHistory.goBack();
         }
     })
 
-    .controller('newEventsCtrl', function ($scope, User, Events, localStorageFactory, $ionicHistory) {
+    .controller('newEventsCtrl', function ($scope, User, Events, localStorageFactory, $ionicHistory, ionicDatePicker, ionicTimePicker) {
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.eventDate = new Date();
         $scope.eventDate.setHours(0, 0, 0, 0);
+		$scope.eventDate = Date.parse($scope.eventDate);
         $scope.title = "Selecteer datum";
         $scope.eventTime = 72000;
 
-        $scope.datePickerCallback = function (val) {
-            if (typeof(val) === 'undefined') {
-                //console.log('Date not selected');
-            } else {
-                //console.log('Selected date is : ', val);
-                $scope.eventDate = val;
-            }
+		var eventDateObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.eventDate = val;
+                }
+            },
+            disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: new Date($scope.eventDate),      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
         };
 
-        $scope.timePickerCallback = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.eventTime = val;
-            }
+        $scope.openDatePicker = function(type){
+			switch(type){
+				case "eventDate": ionicDatePicker.openDatePicker(eventDateObj);
+				break;
+			default: break;
+			}
         };
+
+
+        var eventTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.eventTime = val;
+                }
+            },
+            inputTime: $scope.eventTime,   //Optional
+            format: 24,         //Optional
+            step: 1,           //Optional
+            setLabel: 'Set'    //Optional
+        };
+		
+		$scope.openTimePicker = function(type) {
+			switch(type){
+			case "eventTime":
+				ionicTimePicker.openTimePicker(eventTimeObj);
+				break;
+			default: break;
+			}
+        }
 
         $scope.newEvent = function (location) {
-            Events.createEvent($scope.teamId, $scope.eventDate, $scope.eventTime, location);
+            Events.createEvent($scope.teamId, $scope.seasonId, $scope.eventDate, $scope.eventTime, location);
             //return to previous page
             $ionicHistory.goBack();
         }

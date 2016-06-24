@@ -4,9 +4,10 @@ angular.module('starter.PracticeControllers', [])
 		$scope.useNickNames = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.practises = localStorageFactory.getPractises();
         $scope.limit = 3;
-        $scope.practisesRef = Practises.getPractisesRef($scope.teamId);
+		
         $scope.showDelete = function () {
             //console.log('showdelete:' + $scope.ShowDelete);
             $scope.ShowDelete = !$scope.ShowDelete;
@@ -21,7 +22,7 @@ angular.module('starter.PracticeControllers', [])
 
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
-                $scope.getPractises = Practises.getPractisesArray($scope.teamId).then(function (practises) {
+                $scope.getPractises = Practises.getPractisesArray($scope.teamId,$scope.seasonId).then(function (practises) {
                     $scope.practises = practises;
                     localStorageFactory.setPractises(practises);
                 });
@@ -53,10 +54,10 @@ angular.module('starter.PracticeControllers', [])
 
             switch (type) {
                 case "present":
-                    $scope.present = Attendance.addAttendance("present", "Practises", User.getUID(), practise.$id, $scope.teamId, practise.Absent);
+                    $scope.present = Attendance.addAttendance("present", "Practises", User.getUID(), practise.$id, $scope.teamId, $scope.seasonId, practise.Absent);
                     break;
                 case "absent":
-                    $scope.absent = Attendance.addAttendance("absent", "Practises", User.getUID(), practise.$id, $scope.teamId, practise.Present);
+                    $scope.absent = Attendance.addAttendance("absent", "Practises", User.getUID(), practise.$id, $scope.teamId, $scope.seasonId, practise.Present);
                     break;
                 default:
                     //nothing yet
@@ -79,11 +80,12 @@ angular.module('starter.PracticeControllers', [])
         $scope.practiseId = $stateParams.practiseId;
         $scope.players = localStorageFactory.getPlayers();
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.isAdmin = localStorageFactory.getAdmin();
 		$scope.useNickNames = false;
         $scope.settings = Settings.getSettings($scope.teamId);
 
-        Practises.getPractisesRef($scope.teamId).child($scope.practiseId).on('value', function (practiseSnap) {
+        Practises.getPractisesRef($scope.teamId,$scope.seasonId).child($scope.practiseId).on('value', function (practiseSnap) {
             $scope.practiseDate = new Date(+practiseSnap.val().date);
             $scope.isPast = $scope.practiseDate < new Date();
             $scope.practise = practiseSnap.val();
@@ -102,14 +104,14 @@ angular.module('starter.PracticeControllers', [])
                     if ($scope.present === true) {
                         // already logged, no change needed
                     } else {
-                        $scope.present = Attendance.addAttendance("present", "Practises", User.getUID(), $scope.practiseId, $scope.teamId, $scope.practise.Absent);
+                        $scope.present = Attendance.addAttendance("present", "Practises", User.getUID(), $scope.practiseId, $scope.teamId, $scope.seasonId, $scope.practise.Absent);
                     }
                     break;
                 case "absent":
                     if ($scope.absent === true) {
                         // already logged, no change needed
                     } else {
-                        $scope.absent = Attendance.addAttendance("absent", "Practises", User.getUID(), $scope.practiseId, $scope.teamId, $scope.practise.Present);
+                        $scope.absent = Attendance.addAttendance("absent", "Practises", User.getUID(), $scope.practiseId, $scope.teamId, $scope.seasonId, $scope.practise.Present);
                     }
                     break;
                 default:
@@ -120,14 +122,14 @@ angular.module('starter.PracticeControllers', [])
         $scope.forceAttendance = function (type, uid) {
             switch (type) {
                 case "present":
-                    Attendance.addAttendance("present", "Practises", uid, $scope.practiseId, $scope.teamId, $scope.practise.Absent);
+                    Attendance.addAttendance("present", "Practises", uid, $scope.practiseId, $scope.teamId, $scope.seasonId, $scope.practise.Absent);
                     break;
                 case "absent":
-                    Attendance.addAttendance("absent", "Practises", uid, $scope.practiseId, $scope.teamId, $scope.practise.Present);
+                    Attendance.addAttendance("absent", "Practises", uid, $scope.practiseId, $scope.teamId, $scope.seasonId, $scope.practise.Present);
                     break;
                 case 'unknown':
                     //remove  attendance, reset to unknown
-                    Attendance.resetAttendance("Practises", uid, $scope.practiseId, $scope.teamId, $scope.practise.Present, $scope.practise.Absent);
+                    Attendance.resetAttendance("Practises", uid, $scope.practiseId, $scope.teamId, $scope.seasonId, $scope.practise.Present, $scope.practise.Absent);
                     return true;
                     break;
                 default:
@@ -137,10 +139,12 @@ angular.module('starter.PracticeControllers', [])
         }
     })
 
-    .controller('Practises_EditCtrl', function ($scope, Practises, User, $stateParams, localStorageFactory, $ionicHistory) {
+    .controller('Practises_EditCtrl', function ($scope, Practises, User, $stateParams, localStorageFactory, $ionicHistory, ionicDatePicker, ionicTimePicker) {
         $scope.practiseId = $stateParams.practiseId;
         $scope.teamId = localStorageFactory.getTeamId();
-        $scope.getPractise = Practises.getPractise($scope.teamId).then(function (practise) {
+		$scope.seasonId = localStorageFactory.getSeasonId();
+		
+        $scope.getPractise = Practises.getPractise($scope.teamId,$scope.seasonId).then(function (practise) {
             $scope.practiseDate = new Date(+practise.date);
             $scope.title = "Selecteer datum";
             $scope.practiseTime = practise.time;
@@ -148,59 +152,147 @@ angular.module('starter.PracticeControllers', [])
             $scope.location = practise.location;
         })
 
-        $scope.datePickerCallback = function (val) {
-            if (typeof(val) === 'undefined') {
-                //console.log('Date not selected');
-            } else {
-                //console.log('Selected date is : ', val);
-                $scope.practiseDate = val;
-            }
+        var practiseDateObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.practiseDate = val;
+                }
+            },
+            disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: new Date($scope.practiseDate),      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
         };
 
-        $scope.timePickerCallback = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.practiseTime = val;
-            }
+        $scope.openDatePicker = function(type){
+			switch(type){
+				case "practiseDate": 
+					practiseDateObj.inputDate = new Date($scope.practiseDate);
+					ionicDatePicker.openDatePicker(practiseDateObj);
+				break;
+			default: break;
+			}
         };
+
+
+        var practiseTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.practiseTime = val;
+                }
+            },
+            inputTime: $scope.practiseTime,   //Optional
+            format: 24,         //Optional
+            step: 1,           //Optional
+            setLabel: 'Set'    //Optional
+        };
+		
+		$scope.openTimePicker = function(type) {
+			switch(type){
+			case "practiseTime":
+				practiseTimeObj.inputTime = $scope.practiseTime;
+				ionicTimePicker.openTimePicker(practiseTimeObj);
+				break;
+			default: break;
+			}
+        }
 
         $scope.updatePractise = function (location) {
-            Practises.updatePractise($scope.teamId, $scope.practiseId, $scope.practiseDate, $scope.practiseTime, location);
+            Practises.updatePractise($scope.teamId, $scope.seasonId, $scope.practiseId, $scope.practiseDate, $scope.practiseTime, location);
             $ionicHistory.goBack();
         }
     })
 
-    .controller('newPractisesCtrl', function ($scope, User, Practises, localStorageFactory, $ionicHistory) {
+    .controller('newPractisesCtrl', function ($scope, User, Practises, localStorageFactory, $ionicHistory, ionicDatePicker, ionicTimePicker) {
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.practiseDate = new Date();
         $scope.practiseDate.setHours(0, 0, 0, 0);
+		$scope.practiseDate = Date.parse($scope.practiseDate);
         $scope.title = "Selecteer datum";
         $scope.practiseTime = 72000;
         $scope.weeks = 1;
 
-        $scope.datePickerCallback = function (val) {
-            if (typeof(val) === 'undefined') {
-                //console.log('Date not selected');
-            } else {
-                //console.log('Selected date is : ', val);
-                $scope.practiseDate = val;
-            }
+        var practiseDateObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.practiseDate = val;
+                }
+            },
+            disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: new Date($scope.practiseDate),      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
         };
 
-        $scope.timePickerCallback = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.practiseTime = val;
-            }
+        $scope.openDatePicker = function(type){
+			switch(type){
+				case "practiseDate": ionicDatePicker.openDatePicker(practiseDateObj);
+				break;
+			default: break;
+			}
         };
+
+
+        var practiseTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.practiseTime = val;
+                }
+            },
+            inputTime: $scope.practiseTime,   //Optional
+            format: 24,         //Optional
+            step: 1,           //Optional
+            setLabel: 'Set'    //Optional
+        };
+		
+		$scope.openTimePicker = function(type) {
+			switch(type){
+			case "practiseTime":
+				ionicTimePicker.openTimePicker(practiseTimeObj);
+				break;
+			default: break;
+			}
+        }
 
         $scope.newPractise = function (location, repeatValue) {
             //$scope.practiseDate = Date.parse($scope.practiseDate);
-            Practises.createPractise($scope.teamId, $scope.practiseDate, $scope.practiseTime, location, repeatValue);
+			//console.log($scope.teamId, $scope.seasonId, $scope.practiseDate, $scope.practiseTime, location, repeatValue);
+            Practises.createPractise($scope.teamId, $scope.seasonId, $scope.practiseDate, $scope.practiseTime, location, repeatValue);
             //return to previous page
             $ionicHistory.goBack();
         }

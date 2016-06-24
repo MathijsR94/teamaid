@@ -33,7 +33,7 @@ angular.module('starter.GameControllers', [])
         $scope.onItemDelete = function (item) {
             if (confirm('Dit Item verwijderen?')) {
                 //console.log(item);
-                Statistics.RemoveStats($scope.teamId, item.$id);
+                Statistics.RemoveStats($scope.teamId,$scope.seasonId, item.$id);
                 $scope.games.$remove(item);
                 //remove linked statistics!
             }
@@ -56,10 +56,10 @@ angular.module('starter.GameControllers', [])
 
             switch (type) {
                 case "present":
-                    $scope.present = Attendance.addAttendance("present", "Games", User.getUID(), game.$id, $scope.teamId, game.Absent);
+                    $scope.present = Attendance.addAttendance("present", "Games", User.getUID(), game.$id, $scope.teamId, $scope.seasonId, game.Absent);
                     break;
                 case "absent":
-                    $scope.absent = Attendance.addAttendance("absent", "Games", User.getUID(), game.$id, $scope.teamId, game.Present);
+                    $scope.absent = Attendance.addAttendance("absent", "Games", User.getUID(), game.$id, $scope.teamId, $scope.seasonId, game.Present);
                     break;
                 default:
                     //nothing yet
@@ -235,7 +235,7 @@ angular.module('starter.GameControllers', [])
 
     })
 
-    .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory) {
+    .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory,ionicDatePicker, ionicTimePicker) {
         $scope.gameId = $stateParams.gameId;
         $scope.teamName = localStorageFactory.getTeamName();
 		$scope.useNickNames = false;
@@ -243,7 +243,7 @@ angular.module('starter.GameControllers', [])
 		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.getGame = Games.getGame($scope.teamId,$scope.seasonId).then(function (game) {
 
-            $scope.gameDate = new Date(+game.date);
+            $scope.gameDate = game.date;
             //console.log($scope.gameDate);
             //console.log(game.date);
             $scope.title = "Selecteer datum";
@@ -256,32 +256,87 @@ angular.module('starter.GameControllers', [])
             else
                 $scope.collectTime = game.time - 3600;
         })
-        $scope.datePickerCallback = function (val) {
-            if (typeof(val) === 'undefined') {
-                //console.log('Date not selected');
-            } else {
-                //console.log('Selected date is : ', val);
-                $scope.gameDate = val;
-            }
+
+       var gameDateObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.gameDate = val;
+                }
+            },
+            disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: new Date($scope.gameDate),      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
         };
 
-        $scope.timePickerCallbackGameTime = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.gameTime = val;
-            }
+        $scope.openDatePicker = function(type){
+			
+			switch(type){
+				case "gameDate": 
+					gameDateObj.inputDate = new Date($scope.gameDate);
+					ionicDatePicker.openDatePicker(gameDateObj);
+				break;
+			default: break;
+			}
         };
 
-        $scope.timePickerCallbackCollectTime = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.collect = val;
-            }
+        var gameTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.gameTime = val;
+                }
+            },
+            inputTime: $scope.gameTime,   //Optional
+            format: 24,         //Optional
+            step: 1,           //Optional
+            setLabel: 'Set'    //Optional
         };
+		
+		var collectTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.collectTime = val;
+                }
+            },
+            inputTime: $scope.collectTime,   //Optional
+            format: 24,         //Optional
+            step: 1,           //Optional
+            setLabel: 'Set'    //Optional
+        };
+
+        $scope.openTimePicker = function(type) {
+			switch(type){
+            case "collectTime":
+				collectTimeObj.inputTime = $scope.collectTime;
+				ionicTimePicker.openTimePicker(collectTimeObj);
+				break;
+			case "gameTime":
+				gameTimeObj.inputTime = $scope.gameTime;
+				ionicTimePicker.openTimePicker(gameTimeObj);
+				break;
+			default: break;
+			}
+        }		
 
         $scope.updateGame = function (home, away) {
             Games.updateGame($scope.teamId, $scope.seasonId, $scope.gameId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
@@ -301,15 +356,6 @@ angular.module('starter.GameControllers', [])
         $scope.gameTime = 52200;
         $scope.collectTime = 48600;
 		
-        $scope.timePickerCallbackCollectTime = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.collect = val;
-            }
-        };
-
         $scope.newGame = function (homeAway, opponent) {
             if (homeAway === true) {
                 var home = $scope.teamName;
@@ -319,6 +365,7 @@ angular.module('starter.GameControllers', [])
                 var away = $scope.teamName;
                 var home = opponent;
             }
+			console.log($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
             Games.createGame($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
             //console.dir($ionicHistory);
             $ionicHistory.goBack();

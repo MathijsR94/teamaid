@@ -2,9 +2,10 @@ angular.module('starter.FinanceControllers', [])
     .controller('FinanceCtrl', function ($scope, User, Teams, Finance, localStorageFactory, $state) {
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.players = localStorageFactory.getPlayers();
 
-        $scope.getCredits = Finance.getCredits($scope.teamId).then(function (data) {
+        $scope.getCredits = Finance.getCredits($scope.teamId,$scope.seasonId).then(function (data) {
             $scope.credits = data;
             //console.log($scope.credits);
         });
@@ -28,7 +29,8 @@ angular.module('starter.FinanceControllers', [])
 
     .controller('CreditsCtrl', function ($scope, Teams, localStorageFactory, User, Finance, $state, $ionicHistory, Utility) {
         $scope.teamId = localStorageFactory.getTeamId();
-        $scope.nbsp = " "; // whitespace
+		$scope.seasonId = localStorageFactory.getSeasonId();
+        //$scope.nbsp = " "; // whitespace
         $scope.players = localStorageFactory.getPlayers();
 
         $scope.isEmpty = function (obj) {
@@ -41,11 +43,11 @@ angular.module('starter.FinanceControllers', [])
             }
             var val = value;
             if (debetCredit !== true) {
-                Finance.newCredit($scope.teamId, uid, (val * (-1)), comment, $scope.players[uid]);
+                Finance.newCredit($scope.teamId, $scope.seasonId, uid, (val * (-1)), comment, $scope.players[uid]);
                 //console.log("debet");
             }
             else {
-                Finance.newCredit($scope.teamId, uid, (val), comment, $scope.players[uid]);
+                Finance.newCredit($scope.teamId, $scope.seasonId, uid, (val), comment, $scope.players[uid]);
                 //console.log("credit");
             }
 

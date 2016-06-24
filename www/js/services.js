@@ -287,7 +287,7 @@ angular.module('starter.services', [])
                 var games = $firebaseArray(teamGamesRef);
 
                 games.$add({
-                    date: Date.parse(gameDate),
+                    date: gameDate,
                     time: gameTime,
                     collect: collectTime,
                     home: home,
@@ -296,7 +296,7 @@ angular.module('starter.services', [])
             },
             updateGame: function (teamId, seasonId, gameId, date, time, collectTime, home, away) {
                 gamesRef.child(teamId).child(seasonId).child(gameId).update({
-                    date: Date.parse(date),
+                    date: date,
                     time: time,
                     collect: collectTime,
                     home: home,
@@ -347,19 +347,20 @@ angular.module('starter.services', [])
                 var practises = $firebaseArray(teamPractiseRef);
                 for (var i = 0; i < repeat; i++) {
                     practises.$add({
-                        date: Date.parse(date),
+                        date: date,
                         time: time,
                         location: location
                     });
                     // increase a week
-                    date.setDate(date.getDate() + (7));
+					var dateObj = new Date(date);
+                    dateObj.setDate(dateObj.getDate() + (7));
+					date = Date.parse(dateObj);
                 }
                 ;
             },
             updatePractise: function (teamId, seasonId, practiseId, date, time, location) {
-
                 practisesRef.child(teamId).child(seasonId).child(practiseId).update({
-                    date: Date.parse(date),
+                    date: date,
                     time: time,
                     location: location
                 });
@@ -404,14 +405,14 @@ angular.module('starter.services', [])
                 var teamEventRef = eventsRef.child(teamId).child(seasonId);
                 var events = $firebaseArray(teamEventRef);
                 events.$add({
-                    date: Date.parse(date),
+                    date: date,
                     time: time,
                     location: location
                 });
             },
             updateEvent: function (teamId, seasonId, eventId, date, time, location) {
                 eventsRef.child(teamId).child(seasonId).child(eventId).update({
-                    date: Date.parse(date),
+                    date: date,
                     time: time,
                     location: location
                 });
