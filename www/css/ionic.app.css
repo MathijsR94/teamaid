@@ -8577,3 +8577,37 @@ hr {
 
 .item.activated {
   background: #f9f9f9; }
+
+.navigation-drawer i {
+  position: relative;
+  top: 2px; }
+
+.bold {
+  font-weight: 900; }
+
+.ionic_datepicker_popup .popup-buttons button:nth-of-type(3) {
+  padding: 0; }
+
+.ionic_datepicker_popup .popup-buttons button:nth-of-type(1) {
+  padding: 0; }
+
+.ionic_datepicker_popup .popup-body .selected_date_full {
+  background-color: #607D8B !important; }
+
+.ionic_datepicker_popup .popup-buttons button {
+  background-color: #607D8B !important;
+  margin-right: 0 !important; }
+
+.ionic_datepicker_popup .selected_date {
+  background-color: #607D8B !important;
+  color: #fff !important; }
+
+.ionic_datepicker_popup .today {
+  border: 1px solid #455A64 !important; }
+
+.ionic_timepicker_popup .heading {
+  background-color: #607D8B !important; }
+
+.ionic_timepicker_popup .button_set {
+  background-color: #607D8B !important;
+  margin-right: 0 !important; }

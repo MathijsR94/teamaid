@@ -4,8 +4,9 @@ angular.module('starter.DutyControllers', [])
 		$scope.useNickNames = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.settings = localStorageFactory.getSettings();
-        $scope.duties = Duties.getDutiesArray($scope.teamId);
+        $scope.duties = Duties.getDutiesArray($scope.teamId, $scope.seasonId);
         //get Games
         $scope.games = localStorageFactory.getGames();
         // get Practices
@@ -47,9 +48,7 @@ angular.module('starter.DutyControllers', [])
 		////----------------------------- tijdelijk duty crawler ---------------
 		*/
 			
-			
-			
-			
+				
         $scope.limit = 3;
         $scope.loadMore = function () {
             $scope.limit = $scope.duties.length;
@@ -60,19 +59,19 @@ angular.module('starter.DutyControllers', [])
 
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
-                $scope.getGames = Games.getGamesArray($scope.teamId).then(function (games) {
+                $scope.getGames = Games.getGamesArray($scope.teamId,$scope.seasonId).then(function (games) {
                     $scope.games = games;
                     localStorageFactory.setGames(games);
                 });
             }
             if (snap.val() === true) {
-                $scope.getPractises = Practises.getPractisesArray($scope.teamId).then(function (practises) {
+                $scope.getPractises = Practises.getPractisesArray($scope.teamId,$scope.seasonId).then(function (practises) {
                     $scope.practises = practises;
                     localStorageFactory.setPractises(practises);
                 });
             }
             if (snap.val() === true) {
-                $scope.getEvents = Events.getEventsArray($scope.teamId).then(function (events) {
+                $scope.getEvents = Events.getEventsArray($scope.teamId,$scope.seasonId).then(function (events) {
                     $scope.events = events;
                     localStorageFactory.setEvents(events);
                 });
@@ -189,14 +188,14 @@ angular.module('starter.DutyControllers', [])
 
                     if ($scope.duties.$getRecord(occurenceKey) === null) {
                         // this Duty item does not yet exist lets create it
-                        Duties.addDuty($scope.teamId, occurenceKey, occurence.start, occurence.end, duty);
+                        Duties.addDuty($scope.teamId, $scope.seasonId, occurenceKey, occurence.start, occurence.end, duty);
                     }
                     else {
                         // pre existing duty overwrite the Duty players
-                        Duties.updateDuty($scope.teamId, occurenceKey, duty);
+                        Duties.updateDuty($scope.teamId, $scope.seasonId, occurenceKey, duty);
                     }
                     //update the linked Events
-                    Duties.linkEvents($scope.teamId, occurenceEvents, duty);
+                    Duties.linkEvents($scope.teamId, $scope.seasonId, occurenceEvents, duty);
 
                 }
                 else {
@@ -208,7 +207,7 @@ angular.module('starter.DutyControllers', [])
                         // pre existing duty, it is no longer valid, lets remove it!
 
                         // it needs to be removed since it has no linked events
-                        Duties.removeDuty($scope.teamId, occurenceKey);
+                        Duties.removeDuty($scope.teamId, $scope.seasonId, occurenceKey);
                     }
                 }
 
@@ -239,7 +238,7 @@ angular.module('starter.DutyControllers', [])
                         occurenceEvents["Events"] = retVal;
                 }
                 //console.log("occurrences");
-                Duties.unlinkEvents($scope.teamId, occurenceEvents);
+                Duties.unlinkEvents($scope.teamId, $scope.seasonId, occurenceEvents);
             }
         };
 
@@ -268,9 +267,10 @@ angular.module('starter.DutyControllers', [])
         $scope.dutyId = $stateParams.dutyId;
 		$scope.useNickNames = false;
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.players = localStorageFactory.getPlayers();
         $scope.settings = localStorageFactory.getSettings();
-        $scope.duties = Duties.getDutiesArray($scope.teamId);
+        $scope.duties = Duties.getDutiesArray($scope.teamId,$scope.seasonId);
         //get Games
         $scope.games = localStorageFactory.getGames();
         // get Practices
@@ -281,7 +281,7 @@ angular.module('starter.DutyControllers', [])
 
         //console.log($scope.dutyId);
         $scope.dutyPlayers = {};
-        $scope.getDuty = Duties.getDuty($scope.teamId).then(function (duty) {
+        $scope.getDuty = Duties.getDuty($scope.teamId,$scope.seasonId).then(function (duty) {
             $scope.occurence = duty;
             $scope.startDate = new Date(+duty.start);
             $scope.endDate = new Date(+duty.end);
@@ -315,8 +315,8 @@ angular.module('starter.DutyControllers', [])
                 if (Object.keys(retVal).length > 0)
                     occurenceEvents["Events"] = retVal;
             }
-            Duties.linkEvents($scope.teamId, occurenceEvents, $scope.dutyPlayers);
-            Duties.updateDuty($scope.teamId, $scope.dutyId, $scope.dutyPlayers);
+            Duties.linkEvents($scope.teamId, $scope.seasonId, occurenceEvents, $scope.dutyPlayers);
+            Duties.updateDuty($scope.teamId, $scope.seasonId, $scope.dutyId, $scope.dutyPlayers);
 
             $ionicHistory.goBack();
         }
@@ -324,10 +324,11 @@ angular.module('starter.DutyControllers', [])
 
     .controller('newDutiesCtrl', function ($scope, User, Duties, localStorageFactory, $ionicHistory) {
         $scope.teamId = localStorageFactory.getTeamId();
+		$scope.seasonId = localStorageFactory.getSeasonId();
 		$scope.useNickNames = false;
         $scope.players = localStorageFactory.getPlayers();
         $scope.settings = localStorageFactory.getSettings();
-        $scope.duties = Duties.getDutiesArray($scope.teamId);
+        $scope.duties = Duties.getDutiesArray($scope.teamId,$scope.seasonId);
         //get Games
         $scope.games = localStorageFactory.getGames();
         // get Practices
@@ -340,6 +341,8 @@ angular.module('starter.DutyControllers', [])
         $scope.dutyEnd = new Date();
         $scope.dutyEnd.setHours(0, 0, 0, 0);
         $scope.dutyEnd.setDate($scope.dutyStart.getDate() + 7);
+		$scope.dutyStart = new Date($scope.dutyStart);
+		$scope.dutyEnd = new Date($scope.dutyEnd);
         $scope.title = "Selecteer datum";
 
 
@@ -363,7 +366,7 @@ angular.module('starter.DutyControllers', [])
                 //console.log($scope.dutyEnd);
                 var occurenceKey = $scope.dutyStart.getFullYear() + "" + $scope.dutyStart.getMonth() + "" + $scope.dutyStart.getDate();
                 // create new occurence
-                Duties.addDuty($scope.teamId, occurenceKey, $scope.dutyStart, $scope.dutyEnd, dutyPlayers);
+                Duties.addDuty($scope.teamId, $scope.seasonId, occurenceKey, $scope.dutyStart, $scope.dutyEnd, dutyPlayers);
 
                 // gather to be linked events
                 var occurenceEvents = {};
@@ -385,7 +388,7 @@ angular.module('starter.DutyControllers', [])
                 }
                 // link all events
                 //console.log(occurenceEvents);
-                Duties.linkEvents($scope.teamId, occurenceEvents, dutyPlayers);
+                Duties.linkEvents($scope.teamId, $scope.seasonId, occurenceEvents, dutyPlayers);
 
                 //return to previous page
                 $ionicHistory.goBack();

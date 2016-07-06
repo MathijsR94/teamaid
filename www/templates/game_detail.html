@@ -6,14 +6,11 @@
 
                 <h3 class="center">{{homeScore}} - {{awayScore}}</h3>
                 <span class="center">Datum: {{ game.date | date:'dd - MM - yyyy' }}</span>
-        <span class="center">Aanvang wedstrijd: <standard-time-no-meridian
-                etime='game.time'></standard-time-no-meridian></span>
-        <span class="center">Verzameltijd: <standard-time-no-meridian
-                etime='game.collect'></standard-time-no-meridian></span>
+        <span class="center">Aanvang wedstrijd: <standard-time-no-meridian etime='game.time'></standard-time-no-meridian></span>
+        <span class="center">Verzameltijd: <standard-time-no-meridian etime='game.collect'></standard-time-no-meridian></span>
 
                 <div ng-if="settings.dutyGames === true">
-                    <span ng-repeat="(id,value) in game.Duty" class="center">Corvee: <player-name player='players[id]'
-                                                                                                  nick-name='useNickNames'></player-name></span>
+                    <span ng-repeat="(id,value) in game.Duty" class="center">Corvee: <player-name player='players[id]' nick-name='useNickNames'></player-name></span>
                 </div>
             </div>
             <div ng-show="!isPast">
@@ -46,11 +43,9 @@
                         <ion-item ng-repeat="(id,value) in game.Present">
                             <player-name player='players[id]' nick-name='useNickNames'></player-name>
                             <!-- <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> -->
-                            <ion-option-button class="button-assertive" ng-if="isAdmin"
-                                               ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A
+                            <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A
                             </ion-option-button>
-                            <ion-option-button class="button-royal" ng-if="isAdmin"
-                                               ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U
+                            <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U
                             </ion-option-button>
                         </ion-item>
                     </div>
@@ -134,12 +129,10 @@
                 basis opstelling
             </ion-item>
             <ion-item class="item-accordion" ng-show="isGroupShown('BasisTeam')">
-                <!-- 4-4-2 -->
-                <div ng-if="tactic !== 0 && tactic !== undefined">
-                    <playing-field lineup="basis" players="players" data-method="isScrollEnabled(value)" type="1"
-                                   grid="false" drawspeed="30"></playing-field>
+                <div ng-if="showBasis === true">
+                    <playing-field draw-players="basis" draw-changes="changes" players="players" scroll-enabled="isScrollEnabled(value)" type="1" grid="false" drawspeed="100"></playing-field>
                 </div>
-                <div ng-if="tactic === 0 || tactic === undefined">
+                <div ng-if="showBasis === false">
                     De basis opstelling is nog niet bekend
                 </div>
             </ion-item>

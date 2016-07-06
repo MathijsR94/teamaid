@@ -4,12 +4,8 @@
             <div class="col col-center">
                     <h3>Event</h3>
                     <div class="list">
-						<ionic-datepicker name="date" idate="eventDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
-							<button class="button button-block button-stable"> {{ eventDate | date:'dd - MMMM - yyyy' }} </button>
-						</ionic-datepicker>
-						<ionic-timepicker name="time" etime="eventTime" format="24" step="5" callback="timePickerCallback">
-							<button class="button button-block button-stable"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
-						</ionic-timepicker>
+						<button class="button button-block button-stable" ng-click="openDatePicker('eventDate')"> {{ eventDate | date:'dd - MMMM - yyyy' }} </button>
+						<button class="button button-block button-stable" ng-click="openTimePicker('eventTime')"> <standard-time-no-meridian etime='eventTime'></standard-time-no-meridian></button>
                         <label class="item item-input">
                             <span class="input-label">Locatie</span>
                             <input type="text" ng-model="location" required/>

@@ -80,6 +80,7 @@
 		<ion-item class="item-accordion" ng-show="isGroupShown('UpdatePlayer')">
 			<div ng-if="isAdmin == true" class="buttons">
 					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="updatePlayers()">Refresh all players!</button>
+					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="addSeasons()">voeg Seasons layer toe aan DB!</button>
 			</div>
 			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)" 
 				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
@@ -136,7 +137,7 @@
 		<ion-item class="item-accordion" ng-show="isGroupShown('Seasons')">
 			<ion-list>
 				<ion-item ng-repeat="(id,value) in seasons">
-					<h2>Season.title</h2>
+					<h2>Season:{{value.title}}</h2>
 					<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deleteSeason(id)">Delete</ion-option-button>
 				</ion-item>
 			</ion-list>
