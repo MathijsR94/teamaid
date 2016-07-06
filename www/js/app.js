@@ -90,7 +90,7 @@ var app = angular.module('starter', ['ionic',
             format: 12,
             step: 15,
             setLabel: 'Set',
-            closeLabel: 'Close'
+            closeLabel: 'Sluit'
         };
         ionicTimePickerProvider.configTimePicker(timePickerObj);
     })

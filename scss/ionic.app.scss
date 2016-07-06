@@ -373,7 +373,15 @@ hr {
   background-color: $main-color !important;
 }
 
-.ionic_timepicker_popup .button_set {
+.ionic_timepicker_popup .button_set, .ionic_timepicker_popup .button_close {
   background-color: $main-color !important;
   margin-right: 0 !important;
+}
+
+.ionic_datepicker_popup .popup-body .month_select:after, .ionic_datepicker_popup .popup-body .year_select:after {
+  color: $main-color !important;
+}
+
+.ionic_datepicker_popup .popup-body .button-clear {
+  color: $main-color !important;
 }
