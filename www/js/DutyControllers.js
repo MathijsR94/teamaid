@@ -276,7 +276,6 @@ angular.module('starter.DutyControllers', [])
         // get Practices
         $scope.practises = localStorageFactory.getPractises();
         // get Events
-        // get Events
         $scope.events = localStorageFactory.getEvents();
 
         //console.log($scope.dutyId);
@@ -322,7 +321,7 @@ angular.module('starter.DutyControllers', [])
         }
     })
 
-    .controller('newDutiesCtrl', function ($scope, User, Duties, localStorageFactory, $ionicHistory) {
+    .controller('newDutiesCtrl', function ($scope, User, Duties, localStorageFactory, $ionicHistory, ionicDatePicker) {
         $scope.teamId = localStorageFactory.getTeamId();
 		$scope.seasonId = localStorageFactory.getSeasonId();
 		$scope.useNickNames = false;
@@ -341,30 +340,55 @@ angular.module('starter.DutyControllers', [])
         $scope.dutyEnd = new Date();
         $scope.dutyEnd.setHours(0, 0, 0, 0);
         $scope.dutyEnd.setDate($scope.dutyStart.getDate() + 7);
-		$scope.dutyStart = new Date($scope.dutyStart);
-		$scope.dutyEnd = new Date($scope.dutyEnd);
+		$scope.dutyStart = Date.parse($scope.dutyStart);
+		$scope.dutyEnd = Date.parse($scope.dutyEnd);
         $scope.title = "Selecteer datum";
 
-
-        $scope.datePickerCallback = function (val) {
-            if (typeof(val) === 'undefined') {
-                //console.log('Date not selected');
-            } else {
-                //console.log('Selected date is : ', val);
-                $scope.dutyStart = val;
-                $scope.dutyEnd = new Date(+val);
-                $scope.dutyEnd.setDate($scope.dutyEnd.getDate() + 7);
-            }
+		var dutyDateObj = {
+            callback: function (val) {  //Mandatory
+                if (typeof(val) === 'undefined') {
+                    //console.log('Date not selected');
+                } else {
+                    //console.log('Selected date is : ', val);
+                    $scope.dutyStart = val;
+					$scope.dutyEnd = val + 604800*1000; // 604800 = 1 week in seconds
+					console.log($scope.dutyStart,$scope.dutyEnd);
+                }
+            },
+            disabledDates: [            //Optional
+                // new Date(2016, 2, 16),
+                // new Date(2015, 3, 16),
+                // new Date(2015, 4, 16),
+                // new Date(2015, 5, 16),
+                // new Date('Wednesday, August 12, 2015'),
+                // new Date("08-16-2016"),
+                // new Date(1439676000000)
+            ],
+            //from: new Date(2012, 1, 1), //Optional
+            //to: new Date(2016, 10, 30), //Optional
+            inputDate: new Date($scope.dutyStart),      //Optional
+            mondayFirst: true,          //Optional
+            closeOnSelect: false,       //Optional
+            templateType: 'popup'       //Optional
+        };
+		
+		$scope.openDatePicker = function(type){
+			switch(type){
+				case "dutyDate": ionicDatePicker.openDatePicker(dutyDateObj);
+				break;
+			default: break;
+			}
         };
 
         $scope.newDuty = function (duty) {
 
             if (typeof duty !== 'undefined') {
                 var dutyPlayers = {};
+				var tempDate = new Date($scope.dutyStart);
                 dutyPlayers[duty] = true;
 
                 //console.log($scope.dutyEnd);
-                var occurenceKey = $scope.dutyStart.getFullYear() + "" + $scope.dutyStart.getMonth() + "" + $scope.dutyStart.getDate();
+                var occurenceKey = tempDate.getFullYear() + "" + tempDate.getMonth() + "" + tempDate.getDate();
                 // create new occurence
                 Duties.addDuty($scope.teamId, $scope.seasonId, occurenceKey, $scope.dutyStart, $scope.dutyEnd, dutyPlayers);
 

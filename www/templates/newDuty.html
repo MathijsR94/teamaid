@@ -4,10 +4,8 @@
             <div class="col col-center">
                     <h3>Corvee</h3>
                     <div class="list">
-						<ionic-datepicker name="date" idate="dutyStart" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
-							<span class="input-label">Start Datum</span>
-							<button class="button button-block button-stable"> {{ dutyStart | date:'dd - MMMM - yyyy' }} </button>
-						</ionic-datepicker>
+						<span class="input-label">Start Datum</span>
+						<button class="button button-block button-stable" ng-click="openDatePicker('dutyDate')"> {{ dutyStart | date:'dd - MMMM - yyyy' }} </button>
 					<label class="item-input">
 						<span class="input-label">Eind Datum</span>
 						<span > {{ dutyEnd | date:'dd - MMMM - yyyy' }} </span>	
