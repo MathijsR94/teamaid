@@ -41,17 +41,17 @@ var app = angular.module('starter', ['ionic',
                 StatusBar.styleDefault();
             }
             //pushNotification = window.plugins.pushNotification;
-            $ionicPush.register(
-                onNotification,
-                errorHandler,
-                {
-                    'badge': 'true',
-                    'sound': 'true',
-                    'alert': 'true',
-                    'ecb': 'onNotification',
-                    'senderID': 'teamaid-1144',
-                }
-            );
+            //$ionicPush.register(
+            //    onNotification,
+            //    errorHandler,
+            //    {
+            //        'badge': 'true',
+            //        'sound': 'true',
+            //        'alert': 'true',
+            //        'ecb': 'onNotification',
+            //        'senderID': 'teamaid-1144',
+            //    }
+            //);
         })
 
     })

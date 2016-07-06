@@ -1,16 +1,16 @@
 angular.module('starter.GameControllers', [])
     .controller('GamesCtrl', function ($scope, Games, User, $filter, $state, Attendance, Statistics, $ionicHistory, Utility, localStorageFactory, firebaseRef) {
         $scope.ShowDelete = false;
-		$scope.useNickNames = false;
+        $scope.useNickNames = false;
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
-		$scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.games = localStorageFactory.getGames();
         $scope.players = localStorageFactory.getPlayers();
         $scope.limit = 3;
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
-                $scope.getGames = Games.getGamesArray($scope.teamId,$scope.seasonId).then(function (games) {
+                $scope.getGames = Games.getGamesArray($scope.teamId, $scope.seasonId).then(function (games) {
                     $scope.games = games;
                     console.log(games);
                     localStorageFactory.setGames(games);
@@ -19,7 +19,7 @@ angular.module('starter.GameControllers', [])
         });
 
 
-        $scope.gamesRef = Games.getGamesRef($scope.teamId,$scope.seasonId);
+        $scope.gamesRef = Games.getGamesRef($scope.teamId, $scope.seasonId);
 
         $scope.showDelete = function () {
             //console.log('showdelete:' + $scope.ShowDelete);
@@ -33,7 +33,7 @@ angular.module('starter.GameControllers', [])
         $scope.onItemDelete = function (item) {
             if (confirm('Dit Item verwijderen?')) {
                 //console.log(item);
-                Statistics.RemoveStats($scope.teamId,$scope.seasonId, item.$id);
+                Statistics.RemoveStats($scope.teamId, $scope.seasonId, item.$id);
                 $scope.games.$remove(item);
                 //remove linked statistics!
             }
@@ -86,26 +86,24 @@ angular.module('starter.GameControllers', [])
 
     .controller('Games_DetailCtrl', function ($scope, $ionicScrollDelegate, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
         $scope.gameId = $stateParams.gameId;
-		$scope.useNickNames = false;
+        $scope.useNickNames = false;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.teamId = localStorageFactory.getTeamId();
-		$scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.settings = Settings.getSettings($scope.teamId);
         $scope.teamName = localStorageFactory.getTeamName();
         $scope.homeScore = 0;
         $scope.awayScore = 0;
-		$scope.showBasis = false;
+        $scope.showBasis = false;
 
         $scope.gameLog = {};
         $scope.basis = {};
         $scope.scrollEnabled = false;
 
-       
 
-
-        Games.getGamesRef($scope.teamId,$scope.seasonId).child($scope.gameId).on('value', function (gameSnap) {
+        Games.getGamesRef($scope.teamId, $scope.seasonId).child($scope.gameId).on('value', function (gameSnap) {
             $scope.gameDate = new Date(+gameSnap.val().date);
             $scope.isPast = $scope.gameDate < new Date();
             $scope.game = gameSnap.val();
@@ -115,14 +113,14 @@ angular.module('starter.GameControllers', [])
             $scope.unknown = (!$scope.present && !$scope.absent);
             $scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
 
-			if (typeof $scope.inactivePlayers !== 'undefined') {
-				$scope.players = angular.extend($scope.players, $scope.inactivePlayers);
-			}
-        $scope.fieldPlayers = angular.copy($scope.players);
-            Statistics.getStatisticsRef($scope.teamId,$scope.seasonId).child($scope.gameId).on('value', function (statsSnap) {
+            if (typeof $scope.inactivePlayers !== 'undefined') {
+                $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
+            }
+            $scope.fieldPlayers = angular.copy($scope.players);
+            Statistics.getStatisticsRef($scope.teamId, $scope.seasonId).child($scope.gameId).on('value', function (statsSnap) {
 
                 var stats = statsSnap.val();
-				console.log(stats);
+                console.log(stats);
                 if (stats !== null) {
 
                     if (typeof stats.Basis !== 'undefined') {
@@ -235,13 +233,13 @@ angular.module('starter.GameControllers', [])
 
     })
 
-    .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory,ionicDatePicker, ionicTimePicker) {
+    .controller('Games_EditCtrl', function ($scope, Games, User, $stateParams, localStorageFactory, $ionicHistory, ionicDatePicker, ionicTimePicker) {
         $scope.gameId = $stateParams.gameId;
         $scope.teamName = localStorageFactory.getTeamName();
-		$scope.useNickNames = false;
+        $scope.useNickNames = false;
         $scope.teamId = localStorageFactory.getTeamId();
-		$scope.seasonId = localStorageFactory.getSeasonId();
-        $scope.getGame = Games.getGame($scope.teamId,$scope.seasonId).then(function (game) {
+        $scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.getGame = Games.getGame($scope.teamId, $scope.seasonId).then(function (game) {
 
             $scope.gameDate = game.date;
             //console.log($scope.gameDate);
@@ -257,7 +255,7 @@ angular.module('starter.GameControllers', [])
                 $scope.collectTime = game.time - 3600;
         })
 
-       var gameDateObj = {
+        var gameDateObj = {
             callback: function (val) {  //Mandatory
                 if (typeof(val) === 'undefined') {
                     //console.log('Date not selected');
@@ -283,15 +281,16 @@ angular.module('starter.GameControllers', [])
             templateType: 'popup'       //Optional
         };
 
-        $scope.openDatePicker = function(type){
-			
-			switch(type){
-				case "gameDate": 
-					gameDateObj.inputDate = new Date($scope.gameDate);
-					ionicDatePicker.openDatePicker(gameDateObj);
-				break;
-			default: break;
-			}
+        $scope.openDatePicker = function (type) {
+
+            switch (type) {
+                case "gameDate":
+                    gameDateObj.inputDate = new Date($scope.gameDate);
+                    ionicDatePicker.openDatePicker(gameDateObj);
+                    break;
+                default:
+                    break;
+            }
         };
 
         var gameTimeObj = {
@@ -308,8 +307,8 @@ angular.module('starter.GameControllers', [])
             step: 1,           //Optional
             setLabel: 'Set'    //Optional
         };
-		
-		var collectTimeObj = {
+
+        var collectTimeObj = {
             callback: function (val) {      //Mandatory
                 if (typeof (val) === 'undefined') {
                     //console.log('Time not selected');
@@ -324,19 +323,20 @@ angular.module('starter.GameControllers', [])
             setLabel: 'Set'    //Optional
         };
 
-        $scope.openTimePicker = function(type) {
-			switch(type){
-            case "collectTime":
-				collectTimeObj.inputTime = $scope.collectTime;
-				ionicTimePicker.openTimePicker(collectTimeObj);
-				break;
-			case "gameTime":
-				gameTimeObj.inputTime = $scope.gameTime;
-				ionicTimePicker.openTimePicker(gameTimeObj);
-				break;
-			default: break;
-			}
-        }		
+        $scope.openTimePicker = function (type) {
+            switch (type) {
+                case "collectTime":
+                    collectTimeObj.inputTime = $scope.collectTime;
+                    ionicTimePicker.openTimePicker(collectTimeObj);
+                    break;
+                case "gameTime":
+                    gameTimeObj.inputTime = $scope.gameTime;
+                    ionicTimePicker.openTimePicker(gameTimeObj);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         $scope.updateGame = function (home, away) {
             Games.updateGame($scope.teamId, $scope.seasonId, $scope.gameId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
@@ -347,15 +347,15 @@ angular.module('starter.GameControllers', [])
     .controller('newGamesCtrl', function ($scope, User, Games, Teams, localStorageFactory, $ionicHistory, ionicDatePicker, ionicTimePicker) {
 
         $scope.teamId = localStorageFactory.getTeamId();
-		$scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.teamName = localStorageFactory.getTeamName();
         $scope.gameDate = new Date();
         $scope.gameDate.setHours(0, 0, 0, 0);
-		$scope.gameDate = Date.parse($scope.gameDate);
+        $scope.gameDate = Date.parse($scope.gameDate);
         $scope.title = "Selecteer datum";
         $scope.gameTime = 52200;
         $scope.collectTime = 48600;
-		
+
         $scope.newGame = function (homeAway, opponent) {
             if (homeAway === true) {
                 var home = $scope.teamName;
@@ -365,7 +365,7 @@ angular.module('starter.GameControllers', [])
                 var away = $scope.teamName;
                 var home = opponent;
             }
-			console.log($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
+            console.log($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
             Games.createGame($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
             //console.dir($ionicHistory);
             $ionicHistory.goBack();
@@ -398,12 +398,14 @@ angular.module('starter.GameControllers', [])
             templateType: 'popup'       //Optional
         };
 
-        $scope.openDatePicker = function(type){
-			switch(type){
-				case "gameDate": ionicDatePicker.openDatePicker(gameDateObj);
-				break;
-			default: break;
-			}
+        $scope.openDatePicker = function (type) {
+            switch (type) {
+                case "gameDate":
+                    ionicDatePicker.openDatePicker(gameDateObj);
+                    break;
+                default:
+                    break;
+            }
         };
 
 
@@ -421,8 +423,8 @@ angular.module('starter.GameControllers', [])
             step: 1,           //Optional
             setLabel: 'Set'    //Optional
         };
-		
-		var collectTimeObj = {
+
+        var collectTimeObj = {
             callback: function (val) {      //Mandatory
                 if (typeof (val) === 'undefined') {
                     //console.log('Time not selected');
@@ -437,21 +439,22 @@ angular.module('starter.GameControllers', [])
             setLabel: 'Set'    //Optional
         };
 
-        $scope.openTimePicker = function(type) {
-			switch(type){
-            case "collectTime":
-				ionicTimePicker.openTimePicker(collectTimeObj);
-				break;
-			case "gameTime":
-				ionicTimePicker.openTimePicker(gameTimeObj);
-				break;
-			default: break;
-			}
+        $scope.openTimePicker = function (type) {
+            switch (type) {
+                case "collectTime":
+                    ionicTimePicker.openTimePicker(collectTimeObj);
+                    break;
+                case "gameTime":
+                    ionicTimePicker.openTimePicker(gameTimeObj);
+                    break;
+                default:
+                    break;
+            }
         }
 
     })
 
-    .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, localStorageFactory, $ionicSideMenuDelegate, $ionicScrollDelegate) {
+    .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, localStorageFactory, $ionicSideMenuDelegate, $ionicScrollDelegate, $ionicPopup, ionicTimePicker) {
         $scope.gameId = $stateParams.gameId;
         $scope.selectedType = "";
         $scope.typeStats = ["wissel", "positie wissel", "goal voor", "goal tegen", "gele kaart", "rode kaart", "event"];
@@ -460,16 +463,16 @@ angular.module('starter.GameControllers', [])
         $scope.homeScore = 0;
         $scope.awayScore = 0;
         $scope.teamId = localStorageFactory.getTeamId(); // get TeamId from local storage
-		$scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.gameLog = [];
         $scope.nbsp = " "; // whitespace
         $scope.title = "Selecteer datum";
         $scope.tactic = 0;
-		$scope.basisLineUp = {};
-		$scope.basisChanges = {}
-		$scope.actualPlayers = {};
-		$scope.changes = {};
-		$scope.useNickNames = false;
+        $scope.basisLineUp = {};
+        $scope.basisChanges = {}
+        $scope.actualPlayers = {};
+        $scope.changes = {};
+        $scope.useNickNames = false;
         $scope.ShowDelete = true;
         $scope.scrollEnabled = false;
 
@@ -487,7 +490,7 @@ angular.module('starter.GameControllers', [])
             $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
         }
 
-        var gamesRef = Games.getGamesRef($scope.teamId,$scope.seasonId);
+        var gamesRef = Games.getGamesRef($scope.teamId, $scope.seasonId);
         gamesRef.child(localStorageFactory.getSelectedGame()).on('value', function (gameSnap) {
 
             $scope.game = gameSnap.val();
@@ -501,8 +504,8 @@ angular.module('starter.GameControllers', [])
 
             // get current statistics and  fill them in !
             // console.log(game);
-            var statsRef = Statistics.getStatisticsRef($scope.teamId,$scope.seasonId);
-			
+            var statsRef = Statistics.getStatisticsRef($scope.teamId, $scope.seasonId);
+
             statsRef.child(localStorageFactory.getSelectedGame()).on('value', function (statsSnap) {
 
                 $scope.homeScore = 0;
@@ -511,7 +514,7 @@ angular.module('starter.GameControllers', [])
                 var stats = statsSnap.val();
                 if (stats === null) { // no statistics
                     var init = Statistics.initialize($scope.teamId, $scope.seasonId, localStorageFactory.getSelectedGame(), $scope.game.time);
-					$scope.eventTime = init.firstHalfStart;
+                    $scope.eventTime = init.firstHalfStart;
                     $scope.firstHalfStart = init.firstHalfStart;
                     $scope.firstHalfEnd = init.firstHalfEnd;
                     $scope.secondHalfStart = init.secondHalfStart;
@@ -519,13 +522,13 @@ angular.module('starter.GameControllers', [])
                     $scope.tactic = 0;
                     $scope.externalPlayers = 0;
                     $scope.actualPlayers = {};
-					$scope.changes = angular.copy($scope.presentPlayers);
+                    $scope.changes = angular.copy($scope.presentPlayers);
                     $scope.basisChanges = angular.copy($scope.presentPlayers);
-					$scope.basisLineUp = {};
+                    $scope.basisLineUp = {};
                 }
                 else {
                     $scope.tactic = stats.tactic;
-					$scope.eventTime = stats.firstHalfStart;
+                    $scope.eventTime = stats.firstHalfStart;
                     $scope.firstHalfStart = stats.firstHalfStart;
                     $scope.firstHalfEnd = stats.firstHalfEnd;
                     $scope.secondHalfStart = stats.secondHalfStart;
@@ -533,7 +536,7 @@ angular.module('starter.GameControllers', [])
 
                     if (typeof stats.externalPlayers !== 'undefined') {
                         $scope.externalPlayers = Object.keys(stats.externalPlayers).length;
-						//console.log($scope.externalPlayers);
+                        //console.log($scope.externalPlayers);
                         $scope.externalPlayerNames = stats.externalPlayers;
                         for (key in stats.externalPlayers) {
                             $scope.presentPlayers[key] = true;
@@ -544,33 +547,51 @@ angular.module('starter.GameControllers', [])
                     else {
                         $scope.externalPlayers = 0;
                     }
-					
-					$scope.basisChanges = angular.copy($scope.presentPlayers);
-					
-					if (typeof stats.Basis !== 'undefined') {
-						 $scope.basisLineUp= angular.copy(stats.Basis);
-                    } 
-					console.log($scope.basisLineUp);
-					for( player in $scope.basisLineUp){
-						delete $scope.basisChanges[player];
-                    }		
-					$scope.liveGameLog = angular.copy(stats.GameLog);
-					$scope.actualPlayers = angular.copy($scope.basisLineUp);
-					$scope.changes = angular.copy($scope.basisChanges);					
-					var actual = Statistics.makeActual($scope.actualPlayers,$scope.changes,$scope.liveGameLog,$scope.game.home === $scope.teamName);
-					//console.log(actual);
-					$scope.actualPlayers = actual.actualPlayers;
-					$scope.changes = actual.changes;
-					$scope.homeScore = actual.homeScore;
-					$scope.awayScore = actual.awayScore;
-					
+
+                    $scope.basisChanges = angular.copy($scope.presentPlayers);
+
+                    if (typeof stats.Basis !== 'undefined') {
+                        $scope.basisLineUp = angular.copy(stats.Basis);
+                    }
+                    console.log($scope.basisLineUp);
+                    for (player in $scope.basisLineUp) {
+                        delete $scope.basisChanges[player];
+                    }
+                    $scope.liveGameLog = angular.copy(stats.GameLog);
+                    $scope.actualPlayers = angular.copy($scope.basisLineUp);
+                    $scope.changes = angular.copy($scope.basisChanges);
+                    var actual = Statistics.makeActual($scope.actualPlayers, $scope.changes, $scope.liveGameLog, $scope.game.home === $scope.teamName);
+                    //console.log(actual);
+                    $scope.actualPlayers = actual.actualPlayers;
+                    $scope.changes = actual.changes;
+                    $scope.homeScore = actual.homeScore;
+                    $scope.awayScore = actual.awayScore;
+
                 }
             })
 
         })
 
-        $scope.timePickerCallback = function (val) {
+        var eventTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.eventTime = val;
+                }
+            },
+            inputTime: $scope.eventTime,   //Optional
+            format: 12,         //Optional
+            step: 0,           //Optional
+            setLabel: 'Set'    //Optional
         };
+
+        $scope.openTimePicker = function (time) {
+            console.log($scope.eventTime);
+            eventTimeObj.inputTime = time;
+            ionicTimePicker.openTimePicker(eventTimeObj);
+        }
 
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
@@ -585,13 +606,13 @@ angular.module('starter.GameControllers', [])
 
         $scope.updateEventTime = function () {
             var curDate = new Date();
-			var newTime = (curDate.getHours() * 3600) + (curDate.getMinutes() * 60);
-			curDate.setHours(0, 0, 0, 0);
-			if($scope.game.date === curDate.getTime()){
-				if( newTime >= $scope.firstHalfStart && newTime <= $scope.secondHalfEnd ){
-					$scope.eventTime = newTime;
-				}
-			}
+            var newTime = (curDate.getHours() * 3600) + (curDate.getMinutes() * 60);
+            curDate.setHours(0, 0, 0, 0);
+            if ($scope.game.date === curDate.getTime()) {
+                if (newTime >= $scope.firstHalfStart && newTime <= $scope.secondHalfEnd) {
+                    $scope.eventTime = newTime;
+                }
+            }
             //console.log($scope.eventTime);
         };
         $scope.updatePlayerList = function (externalPlayers) {
@@ -612,31 +633,31 @@ angular.module('starter.GameControllers', [])
             Statistics.storeExternals($scope.teamId, $scope.seasonId, $scope.gameId, $scope.externalPlayerNames);
         };
         $scope.storeBasis = function () {
-			// check for conflict!
-			console.log($scope.basisLineUp,$scope.basisChanges,$scope.GameLog);
+            // check for conflict!
+            console.log($scope.basisLineUp, $scope.basisChanges, $scope.GameLog);
 
-			var testActual = Statistics.makeActual(angular.copy($scope.basisLineUp),angular.copy($scope.basisChanges),$scope.liveGameLog,$scope.game.home === $scope.teamName);
-			console.log(testActual);
-			if(testActual.error === true){
-				if (confirm("deze wijziging is inconsistent met het betaande GameLog klik op OK om deze te wissen")) {
-					// remove GameLog
-					alert("database change disabled");
-					//Statistics.clearGameLog($scope.teamId, $scope.seasonId, $scope.gameId);
-				} else {
-					// Do nothing!
-				}
-			}
-			else{
-				alert("database change disabled");
-				Statistics.updateBasis($scope.teamId, $scope.seasonId, $scope.gameId, $scope.basisLineUp);
-			}
-		};
+            var testActual = Statistics.makeActual(angular.copy($scope.basisLineUp), angular.copy($scope.basisChanges), $scope.liveGameLog, $scope.game.home === $scope.teamName);
+            console.log(testActual);
+            if (testActual.error === true) {
+                if (confirm("deze wijziging is inconsistent met het betaande GameLog klik op OK om deze te wissen")) {
+                    // remove GameLog
+                    alert("database change disabled");
+                    //Statistics.clearGameLog($scope.teamId, $scope.seasonId, $scope.gameId);
+                } else {
+                    // Do nothing!
+                }
+            }
+            else {
+                alert("database change disabled");
+                Statistics.updateBasis($scope.teamId, $scope.seasonId, $scope.gameId, $scope.basisLineUp);
+            }
+        };
         $scope.saveChange = function (playerIn, playerOut, time, comment) {
             var pos = $scope.actualPlayers[playerOut]; // position of player going out
             if (typeof comment === 'undefined') { // protect against undefined
                 comment = " ";
             }
-            Statistics.newChange($scope.teamId, $scope.seasonId, $scope.gameId, playerIn, playerOut, pos, time, comment);
+            //Statistics.newChange($scope.teamId, $scope.seasonId, $scope.gameId, playerIn, playerOut, pos, time, comment);
             $scope.selectedType = "";
             $scope.toggleGroup(null);
         };
@@ -644,10 +665,10 @@ angular.module('starter.GameControllers', [])
             if (typeof comment === 'undefined') { // protect against undefined
                 comment = " ";
             }
-            comment = $scope.players[player1].nickName + " wisselt van positie met " + $scope.players[player2].nickName;
+            //comment = $scope.players[player1].nickName + " wisselt van positie met " + $scope.players[player2].nickName;
 
             console.log(player1, player2, time, comment);
-            Statistics.newPosChange($scope.teamId, $scope.seasonId, $scope.gameId, player1, player2, time, comment);
+            //Statistics.newPosChange($scope.teamId, $scope.seasonId, $scope.gameId, player1, player2, time, comment);
             $scope.selectedType = "";
             $scope.toggleGroup(null);
         };
@@ -655,7 +676,8 @@ angular.module('starter.GameControllers', [])
             if (typeof comment === 'undefined') { // protect against undefined
                 comment = " ";
             }
-            Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, player, time, comment);
+            console.log($scope.teamId, $scope.seasonId, $scope.gameId, true, player, time, comment);
+            //Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, player, time, comment);
             $scope.selectedType = "";
             $scope.toggleGroup(null);
         };
@@ -685,7 +707,7 @@ angular.module('starter.GameControllers', [])
                 }
             }
 
-            Statistics.newCard($scope.teamId, $scope.seasonId, $scope.gameId, type, player, time, comment);
+            //Statistics.newCard($scope.teamId, $scope.seasonId, $scope.gameId, type, player, time, comment);
             $scope.selectedType = "";
             $scope.toggleGroup(null);
         };
@@ -708,29 +730,28 @@ angular.module('starter.GameControllers', [])
             }
         };
 
-        $scope.isScrollEnabled = function(value) {
-            value ? $ionicScrollDelegate.getScrollView().options.scrollingY = true:
+        $scope.isScrollEnabled = function (value) {
+            value ? $ionicScrollDelegate.getScrollView().options.scrollingY = true :
                 $ionicScrollDelegate.getScrollView().options.scrollingY = false;
 
         }
 
-        $scope.eventDelegator = function(type, basis, eventData) {
-			console.log($scope.eventTime);
-            if(basis) {
+        $scope.eventDelegator = function (type, basis, eventData) {
+            if (basis) {
                 switch (type) {
                     case "posChange":
-                        if(eventData.player1 != -1)
+                        if (eventData.player1 != -1)
                             $scope.basisLineUp[eventData.player1] = eventData.pos1;
-                        if(eventData.player2 != -1)
+                        if (eventData.player2 != -1)
                             $scope.basisLineUp[eventData.player2] = eventData.pos2;
                         break;
-						
+
                     case "change":
-                        if(eventData.player1 != -1) {// must be substitute!
+                        if (eventData.player1 != -1) {// must be substitute!
                             $scope.basisLineUp[eventData.player1] = eventData.pos1;
                             delete $scope.basisChanges[eventData.player1];
                         }
-                        if(eventData.player2 != -1) {
+                        if (eventData.player2 != -1) {
                             $scope.basisChanges[eventData.player2] = true;
                             delete $scope.basisLineUp[eventData.player2];
                         }
@@ -741,9 +762,13 @@ angular.module('starter.GameControllers', [])
 
                 }
             } else {
-                switch(type) {
+                switch (type) {
                     case "posChange":
                         $scope.savePosChange(eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
+                        break;
+                    case "ourGoal":
+                        console.log("oUr");
+                        $scope.showPopup("Test");
                         break;
                     default:
                         console.log("default");
@@ -751,6 +776,43 @@ angular.module('starter.GameControllers', [])
                 }
             }
         }
+
+
+        $scope.showPopup = function (title) {
+            $scope.data = {};
+
+            var myPopup = $ionicPopup.show({
+                template: '<button class="button button-block button-stable" ng-click="openTimePicker(eventTime)"> ' +
+                '<standard-time-no-meridian etime=\'eventTime\'></standard-time-no-meridian></button>' +
+                '<label class="item item-input"><span class="input-label floating-label">Comment</span>' +
+                '<input type="text" /></label>',
+                title: title,
+                subTitle: 'Please use normal things',
+                scope: $scope,
+                buttons: [
+                    {text: 'Cancel'},
+                    {
+                        text: '<b>Save</b>',
+                        type: 'button-primary',
+                        onTap: function (e) {
+                            if (!$scope.data.wifi) {
+                                //don't allow the user to close unless he enters wifi password
+                                e.preventDefault();
+                            } else {
+                                return $scope.data.wifi;
+                            }
+                        }
+                    }
+                ]
+            });
+
+            myPopup.then(function (res) {
+                console.log('Tapped!', res);
+            });
+
+        }
+
+
     })
 
     .controller('Games_StatsEditCtrl', function ($scope, Statistics, $stateParams, localStorageFactory, Games, Statistics, $ionicHistory) {
@@ -758,10 +820,10 @@ angular.module('starter.GameControllers', [])
         $scope.statId = $stateParams.statId;
         $scope.gameId = $stateParams.gameId;
         $scope.teamId = localStorageFactory.getTeamId();
-		$scope.seasonId = localStorageFactory.getSeasonId();
-		$scope.useNickNames = false;
-		
-        var presentRef = Games.getGamesRef($scope.teamId,$scope.seasonId).child($scope.gameId).child("Present");
+        $scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.useNickNames = false;
+
+        var presentRef = Games.getGamesRef($scope.teamId, $scope.seasonId).child($scope.gameId).child("Present");
         presentRef.once('value', function (PresentSnap) {
             if (typeof PresentSnap.val() !== 'undefined') {
                 $scope.presentPlayers = angular.copy(PresentSnap.val());
@@ -771,7 +833,7 @@ angular.module('starter.GameControllers', [])
             }
 
             // get current statistics and  fill them in !
-            var statsRef = Statistics.getStatisticsRef($scope.teamId,$scope.seasonId).child($scope.gameId).once('value', function (statsSnap) {
+            var statsRef = Statistics.getStatisticsRef($scope.teamId, $scope.seasonId).child($scope.gameId).once('value', function (statsSnap) {
                 var stats = statsSnap.val();
                 if (typeof stats.externalPlayers !== 'undefined') {
                     $scope.externalPlayers = Object.keys(stats.externalPlayers).length;
