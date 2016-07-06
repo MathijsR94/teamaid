@@ -5,20 +5,20 @@
                     <h3>Wedstrijd</h3>
                     <div class="list">
                         <span>Datum
-						<ionic-datepicker name="date" idate="gameDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">
+						<!--<ionic-datepicker name="date" idate="gameDate" disablepreviousdates="false"  disablefuturedates="false" callback="datePickerCallback" disableddates="disabledDates" title="title">-->
 							<button class="button button-block button-stable"> {{ gameDate | date:'dd - MMMM - yyyy' }} </button>
-						</ionic-datepicker>
+						<!--</ionic-datepicker>-->
                             </span>
 
                         <span>Wedstrijd Aanvang
-						<ionic-timepicker name="time" etime="gameTime" format="24" step="5" callback="timePickerCallbackGameTime">
-							<button class="button button-block button-stable"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
-						</ionic-timepicker>
+						<!--<ionic-timepicker name="time" etime="gameTime" format="24" step="5" callback="timePickerCallbackGameTime">-->
+							<button class="button button-block button-stable" ng-click="openTimePicker()"><standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
+						<!--</ionic-timepicker>-->
 						</span>
 						<span>Verzamel Tijd
-						<ionic-timepicker name="time" etime="collectTime" format="24" step="5" callback="timePickerCallbackCollectTime">
-							<button class="button button-block button-stable"> <standard-time-no-meridian etime='collectTime'></standard-time-no-meridian></button>
-						</ionic-timepicker>
+						<!--<ionic-timepicker name="time" etime="collectTime" format="24" step="5" callback="timePickerCallbackCollectTime">-->
+							<button class="button button-block button-stable" > <standard-time-no-meridian etime='collectTime'></standard-time-no-meridian></button>
+						<!--</ionic-timepicker>-->
                             </span>
 						<ion-toggle ng-model="homeAway">
 							<span class="input-label" ng-if="homeAway !== true">Uit</span>
