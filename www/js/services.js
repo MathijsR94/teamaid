@@ -834,13 +834,13 @@ angular.module('starter.services', [])
             },
             addDuty: function (teamId, seasonId, key, startValue, endValue, dutyObj) {
                 dutyRef.child(teamId).child(seasonId).child(key).set({
-                    start: Date.parse(startValue),
-                    end: Date.parse(endValue),
+                    start: startValue,
+                    end: endValue,
                     Duty: dutyObj
                 });
                 return {
-                    start: Date.parse(startValue),
-                    end: Date.parse(endValue),
+                    start: startValue,
+                    end: endValue,
                     Duty: dutyObj
                 };
                 //console.log("add Duty");
