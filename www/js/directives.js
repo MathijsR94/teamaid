@@ -532,10 +532,14 @@ app.directive('playingField', function () {
 							}
 							if (event != eventDown) {
 								var obj = events[event];
-								context.fillRect(obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+								context.fillRect(obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY * 0.8 );
+								context.fillStyle = "#000000";
+								context.fillText(event, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY) + gridSizeY * 0.95, gridSizeX);
 							}
 							else {
-								context.fillRect(moveX, moveY, gridSizeX, gridSizeY);
+								context.fillRect(moveX, moveY, gridSizeX, gridSizeY * 0.8);
+								context.fillStyle = "#000000";
+								context.fillText(event, moveX, moveY + gridSizeY * 0.95, gridSizeX);
 							}
 							context.fillStyle = "#000000";
 						}
@@ -565,7 +569,7 @@ app.directive('playingField', function () {
                 sizeCalc();
                 canvas.width = WIDTH;
                 canvas.height = HEIGHT;
-                console.log(scope.drawPlayers);
+                //console.log(scope.drawPlayers);
                 return setInterval(draw, scope.drawSpeed);
             }
 

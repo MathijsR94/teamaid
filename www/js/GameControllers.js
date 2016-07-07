@@ -475,6 +475,8 @@ angular.module('starter.GameControllers', [])
         $scope.useNickNames = false;
         $scope.ShowDelete = true;
         $scope.scrollEnabled = false;
+				
+		var eventPopup; //global popupobject
 
         $ionicSideMenuDelegate.canDragContent(false);
         $scope.getGameLog = Statistics.getGameLogArray($scope.teamId, $scope.seasonId, $scope.gameId).then(function (gameLog) {
@@ -510,7 +512,7 @@ angular.module('starter.GameControllers', [])
 
                 $scope.homeScore = 0;
                 $scope.awayScore = 0;
-                console.log(statsSnap.val());
+                //console.log(statsSnap.val());
                 var stats = statsSnap.val();
                 if (stats === null) { // no statistics
                     var init = Statistics.initialize($scope.teamId, $scope.seasonId, localStorageFactory.getSelectedGame(), $scope.game.time);
@@ -553,7 +555,7 @@ angular.module('starter.GameControllers', [])
                     if (typeof stats.Basis !== 'undefined') {
                         $scope.basisLineUp = angular.copy(stats.Basis);
                     }
-                    console.log($scope.basisLineUp);
+                    //console.log($scope.basisLineUp);
                     for (player in $scope.basisLineUp) {
                         delete $scope.basisChanges[player];
                     }
@@ -661,9 +663,9 @@ angular.module('starter.GameControllers', [])
             setLabel: 'Set'    //Optional
         };
 
-        $scope.openEventTimePicker = function (time) {
-            console.log($scope.eventTime);
-            eventTimeObj.inputTime = time;
+        $scope.openEventTimePicker = function () {
+            console.log($scope.eventTime,eventTimeObj);
+			eventTimeObj.inputTime = $scope.eventTime;
             ionicTimePicker.openTimePicker(eventTimeObj);
         }
 
@@ -811,8 +813,12 @@ angular.module('starter.GameControllers', [])
 						if (typeof $scope.eventComment === 'undefined') { // protect against undefined
 							$scope.eventComment = " ";
 						}
-						console.log("ourGoal",$scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, $scope.eventTime, $scope.eventComment);
-						//Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, $scope.eventTime, $scope.eventComment);
+						eventPopup.then(function (apply) {
+							if(apply){
+								console.log("ourGoal",$scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, $scope.eventTime, $scope.eventComment);
+								Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, $scope.eventTime, $scope.eventComment);
+							}
+						});
                         break;
 					case "theirGoal":
                         $scope.showPopup("Test");
@@ -820,8 +826,12 @@ angular.module('starter.GameControllers', [])
 						if (typeof $scope.eventComment === 'undefined') { // protect against undefined
 							$scope.eventComment = " ";
 						}
-						console.log("theirGoal",$scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', $scope.eventTime, $scope.eventComment);
-						//Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', $scope.eventTime, $scope.eventComment);
+						eventPopup.then(function (apply) {
+							if(apply){
+								console.log("theirGoal",$scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', $scope.eventTime, $scope.eventComment);
+								Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', $scope.eventTime, $scope.eventComment);
+							}
+						});
                         break;
 					case "yellowCard":
                         $scope.showPopup("Test");
@@ -849,37 +859,31 @@ angular.module('starter.GameControllers', [])
         }
 
         $scope.showPopup = function (title) {
-            $scope.data = {};
 
-            var myPopup = $ionicPopup.show({
-                template: '<button class="button button-block button-stable" ng-click="openEventTimePicker(eventTime)"> ' +
+            eventPopup = $ionicPopup.show({
+                template: '<button class="button button-block button-stable" ng-click="openEventTimePicker()"> ' +
                 '<standard-time-no-meridian etime=\'eventTime\'></standard-time-no-meridian></button>' +
                 '<label class="item item-input"><span class="input-label floating-label">Comment</span>' +
-                '<input type="text" /></label>',
+                '<input type="text"  ng-model=\'eventComment\'/></label>',
                 title: title,
                 subTitle: 'Please use normal things',
                 scope: $scope,
                 buttons: [
-                    {text: 'Cancel'},
+                    {	
+						text: 'Cancel',
+						onTap: function (e) {
+                            return false;
+                        }
+					},
                     {
                         text: '<b>Save</b>',
                         type: 'button-primary',
                         onTap: function (e) {
-                            if (!$scope.data.wifi) {
-                                //don't allow the user to close unless he enters wifi password
-                                e.preventDefault();
-                            } else {
-                                return $scope.data.wifi;
-                            }
+                            return true;
                         }
                     }
                 ]
             });
-
-            myPopup.then(function (res) {
-                console.log('Tapped!', res);
-            });
-
         }
 
 
