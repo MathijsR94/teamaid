@@ -571,7 +571,81 @@ angular.module('starter.GameControllers', [])
             })
 
         })
+		var firstHalfStartTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.firstHalfStart = val;
+                }
+            },
+            inputTime: $scope.firstHalfStart,   //Optional
+            format: 24,         //Optional
+            step: 5,           //Optional
+            setLabel: 'Set'    //Optional
+        };
+		var firstHalfEndTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.firstHalfEnd = val;
+                }
+            },
+            inputTime: $scope.firstHalfEnd,   //Optional
+            format: 24,         //Optional
+            step: 5,           //Optional
+            setLabel: 'Set'    //Optional
+        };
+		var secondHalfStartTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.secondHalfStart = val;
+                }
+            },
+            inputTime: $scope.secondHalfStart,   //Optional
+            format: 24,         //Optional
+            step: 5,           //Optional
+            setLabel: 'Set'    //Optional
+        };
+		var secondHalfEndTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.secondHalfEnd = val;
+                }
+            },
+            inputTime: $scope.secondHalfEnd,   //Optional
+            format: 24,         //Optional
+            step: 5,           //Optional
+            setLabel: 'Set'    //Optional
+        };
 
+        $scope.openTimePicker = function (type) {
+			switch(type){
+				case "firstHalfStart":
+					ionicTimePicker.openTimePicker(firstHalfStartTimeObj);
+				break;
+				case  "firstHalfEnd":
+					ionicTimePicker.openTimePicker(firstHalfEndTimeObj);
+				break;
+				case "secondHalfStart":
+					ionicTimePicker.openTimePicker(secondHalfStartTimeObj);
+				break;
+				case "secondHalfEnd":
+					ionicTimePicker.openTimePicker(secondHalfEndTimeObj);
+				break;
+				default: break;
+			}
+        }
+		
         var eventTimeObj = {
             callback: function (val) {      //Mandatory
                 if (typeof (val) === 'undefined') {
@@ -582,12 +656,12 @@ angular.module('starter.GameControllers', [])
                 }
             },
             inputTime: $scope.eventTime,   //Optional
-            format: 12,         //Optional
-            step: 0,           //Optional
+            format: 24,         //Optional
+            step: 1,           //Optional
             setLabel: 'Set'    //Optional
         };
 
-        $scope.openTimePicker = function (time) {
+        $scope.openEventTimePicker = function (time) {
             console.log($scope.eventTime);
             eventTimeObj.inputTime = time;
             ionicTimePicker.openTimePicker(eventTimeObj);
@@ -652,71 +726,25 @@ angular.module('starter.GameControllers', [])
                 Statistics.updateBasis($scope.teamId, $scope.seasonId, $scope.gameId, $scope.basisLineUp);
             }
         };
-        $scope.saveChange = function (playerIn, playerOut, time, comment) {
-            var pos = $scope.actualPlayers[playerOut]; // position of player going out
-            if (typeof comment === 'undefined') { // protect against undefined
-                comment = " ";
-            }
-            //Statistics.newChange($scope.teamId, $scope.seasonId, $scope.gameId, playerIn, playerOut, pos, time, comment);
-            $scope.selectedType = "";
-            $scope.toggleGroup(null);
-        };
-        $scope.savePosChange = function (player1, player2, time, comment) {
-            if (typeof comment === 'undefined') { // protect against undefined
-                comment = " ";
-            }
-            //comment = $scope.players[player1].nickName + " wisselt van positie met " + $scope.players[player2].nickName;
 
-            console.log(player1, player2, time, comment);
-            //Statistics.newPosChange($scope.teamId, $scope.seasonId, $scope.gameId, player1, player2, time, comment);
-            $scope.selectedType = "";
-            $scope.toggleGroup(null);
-        };
-        $scope.saveOurGoal = function (player, time, comment) {
-            if (typeof comment === 'undefined') { // protect against undefined
-                comment = " ";
-            }
-            console.log($scope.teamId, $scope.seasonId, $scope.gameId, true, player, time, comment);
-            //Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, player, time, comment);
-            $scope.selectedType = "";
-            $scope.toggleGroup(null);
-        };
-        $scope.saveTheirGoal = function (time, comment) {
-            if (typeof comment === 'undefined') { // protect against undefined
-                comment = " ";
-            }
-            Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', time, comment);
-            $scope.selectedType = "";
-            $scope.toggleGroup(null);
-        };
         $scope.saveCard = function (player, type, time, comment) {
 
             if (typeof comment === 'undefined') { // protect against undefined
                 comment = " ";
             }
 
-            if (type === 'red') {
+            if (type === 'redCard') {
                 delete $scope.actualPlayers[player]; // remove from actual players
             }
             else { // yellow
-
+				type = 'yellow';
                 if (confirm('tweede gele kaart?')) {
                     type = 'yellow2';
                     delete $scope.actualPlayers[player]; // remove from actual players
                     $scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
                 }
             }
-
             //Statistics.newCard($scope.teamId, $scope.seasonId, $scope.gameId, type, player, time, comment);
-            $scope.selectedType = "";
-            $scope.toggleGroup(null);
-        };
-        $scope.saveGameEvent = function (time, comment) {
-            if (typeof comment !== 'undefined') { // protect against undefined
-                Statistics.newGameEvent($scope.teamId, $scope.seasonId, $scope.gameId, time, comment);
-                $scope.selectedType = "";
-                $scope.toggleGroup(null);
-            }
         };
 
         $scope.editStat = function (stat) {
@@ -739,6 +767,7 @@ angular.module('starter.GameControllers', [])
         $scope.eventDelegator = function (type, basis, eventData) {
             if (basis) {
                 switch (type) {
+					// player 1 is always sub and player 2 is always player
                     case "posChange":
                         if (eventData.player1 != -1)
                             $scope.basisLineUp[eventData.player1] = eventData.pos1;
@@ -761,14 +790,56 @@ angular.module('starter.GameControllers', [])
                         break;
 
                 }
-            } else {
+            } else { // events for statistics
                 switch (type) {
-                    case "posChange":
-                        $scope.savePosChange(eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
+                    case "posChange": // position for  position change					
+                        console.log("posChange", eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
+						//Statistics.newPosChange($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
+                        break;
+					case "posMove": // position moves on the field					
+                        console.log("posMove",eventData.player, eventData.pos, $scope.eventTime, eventData.comment);
+						//Statistics.newPosMove($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player, eventData.pos, $scope.eventTime, eventData.comment);
+                        break;
+					case "change": // change a change for a player
+						var pos = $scope.actualPlayers[eventData.player2]; // position of player going out
+						console.log("change",eventData.player1, eventData.player2, pos,  $scope.eventTime, eventData.comment);
+						//Statistics.newChange($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player1, eventData.player2, pos, $scope.eventTime, eventData.comment);
                         break;
                     case "ourGoal":
-                        console.log("oUr");
                         $scope.showPopup("Test");
+						
+						if (typeof $scope.eventComment === 'undefined') { // protect against undefined
+							$scope.eventComment = " ";
+						}
+						console.log("ourGoal",$scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, $scope.eventTime, $scope.eventComment);
+						//Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, $scope.eventTime, $scope.eventComment);
+                        break;
+					case "theirGoal":
+                        $scope.showPopup("Test");
+						
+						if (typeof $scope.eventComment === 'undefined') { // protect against undefined
+							$scope.eventComment = " ";
+						}
+						console.log("theirGoal",$scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', $scope.eventTime, $scope.eventComment);
+						//Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', $scope.eventTime, $scope.eventComment);
+                        break;
+					case "yellowCard":
+                        $scope.showPopup("Test");
+						
+						$scope.saveCard(eventData.player, type, $scope.eventTime, $scope.eventComment);
+                        break;
+					case "redCard":
+                        $scope.showPopup("Test");
+						
+						$scope.saveCard(eventData.player, type, $scope.eventTime, $scope.eventComment);
+                        break;
+					case "gameEvent":
+                        $scope.showPopup("Test");
+						
+						if (typeof $scope.eventComment !== 'undefined') { // protect against undefined
+							console.log("gameEvent",$scope.eventTime, $scope.eventComment);
+							//Statistics.newGameEvent($scope.teamId, $scope.seasonId, $scope.gameId, $scope.eventTime, $scope.eventComment);
+						}
                         break;
                     default:
                         console.log("default");
@@ -777,12 +848,11 @@ angular.module('starter.GameControllers', [])
             }
         }
 
-
         $scope.showPopup = function (title) {
             $scope.data = {};
 
             var myPopup = $ionicPopup.show({
-                template: '<button class="button button-block button-stable" ng-click="openTimePicker(eventTime)"> ' +
+                template: '<button class="button button-block button-stable" ng-click="openEventTimePicker(eventTime)"> ' +
                 '<standard-time-no-meridian etime=\'eventTime\'></standard-time-no-meridian></button>' +
                 '<label class="item item-input"><span class="input-label floating-label">Comment</span>' +
                 '<input type="text" /></label>',
