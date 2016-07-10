@@ -647,8 +647,7 @@ angular.module('starter.GameControllers', [])
 				default: break;
 			}
         }
-		
-        var eventTimeObj = {
+		var eventTimeObj = {
             callback: function (val) {      //Mandatory
                 if (typeof (val) === 'undefined') {
                     //console.log('Time not selected');
@@ -664,7 +663,6 @@ angular.module('starter.GameControllers', [])
         };
 
         $scope.openEventTimePicker = function () {
-            console.log($scope.eventTime,eventTimeObj);
 			eventTimeObj.inputTime = $scope.eventTime;
             ionicTimePicker.openTimePicker(eventTimeObj);
         }
@@ -767,6 +765,7 @@ angular.module('starter.GameControllers', [])
         }
 
         $scope.eventDelegator = function (type, basis, eventData) {
+			$scope.updateEventTime();
             if (basis) {
                 switch (type) {
 					// player 1 is always sub and player 2 is always player
