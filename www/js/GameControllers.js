@@ -633,15 +633,20 @@ angular.module('starter.GameControllers', [])
         $scope.openTimePicker = function (type) {
 			switch(type){
 				case "firstHalfStart":
+					firstHalfStartTimeObj.inputTime = $scope.firstHalfStart;
 					ionicTimePicker.openTimePicker(firstHalfStartTimeObj);
 				break;
 				case  "firstHalfEnd":
+					firstHalfEndTimeObj.inputTime = $scope.firstHalfEnd;
+					console.log(firstHalfEndTimeObj,$scope.firstHalfEndTime);
 					ionicTimePicker.openTimePicker(firstHalfEndTimeObj);
 				break;
 				case "secondHalfStart":
+					secondHalfStartTimeObj.inputTime = $scope.secondHalfStart;
 					ionicTimePicker.openTimePicker(secondHalfStartTimeObj);
 				break;
 				case "secondHalfEnd":
+					secondHalfEndTimeObj.inputTime = $scope.secondHalfEnd;
 					ionicTimePicker.openTimePicker(secondHalfEndTimeObj);
 				break;
 				default: break;
@@ -695,7 +700,8 @@ angular.module('starter.GameControllers', [])
                     $scope.externalPlayerNames["external" + i] = {
                         firstName: "external" + i,
                         insertion: "",
-                        lastName: ""
+                        lastName: "",
+						nickName: "external" + i
                     };
                 }
             }
@@ -715,36 +721,14 @@ angular.module('starter.GameControllers', [])
             if (testActual.error === true) {
                 if (confirm("deze wijziging is inconsistent met het betaande GameLog klik op OK om deze te wissen")) {
                     // remove GameLog
-                    alert("database change disabled");
-                    //Statistics.clearGameLog($scope.teamId, $scope.seasonId, $scope.gameId);
+                    Statistics.clearGameLog($scope.teamId, $scope.seasonId, $scope.gameId);
                 } else {
                     // Do nothing!
                 }
             }
             else {
-                alert("database change disabled");
                 Statistics.updateBasis($scope.teamId, $scope.seasonId, $scope.gameId, $scope.basisLineUp);
             }
-        };
-
-        $scope.saveCard = function (player, type, time, comment) {
-
-            if (typeof comment === 'undefined') { // protect against undefined
-                comment = " ";
-            }
-
-            if (type === 'redCard') {
-                delete $scope.actualPlayers[player]; // remove from actual players
-            }
-            else { // yellow
-				type = 'yellow';
-                if (confirm('tweede gele kaart?')) {
-                    type = 'yellow2';
-                    delete $scope.actualPlayers[player]; // remove from actual players
-                    $scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
-                }
-            }
-            //Statistics.newCard($scope.teamId, $scope.seasonId, $scope.gameId, type, player, time, comment);
         };
 
         $scope.editStat = function (stat) {
@@ -765,27 +749,35 @@ angular.module('starter.GameControllers', [])
         }
 
         $scope.eventDelegator = function (type, basis, eventData) {
-			$scope.updateEventTime();
             if (basis) {
                 switch (type) {
 					// player 1 is always sub and player 2 is always player
                     case "posChange":
-                        if (eventData.player1 != -1)
-                            $scope.basisLineUp[eventData.player1] = eventData.pos1;
-                        if (eventData.player2 != -1)
-                            $scope.basisLineUp[eventData.player2] = eventData.pos2;
-                        break;
-
+						$scope.basisLineUp[eventData.player1] = eventData.pos1;
+						$scope.basisLineUp[eventData.player2] = eventData.pos2;
+						
+						break;
+					case "posMove":
+						$scope.basisLineUp[eventData.player] = eventData.pos;
+					
+						break;
                     case "change":
-                        if (eventData.player1 != -1) {// must be substitute!
-                            $scope.basisLineUp[eventData.player1] = eventData.pos1;
-                            delete $scope.basisChanges[eventData.player1];
-                        }
-                        if (eventData.player2 != -1) {
-                            $scope.basisChanges[eventData.player2] = true;
-                            delete $scope.basisLineUp[eventData.player2];
-                        }
-                        break;
+						$scope.basisLineUp[eventData.player1] = eventData.pos1;
+						delete $scope.basisChanges[eventData.player1];
+						$scope.basisChanges[eventData.player2] = true;
+						delete $scope.basisLineUp[eventData.player2];
+
+						break;
+					case "changeIn":
+						$scope.basisLineUp[eventData.player] = eventData.pos;
+						delete $scope.basisChanges[eventData.player];
+
+						break;
+					case "changeOut":
+						$scope.basisChanges[eventData.player] = true;
+						delete $scope.basisLineUp[eventData.player];
+
+						break;
                     default:
                         console.log("default");
                         break;
@@ -793,62 +785,111 @@ angular.module('starter.GameControllers', [])
                 }
             } else { // events for statistics
                 switch (type) {
-                    case "posChange": // position for  position change					
-                        console.log("posChange", eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
-						//Statistics.newPosChange($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
+                    case "posChange": // position for  position change	
+						$scope.showPopup("Positie wissel",true,false,false,false);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								console.log("posChange", eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
+								Statistics.newPosChange($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player1, eventData.player2, $scope.eventTime, eventData.comment);
+							}
+						});
                         break;
-					case "posMove": // position moves on the field					
-                        console.log("posMove",eventData.player, eventData.pos, $scope.eventTime, eventData.comment);
-						//Statistics.newPosMove($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player, eventData.pos, $scope.eventTime, eventData.comment);
-                        break;
+					case "posMove": // position moves on the field	
+						$scope.showPopup("Positie verandering",true,false,false,false);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								console.log("posMove",eventData.player, eventData.pos, $scope.eventTime, eventData.comment);
+								Statistics.newPosMove($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player, eventData.pos, $scope.eventTime, eventData.comment);
+							}
+						});
+						break;
 					case "change": // change a change for a player
-						var pos = $scope.actualPlayers[eventData.player2]; // position of player going out
-						console.log("change",eventData.player1, eventData.player2, pos,  $scope.eventTime, eventData.comment);
-						//Statistics.newChange($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player1, eventData.player2, pos, $scope.eventTime, eventData.comment);
+						$scope.showPopup("Wissel",true,false,false,false);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								console.log("change",eventData.player1, eventData.player2, eventData.pos,  $scope.eventTime, eventData.comment);
+								Statistics.newChange($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player1, eventData.player2, eventData.pos, $scope.eventTime, eventData.comment);
+							}
+						});						
+                        break;
+					case "changeIn": // bring a change onto the field
+						$scope.showPopup("Speler inbrengen",true,false,false,false);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								console.log("changeIn",eventData.player, eventData.pos,  $scope.eventTime, eventData.comment);
+								Statistics.addPlayer($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player, eventData.pos, $scope.eventTime, eventData.comment);
+							}
+						});						
+                        break;
+					case "changeOut": // remove player from the field
+						$scope.showPopup("Speler verwijderen",true,false,false,false);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								console.log("changeOut",eventData.player, eventData.pos,  $scope.eventTime, eventData.comment);
+								Statistics.removePlayer($scope.teamId, $scope.seasonId, $scope.gameId, eventData.player, eventData.pos, $scope.eventTime, eventData.comment);
+							}
+						});						
                         break;
                     case "ourGoal":
-                        $scope.showPopup("Test");
-						
-						if (typeof $scope.eventComment === 'undefined') { // protect against undefined
-							$scope.eventComment = " ";
-						}
-						eventPopup.then(function (apply) {
-							if(apply){
-								console.log("ourGoal",$scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, $scope.eventTime, $scope.eventComment);
-								Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, $scope.eventTime, $scope.eventComment);
+                        $scope.showPopup("Goal",true,true,false,true);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								console.log("ourGoal", true, eventData.player, $scope.eventTime, result.comment);
+								Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, result.assist, $scope.eventTime, result.comment);
 							}
 						});
                         break;
 					case "theirGoal":
-                        $scope.showPopup("Test");
+                        $scope.showPopup("Tegen Goal",true,true,false,true);
 						
-						if (typeof $scope.eventComment === 'undefined') { // protect against undefined
-							$scope.eventComment = " ";
-						}
-						eventPopup.then(function (apply) {
-							if(apply){
-								console.log("theirGoal",$scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', $scope.eventTime, $scope.eventComment);
-								Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', $scope.eventTime, $scope.eventComment);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								console.log("theirGoal", false, 'undefined', $scope.eventTime, result.comment);
+								Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', result.assist, $scope.eventTime, result.comment);
 							}
 						});
                         break;
 					case "yellowCard":
-                        $scope.showPopup("Test");
+                        $scope.showPopup("Gele kaart",true,true,true,false);
 						
-						$scope.saveCard(eventData.player, type, $scope.eventTime, $scope.eventComment);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								cardType = 'yellow';
+								if (result.yellowType === true) {
+									cardType = 'yellow2';
+									//delete $scope.actualPlayers[player]; // remove from actual players
+									//$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+								}
+								console.log("yellowCard", cardType, eventData.player, $scope.eventTime, result.comment)
+								Statistics.newCard($scope.teamId, $scope.seasonId, $scope.gameId, cardType, eventData.player, $scope.eventTime, result.comment);
+							}
+						});
+						
                         break;
 					case "redCard":
-                        $scope.showPopup("Test");
+                        $scope.showPopup("Rode kaart",true,true,false,false);
 						
-						$scope.saveCard(eventData.player, type, $scope.eventTime, $scope.eventComment);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								cardType = 'red';
+								delete $scope.actualPlayers[player]; // remove from actual players
+								$scope.actualPositions = Statistics.updateActualTeam($scope.actualPlayers);
+								
+								console.log("redCard", cardType, eventData.player, $scope.eventTime, result.comment)
+								Statistics.newCard($scope.teamId, $scope.seasonId, $scope.gameId, cardType, eventData.player, $scope.eventTime, result.comment);
+							}
+						});
                         break;
 					case "gameEvent":
-                        $scope.showPopup("Test");
-						
-						if (typeof $scope.eventComment !== 'undefined') { // protect against undefined
-							console.log("gameEvent",$scope.eventTime, $scope.eventComment);
-							//Statistics.newGameEvent($scope.teamId, $scope.seasonId, $scope.gameId, $scope.eventTime, $scope.eventComment);
-						}
+                        $scope.showPopup("Event",true,true,false,false);
+						eventPopup.then(function (result) {
+							if(typeof result !== 'undefined'){
+								if (result.comment !== " ") { // protect against empty events
+									console.log("gameEvent",$scope.eventTime, result.comment);
+									Statistics.newGameEvent($scope.teamId, $scope.seasonId, $scope.gameId, $scope.eventTime,  result.comment);
+								}
+							}
+						});
                         break;
                     default:
                         console.log("default");
@@ -857,30 +898,53 @@ angular.module('starter.GameControllers', [])
             }
         }
 
-        $scope.showPopup = function (title) {
-
+        $scope.showPopup = function (title, optionTime,optionComment,optionYellow,optionAssist) {
+			$scope.updateEventTime(); // update  the  eventtime if needed
+			$scope.data = {}; 
+			// build up template for popup
+			var templateString = '<span>';
+			if(optionTime){
+				templateString += 	'<button class="button button-block button-stable" ng-click="openEventTimePicker()"> ' +
+									'<standard-time-no-meridian etime=\'eventTime\'></standard-time-no-meridian></button>';
+			}
+			if(optionYellow){
+				templateString += 	'<ion-toggle ng-model="data.yellowType">Tweede geel</ion-toggle>';
+			}
+			if(optionAssist){
+				templateString += 	'<label class="item item-input item-select">'+
+									'<span class="input-label">Assist</span>'+
+									'<select ng-model="data.assist">'+
+									'<option value="-1" selected>nvt.</option>'+
+									'<option ng-repeat="(id,value) in players" value="{{id}}" player-name player="value" nick-name="useNickNames" />'+
+									'</select></label>';
+			}
+			if(optionComment){
+				templateString += 	'<label class="item item-input"><span class="input-label floating-label">Comment</span>' +
+									'<input type="text"  ng-model=\'data.comment\'/></label>';
+			}
+			templateString += '</span>';
+			
             eventPopup = $ionicPopup.show({
-                template: '<button class="button button-block button-stable" ng-click="openEventTimePicker()"> ' +
-                '<standard-time-no-meridian etime=\'eventTime\'></standard-time-no-meridian></button>' +
-                '<label class="item item-input"><span class="input-label floating-label">Comment</span>' +
-                '<input type="text"  ng-model=\'eventComment\'/></label>',
+                template: templateString,
                 title: title,
-                subTitle: 'Please use normal things',
                 scope: $scope,
                 buttons: [
-                    {	
-						text: 'Cancel',
-						onTap: function (e) {
-                            return false;
-                        }
-					},
-                    {
+					{
                         text: '<b>Save</b>',
                         type: 'button-primary',
                         onTap: function (e) {
-                            return true;
+							if (typeof $scope.data.comment === 'undefined') { // protect against undefined
+								$scope.data.comment = " ";
+							}
+							if (typeof $scope.assist === 'undefined') { // protect against undefined
+								$scope.data.assist = -1;
+							}
+                            return $scope.data;
                         }
-                    }
+                    },
+                    {	
+						text: 'Cancel',
+					}
                 ]
             });
         }

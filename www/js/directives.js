@@ -334,14 +334,20 @@ app.directive('playingField', function () {
                         scope.eventFunction({type: "posChange", basis: basis, eventData: eventData});
                     }
                     if (bitMask == 0x1) { // move player on the field
-                        console.log('1');
-                        if (gridX < 1 || gridX > gridNoX - 2 || gridY < 0 || gridY > gridNoY) {//move player to changes
+                        
+						if (gridX < 1 || gridX > gridNoX - 2 || gridY < 0 || gridY > gridNoY) {//move player to changes or from the field
                             var eventData = {
-                                player1: -1, player2: playerDown,
-                                pos1: {}, pos2: scope.drawPlayers[playerDown],
+                                player: playerDown,
+								pos: scope.drawPlayers[playerDown],
                                 comment: scope.players[playerDown].nickName + " verlaat het veld "
                             };
-                            scope.eventFunction({type: "change", basis: basis, eventData: eventData});
+							if (basis) { // in basis mode  return player back to changes
+								scope.drawChanges[playerDown] = true;
+							}
+							updateChangePos();
+							
+                            scope.eventFunction({type: "changeOut", basis: basis, eventData: eventData});
+							
                         } else { // move player to other free position
                             scope.drawPlayers[playerDown].gridX = gridX;//Math.floor((x - offsetX) / gridSizeX);
                             scope.drawPlayers[playerDown].gridY = gridY;//Math.floor((y - offsetY) / gridSizeY);
@@ -355,39 +361,40 @@ app.directive('playingField', function () {
                     }
                     if (bitMask == 0x4) { // place change on the field
                         if (numberOfPlayers < 11) { // check if the max number of players is not exceeded.
-                            scope.drawPlayers[changeDown] = {
-                                gridX: gridX, //Math.floor((x - offsetX) / gridSizeX),
-                                gridY: gridY//gridYMath.floor((y - offsetY) / gridSizeY)
-                            };
-                            delete scope.drawChanges[changeDown];
-                            updateChangePos();
+							if (gridX >= 1 && gridX <= gridNoX - 2 && gridY >= 0 && gridY <= gridNoY) {//move change to the field
+								scope.drawPlayers[changeDown] = {
+									gridX: gridX, //Math.floor((x - offsetX) / gridSizeX),
+									gridY: gridY//gridYMath.floor((y - offsetY) / gridSizeY)
+								};
+								delete scope.drawChanges[changeDown];
+								updateChangePos();
 
-                            var eventData = {
-                                player1: changeDown, player2: -1,
-                                pos1: scope.drawPlayers[changeDown], pos2: {},
-                                comment: scope.players[changeDown].nickName + " is in het veld geplaatst"
-                            };
-                            scope.eventFunction({type: "change", basis: basis, eventData: eventData});
+								var eventData = {
+									player: changeDown,
+									pos: scope.drawPlayers[changeDown],
+									comment: scope.players[changeDown].nickName + " is in het veld geplaatst"
+								};
+								scope.eventFunction({type: "changeIn", basis: basis, eventData: eventData});
+							}
                         }
                     }
                     if (bitMask == 0x6) { // wissel player for change
-
                         scope.drawPlayers[changeDown] = scope.drawPlayers[playerUp]; // take over position
                         delete scope.drawChanges[changeDown];
                         delete scope.drawPlayers[playerUp];
-                        if (basis) {
+                        if (basis) { // in basis mode  return player back to changes
                             scope.drawChanges[playerUp] = true;
                         }
                         updateChangePos();
 
                         var eventData = {
                             player1: changeDown, player2: playerUp,
-                            pos1: scope.drawPlayers[changeDown], pos2: {},
+                            pos: scope.drawPlayers[changeDown],
                             comment: scope.players[changeDown].nickName + " komt in het veld voor " + scope.players[playerUp].nickName
                         };
                         scope.eventFunction({type: "change", basis: basis, eventData: eventData});
                     }
-                    if (bitMask == 0x9) {
+                    if (bitMask == 0x9) { // wissel change for player
                         scope.drawPlayers[changeUp] = scope.drawPlayers[playerDown]; // take over position
                         delete scope.drawChanges[changeUp];
                         delete scope.drawPlayers[playerDown];
@@ -398,7 +405,7 @@ app.directive('playingField', function () {
 
                         var eventData = {
                             player1: changeUp, player2: playerDown,
-                            pos1: scope.drawPlayers[changeUp], pos2: {},
+                            pos1: scope.drawPlayers[changeUp],
                             comment: scope.players[changeUp].nickName + " komt in het veld voor" + scope.players[playerDown].nickName
                         };
                         scope.eventFunction({type: "change", basis: basis, eventData: eventData});
@@ -470,6 +477,7 @@ app.directive('playingField', function () {
                     context.drawImage(source, 0, 0, WIDTH, HEIGHT);
                     context.lineWidth = 0.1;
                     var nickName = "";
+					
                     for (var key in scope.drawPlayers) {
                         // skip loop if the property is from prototype
                         if (!scope.drawPlayers.hasOwnProperty(key)) continue;
@@ -477,7 +485,7 @@ app.directive('playingField', function () {
                         if (typeof scope.players[key].nickName !== 'undefined') {
                             nickName = scope.players[key].nickName;
                         }
-                        else {
+						else {
                             nickName = scope.players[key].firstName;
                         }
                         if (key != playerDown) {
@@ -571,6 +579,7 @@ app.directive('playingField', function () {
                 canvas.height = HEIGHT;
                 //console.log(scope.drawPlayers);
                 return setInterval(draw, scope.drawSpeed);
+				
             }
 
             init();

@@ -615,7 +615,6 @@ angular.module('starter.services', [])
 							case "Changes":
 								switch (GameLog[key].type) { //change type, in/out or  position
 									case "In/Out":
-										;
 										if( typeof actualResult.actualPlayers[GameLog[key].playerOut] === 'undefined' ){
 											actualResult.error = true;
 											console.log(GameLog[key].type);
@@ -625,7 +624,23 @@ angular.module('starter.services', [])
 										// he is already changed so he cannot be changed in again
 										delete actualResult.changes[GameLog[key].playerIn];
 										break;
-
+									case "In":
+										if( typeof actualResult.changes[GameLog[key].player] === 'undefined' ){
+											actualResult.error = true;
+											console.log(GameLog[key].type,GameLog[key]);
+										}
+										//console.log(GameLog[key].position,GameLog[key].player);
+										actualResult.actualPlayers[GameLog[key].player] = GameLog[key].position; // assign position
+										// he is already changed so he cannot be changed in again
+										delete actualResult.changes[GameLog[key].player];
+										break;
+									case "Out":
+										if( typeof actualResult.actualPlayers[GameLog[key].player] === 'undefined' ){
+											actualResult.error = true;
+											console.log(GameLog[key].type);
+										}
+										delete actualResult.actualPlayers[GameLog[key].player];
+										break;	
 									case "Position":
 										var pos1 = actualResult.actualPlayers[GameLog[key].player1]; // position of player1
 										var pos2 = actualResult.actualPlayers[GameLog[key].player2]; // position of player2
@@ -638,7 +653,13 @@ angular.module('starter.services', [])
 										break;
 								}
 								break;
-
+							case "Moves":
+								if( typeof actualResult.actualPlayers[GameLog[key].player] === 'undefined'){
+									actualResult.error = true;
+									console.log(GameLog[key].type);
+								}
+								actualResult.actualPlayers[GameLog[key].player] = GameLog[key].position; // change position
+								break;
 							case "Cards":
 								var player = actualResult.actualPlayers[GameLog[key].player];
 								if( typeof actualResult.actualPlayers[GameLog[key].player] === 'undefined' ){
@@ -712,7 +733,7 @@ angular.module('starter.services', [])
                     time: time,
                     type: "In",
                     statsType: "Changes",
-                    playerIn: player,
+                    player: player,
                     position: pos,
                     comment: comment
                 });
@@ -723,7 +744,7 @@ angular.module('starter.services', [])
                     time: time,
                     type: "Out",
                     statsType: "Changes",
-                    playerOut: playerOut,
+                    player: player,
                     position: pos,
                     comment: comment
                 });
@@ -739,11 +760,23 @@ angular.module('starter.services', [])
                     comment: comment
                 });
             },
-            newGoal: function (teamId, seasonId, gameId, ours, player, time, comment) {
+			newPosMove: function (teamId, seasonId, gameId, player, pos, time, comment) {
+                var posMoves = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
+                posMoves.$add({
+                    time: time,
+                    type: "Move",
+                    statsType: "Moves",
+                    player: player,
+                    position: pos,
+                    comment: comment
+                });
+            },
+            newGoal: function (teamId, seasonId, gameId, ours, player, assist, time, comment) {
                 if (ours === true) {
                     var ourGoals = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                     ourGoals.$add({
                         player: player,
+						assist: assist,
                         statsType: "OurGoals",
                         time: time,
                         comment: comment
@@ -753,6 +786,7 @@ angular.module('starter.services', [])
                     var theirGoals = $firebaseArray(statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog"));
                     theirGoals.$add({
                         time: time,
+						assist: assist,
                         statsType: "TheirGoals",
                         comment: comment
                     });
@@ -786,6 +820,9 @@ angular.module('starter.services', [])
                 gameLog.remove();
             },
             storeExternals: function (teamId, seasonId, gameId, externalPlayers) {
+				for(key in externalPlayers){
+					externalPlayers[key].nickName = externalPlayers[key].firstName;
+				}
                 statsRef.child(teamId).child(seasonId).child(gameId).update({
                     externalPlayers: externalPlayers
                 });
