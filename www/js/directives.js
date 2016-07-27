@@ -176,13 +176,13 @@ app.directive('playingField', function () {
             var originY = 100;
             var gridNoX = 11;
             var gridNoY = 15;
-            var fieldImg = "../img/Field.svg";
+            var fieldImg = "./img/Field.svg";
             var canvas = elem[0];//document.getElementById("playing-field");
             var context;
             var source = new Image();
             source.src = fieldImg;
             var shirt = new Image();
-            shirt.src = "../img/shirt.svg";
+            shirt.src = "./img/shirt.svg";
             var basis = false;
 
             var WIDTH;

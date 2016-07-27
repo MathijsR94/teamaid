@@ -1,107 +1,159 @@
 <ion-view view-title="Statistieken Wedstrijd">
     <ion-content>
-		<div class="row">
-			<div class="col">
-				<h1 class="center">{{game.home}} vs {{game.away}}</h1>
-				<h3 class="center">{{homeScore}} - {{awayScore}}</h3>
-			</div>
-		</div>
-		<!-- <button class="button button-block"  ng-click="update()">update</button> -->
-	<ion-list>
-		<ion-item class="item-stable" ng-click="toggleGroup('gameLog')" ng-class="{active: isGroupShown('gameLog')}">
-			  <i class="icon" ng-class="isGroupShown('gameLog') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-			&nbsp;
-			Wedstrijd verslag
-		</ion-item>
-		<ion-item class="item-accordion" ng-repeat="event in gameLog | orderBy:'time'" ng-show="isGroupShown('gameLog')">
-			<standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
-			<span ng-if="event.statsType === 'GameEvents'"> Event </span>
-			<span ng-if="event.statsType === 'OurGoals'"> Goal voor, <player-name player='players[event.player]' nick-name='useNickNames'></player-name></span>
-			<span ng-if="event.statsType === 'TheirGoals'"> Goal tegen </span>
-			<span ng-if="event.statsType === 'Cards'"> Kaart 
-				<span ng-if="event.type === 'red'">Rood,  </span>
-				<span ng-if="event.type === 'yellow'">Geel,  </span>
-				<span ng-if="event.type === 'yellow2'">Tweede geel,  </span>
-				<player-name player='players[event.player]' nick-name='useNickNames'></player-name>
-			</span>
-			<span ng-if="event.statsType === 'Changes'"> Wissel 
-				<span ng-if="event.type === 'Position'">Positie, <player-name player='players[event.player1]' nick-name='useNickNames'></player-name> voor <player-name player='players[event.player2]' nick-name='useNickNames'></player-name> </span>
-				<span ng-if="event.type === 'Move'">Move, <player-name player='players[event.player]' nick-name='useNickNames'></player-name></span>
-				<span ng-if="event.type === 'In/Out'">,  <player-name player='players[event.playerIn]' nick-name='useNickNames'></player-name> voor <player-name player='players[event.playerOut]' nick-name='useNickNames'></player-name> </span>
-			</span>
-			, {{event.comment}}
-			<ion-option-button class="button-assertive" ng-click="$event.stopPropagation(); onItemDelete(event)">Delete</ion-option-button>
-			<ion-option-button class="button-dark" ng-click="$event.stopPropagation(); editStat(event)">Edit</ion-option-button>
+        <div class="row">
+            <div class="col">
+                <h1 class="center">{{game.home}} vs {{game.away}}</h1>
 
-		</ion-item>
-		<ion-item class="item-stable" ng-click="toggleGroup('gameTimes')" ng-class="{active: isGroupShown('gameTimes')}">
-			  <i class="icon" ng-class="isGroupShown('gameTimes') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-			&nbsp;
-			Wedstrijd tijden
-		</ion-item>
-		<ion-item class="item-accordion" ng-show="isGroupShown('gameTimes')">
-			<div class="col col-30 float-left">Eerste helft:</div>
-			<div class="col">
-				<button class="button button-stable" ng-click="openTimePicker('firstHalfStart')"> <standard-time-no-meridian etime='firstHalfStart'></standard-time-no-meridian></button>
-			tot 
-				<button class="button button-stable" ng-click="openTimePicker('firstHalfEnd')"> <standard-time-no-meridian etime='firstHalfEnd'></standard-time-no-meridian></button>
-			</div>
-			<div class="col col-30 float-left">Tweede helft:</div>
-			<div class="col">
-				<button class="button button-stable" ng-click="openTimePicker('secondHalfStart')"> <standard-time-no-meridian etime='secondHalfStart'></standard-time-no-meridian></button>
-			tot 
-				<button class="button button-stable" ng-click="openTimePicker('secondHalfEnd')"> <standard-time-no-meridian etime='secondHalfEnd'></standard-time-no-meridian></button>
-			</div>
-		</ion-item>
-		<ion-item class="item-stable" ng-click="toggleGroup('basisTeam')" ng-class="{active: isGroupShown('basisTeam')}">
-			  <i class="icon" ng-class="isGroupShown('basisTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-			&nbsp;
-			Basis elftal
-		</ion-item>
-		<ion-item class="item-accordion" ng-show="isGroupShown('basisTeam')">
-			basis elftal:
-			<label class="item item-input item-select">
-				<span class="input-label">externe spelers</span>
-				<select ng-model="externalPlayers" ng-change="updatePlayerList(externalPlayers)">
-					<option value="0">0</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>
-					<option value="7">7</option>
-					<option value="8">8</option>
-					<option value="9">9</option>
-					<option value="10">10</option>
-				</select>
-			</label>
-			<label class="item item-input " ng-repeat="(key,player) in externalPlayerNames">
-				<span class="input-label">naam {{key}}</span>
-				<input type="text" ng-model="player.firstName"/>
-			</label>
-			<div ng-if="externalPlayers > 0">
-					<button class="button button-block" ng-click="storeExternalNames()">save names</button>
-			</div>
-			<div ng-if="isGroupShown('basisTeam')">
-				<playing-field draw-players="basisLineUp" draw-changes="basisChanges" players="players" scroll-enabled="isScrollEnabled(value)" event-function="eventDelegator(type, basis, eventData)" type="3" grid="false" drawspeed="50"></playing-field>
-				
-				<div class="buttons">
-					<button class="button button-block"  ng-click="storeBasis(tactic)">save opstelling</button>
-				</div>
-			</div>
-			
-		</ion-item>
-		<ion-item class="item-stable" ng-click="toggleGroup('currentTeam')" ng-class="{active: isGroupShown('currentTeam')}">
-			  <i class="icon" ng-class="isGroupShown('currentTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-			&nbsp;
-			Actuele opstelling
-		</ion-item>
-		<ion-item class="item-accordion" ng-show="isGroupShown('currentTeam')">	
-			<div ng-if="isGroupShown('currentTeam')">
-				<playing-field draw-players="actualPlayers" draw-changes="changes" players="players" scroll-enabled="isScrollEnabled(value)" event-function="eventDelegator(type, basis, eventData)" type="4" grid="false" drawspeed="50"></playing-field>	
-			</div>
-		</ion-item>
-	</ion-list>
+                <h3 class="center">{{homeScore}} - {{awayScore}}</h3>
+            </div>
+        </div>
+        <!-- <button class="button button-block"  ng-click="update()">update</button> -->
+        <ion-list id="game-stats">
+            <ion-item class="item-stable" ng-click="toggleGroup('gameLog')"
+                      ng-class="{active: isGroupShown('gameLog')}">
+                <i class="icon"
+                   ng-class="isGroupShown('gameLog') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+                &nbsp;
+                Wedstrijd verslag
+            </ion-item>
+            <ion-item class="item-accordion stat" ng-show="isGroupShown('gameLog')" ng-repeat="event in gameLog | orderBy:'time'">
+                <section id="cd-timeline">
+                    <div class="cd-timeline-block">
+                        <div class="cd-timeline-img" ng-class="{'balanced' : event.statsType === 'OurGoals'}">
+                           <i ng-if="event.statsType === 'OurGoals'" class="icon ion-ios-football"></i>
+                        </div>
+                        <!-- cd-timeline-img -->
+
+                        <div class="cd-timeline-content">
+                            <h2>
+                                <span ng-if="event.statsType === 'GameEvents'">Event </span>
+                                <span ng-if="event.statsType === 'OurGoals'">Goal voor</span>
+                                <span ng-if="event.statsType === 'TheirGoals'">Goal tegen </span>
+							<span ng-if="event.statsType === 'Cards'">Kaart
+							<span ng-if="event.type === 'red'">Rood</span>
+							<span ng-if="event.type === 'yellow'">Geel</span>
+							<span ng-if="event.type === 'yellow2'">Tweede geel</span>
+							<player-name player='players[event.player]' nick-name='useNickNames'></player-name>
+							</span>
+							<span ng-if="event.statsType === 'Changes'"> Wissel
+							<span ng-if="event.type === 'Position'">Positie<player-name
+                                    player='players[event.player1]' nick-name='useNickNames'></player-name> voor <player-name
+                                    player='players[event.player2]' nick-name='useNickNames'></player-name> </span>
+							<span ng-if="event.type === 'Move'">Move<player-name player='players[event.player]'
+                                                                                 nick-name='useNickNames'></player-name></span>
+							<span ng-if="event.type === 'In/Out'"><player-name player='players[event.playerIn]'
+                                                                               nick-name='useNickNames'></player-name> voor <player-name
+                                    player='players[event.playerOut]' nick-name='useNickNames'></player-name> </span>
+							</span>
+                                {{event.comment}}
+                            </h2>
+                            <p>
+                                <standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
+                                <span ng-if="event.statsType === 'OurGoals'"><player-name player='players[event.player]'
+                                                                                          nick-name='useNickNames'></player-name></span>
+                            </p>
+                        </div>
+                        <!-- cd-timeline-content -->
+                    </div>
+                    <ion-option-button class="button-assertive"
+                                       ng-click="$event.stopPropagation(); onItemDelete(event)">Delete
+                    </ion-option-button>
+                    <ion-option-button class="button-dark"
+                                       ng-click="$event.stopPropagation(); editStat(event)">Edit
+                    </ion-option-button>
+
+                </section>
+
+            </ion-item>
+            <ion-item class="item-stable" ng-click="toggleGroup('gameTimes')"
+                      ng-class="{active: isGroupShown('gameTimes')}">
+                <i class="icon"
+                   ng-class="isGroupShown('gameTimes') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+                &nbsp;
+                Wedstrijd tijden
+            </ion-item>
+            <ion-item class="item-accordion" ng-show="isGroupShown('gameTimes')">
+                <div class="col col-30 float-left">Eerste helft:</div>
+                <div class="col">
+                    <button class="button button-stable" ng-click="openTimePicker('firstHalfStart')">
+                        <standard-time-no-meridian etime='firstHalfStart'></standard-time-no-meridian>
+                    </button>
+                    tot
+                    <button class="button button-stable" ng-click="openTimePicker('firstHalfEnd')">
+                        <standard-time-no-meridian etime='firstHalfEnd'></standard-time-no-meridian>
+                    </button>
+                </div>
+                <div class="col col-30 float-left">Tweede helft:</div>
+                <div class="col">
+                    <button class="button button-stable" ng-click="openTimePicker('secondHalfStart')">
+                        <standard-time-no-meridian etime='secondHalfStart'></standard-time-no-meridian>
+                    </button>
+                    tot
+                    <button class="button button-stable" ng-click="openTimePicker('secondHalfEnd')">
+                        <standard-time-no-meridian etime='secondHalfEnd'></standard-time-no-meridian>
+                    </button>
+                </div>
+            </ion-item>
+            <ion-item class="item-stable" ng-click="toggleGroup('basisTeam')"
+                      ng-class="{active: isGroupShown('basisTeam')}">
+                <i class="icon"
+                   ng-class="isGroupShown('basisTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+                &nbsp;
+                Basis elftal
+            </ion-item>
+            <ion-item class="item-accordion" ng-show="isGroupShown('basisTeam')">
+                basis elftal:
+                <label class="item item-input item-select">
+                    <span class="input-label">externe spelers</span>
+                    <select ng-model="externalPlayers" ng-change="updatePlayerList(externalPlayers)">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </label>
+                <label class="item item-input " ng-repeat="(key,player) in externalPlayerNames">
+                    <span class="input-label">naam {{key}}</span>
+                    <input type="text" ng-model="player.firstName"/>
+                </label>
+
+                <div ng-if="externalPlayers > 0">
+                    <button class="button button-block" ng-click="storeExternalNames()">save names</button>
+                </div>
+                <div ng-if="isGroupShown('basisTeam')">
+                    <playing-field draw-players="basisLineUp" draw-changes="basisChanges" players="players"
+                                   scroll-enabled="isScrollEnabled(value)"
+                                   event-function="eventDelegator(type, basis, eventData)" type="3" grid="false"
+                                   drawspeed="50"></playing-field>
+
+                    <div class="buttons">
+                        <button class="button button-block" ng-click="storeBasis(tactic)">save opstelling</button>
+                    </div>
+                </div>
+
+            </ion-item>
+            <ion-item class="item-stable" ng-click="toggleGroup('currentTeam')"
+                      ng-class="{active: isGroupShown('currentTeam')}">
+                <i class="icon"
+                   ng-class="isGroupShown('currentTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+                &nbsp;
+                Actuele opstelling
+            </ion-item>
+            <ion-item class="item-accordion" ng-show="isGroupShown('currentTeam')">
+                <div ng-if="isGroupShown('currentTeam')">
+                    <playing-field draw-players="actualPlayers" draw-changes="changes" players="players"
+                                   scroll-enabled="isScrollEnabled(value)"
+                                   event-function="eventDelegator(type, basis, eventData)" type="4" grid="false"
+                                   drawspeed="50"></playing-field>
+                </div>
+            </ion-item>
+        </ion-list>
     </ion-content>
 </ion-view>
