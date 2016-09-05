@@ -23,7 +23,7 @@
         <div class="row responsive-sm">
             <div class="col">
                 <div class="item item-divider">
-                    <span>Aanwezig</span>
+                    <span>Aanwezig ({{numberPresent}})</span>
                 </div>
                 <ion-item ng-repeat="(id,value) in practise.Present">
                     <player-name player='players[id]' nick-name='useNickNames'></player-name>
@@ -38,7 +38,7 @@
             </div>
             <div class="col">
                 <div class="item item-divider">
-                    <span>Afwezig</span>
+                    <span>Afwezig ({{numberAbsent}})</span>
                 </div>
                 <ion-item ng-repeat="(id,value) in practise.Absent">
                     <player-name player='players[id]' nick-name='useNickNames'></player-name>
@@ -53,7 +53,7 @@
             </div>
             <div class="col">
                 <div class="item item-divider">
-                    <span>Onbekend</span>
+                    <span>Onbekend ({{numberUnknown}})</span>
                 </div>
                 <ion-list>
                     <ion-item ng-repeat="(key,player) in unknownPlayers">

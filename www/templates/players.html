@@ -5,7 +5,7 @@
 		<img src="./img/cover.jpg" alt="Geen afbeelding" />
         <h2><player-name player='player' nick-name=false></player-name></h2>
         <p>aka: <player-name player='player' nick-name=true></player-name></p>
-		<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivatePlayer(key)">Deactivate</ion-option-button>
+		<ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); deactivatePlayer(player.$key)">Deactivate</ion-option-button>
       </ion-item>
     </ion-list>
 	<ion-list>
@@ -14,7 +14,7 @@
           <img src="./img/cover.jpg" alt="Geen afbeelding" />
           <h2><player-name player='player' nick-name=false></player-name></h2>
           <p>aka: <player-name player='player' nick-name=true></player-name></p>
-		<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); activatePlayer(key)">Activate</ion-option-button>
+		<ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); activatePlayer(player.$key)">Activate</ion-option-button>
       </ion-item>
     </ion-list>
 	<button ng-if="isAdmin" class="button button-block button-stable" disabled="disabled" ng-click="invitePlayer()">Invite player</button>

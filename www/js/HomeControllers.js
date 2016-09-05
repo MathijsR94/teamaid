@@ -64,7 +64,10 @@ angular.module('starter.HomeControllers', [])
 							if (typeof inactivePlayers !== 'undefined') {
 								$scope.players = angular.extend($scope.players, inactivePlayers);
 							}
-							for (player in $scope.players) {
+														
+							$scope.$watch('seasonId', function(newValue, oldValue) {
+
+								for (player in $scope.players) {
 									playerStats[player] = {
 										gametimeList: {},
 										goalsList: {},
@@ -74,9 +77,9 @@ angular.module('starter.HomeControllers', [])
 										totRed: 0,
 										totGoals: 0
 									};
-							}
-							
-							$scope.$watch('seasonId', function(newValue, oldValue) {
+								}
+								console.log($scope.stats);
+								$scope.stats = {};
 								if($scope.seasonId !== null){
 									Statistics.getRef().child($scope.teamId).child($scope.seasonId).once('value', function (statsSnap) {
 										for (var key in statsSnap.val()) { // walk trough each game
@@ -176,6 +179,9 @@ angular.module('starter.HomeControllers', [])
 											}
 										}
 										localStorageFactory.setStatistics(playerStats);
+										localStorageFactory.setGames([]);
+										localStorageFactory.setPractises([]);
+										localStorageFactory.setEvents([]);
 										$scope.stats = playerStats[$scope.uid];
 
 										Games.getGamesArray($scope.teamId,$scope.seasonId).then(function(games) {

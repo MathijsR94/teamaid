@@ -95,6 +95,22 @@ angular.module('starter.PracticeControllers', [])
             $scope.absent = Attendance.checkAttendance($scope.practise.Absent, User.getUID());
             $scope.unknown = (!$scope.present && !$scope.absent);
             $scope.unknownPlayers = Attendance.checkUnknown($scope.practise.Present, $scope.practise.Absent, $scope.players);
+			
+			if(typeof $scope.practise.Present !== 'undefined')
+				$scope.numberPresent = Object.keys($scope.practise.Present).length;
+			else
+				$scope.numberPresent = 0;
+			
+			if(typeof $scope.practise.Absent !== 'undefined')
+				$scope.numberAbsent = Object.keys($scope.practise.Absent).length;
+			else
+				$scope.numberAbsent = 0;
+			
+			if(typeof $scope.unknownPlayers !== 'undefined')
+				$scope.numberUnknown = Object.keys($scope.unknownPlayers).length;
+			else
+				$scope.numberUnknown = 0;
+
         });
 
         $scope.changeAttendance = function (type) {

@@ -4,9 +4,13 @@
 
         <div class="buttons">
             <select class="button button-bq button-outline" ng-model="teamId" ng-change="setTeamId(teamId)"
-                    ng-options="id as teams[id].teamName for (id,value) in userTeams"></select>
+                    ng-options="id as teams[id].teamName for (id,value) in userTeams">
+					<option value="" disabled selected>Selecteer Team</option>
+					</select>
             <select class="button button-bq button-outline" ng-model="seasonId" ng-change="setSeasonId(seasonId)"
-                    ng-options="id as value.title for (id,value) in seasons"></select>
+                    ng-options="id as value.title for (id,value) in seasons">
+					<option value="" disabled selected>Selecteer Seizoen</option>
+					</select>
         </div>
     </ion-header-bar>
     <ion-content>
@@ -26,13 +30,6 @@
             </div>
             <div class="col col-50">
                 {{stats.totGameTime}}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col" ng-repeat="game in stats.gametimeList">
-                <p ng-repeat="(key, time) in game">
-                    {{key}} {{time}}
-                </p>
             </div>
         </div>
         <div class="row">

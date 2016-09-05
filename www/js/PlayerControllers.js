@@ -1,12 +1,17 @@
 angular.module('starter.PlayerControllers', [])
 
-    .controller('PlayersCtrl', function ($scope, Teams, User, $state, $stateParams, localStorageFactory, $firebaseArray) {
-
+    .controller('PlayersCtrl', function ($scope, Teams, User, $state, $stateParams, localStorageFactory, firebaseRef) {
+		var ref = firebaseRef.ref();
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.playerStats = localStorageFactory.getStatistics();
+		
+		ref.child('Teams').child($scope.teamId).on('value', function (teamsSnap) {
+			$scope.players = teamsSnap.val().Players;
+			$scope.inactivePlayers = teamsSnap.val().InActive;
+		});
 
         for (var player in $scope.players) {
             $scope.players[player].id = player;
@@ -21,16 +26,17 @@ angular.module('starter.PlayerControllers', [])
         };
 
         $scope.deactivatePlayer = function (uid) {
-            Teams.deactivatePlayer($scope.teamId, uid);
+			console.log(uid);
+            Teams.deactivatePlayer($scope.teamId, uid);		
         };
 
         $scope.ShowPlayerDetails = function (player) {
-            console.log(player);
-            console.log($scope.playerStats);
+            //console.log(player);
+            console.log($scope.playerStats[player.$key]);
 
-            localStorageFactory.setPlayerStatistics($scope.playerStats[player.id]);
+            localStorageFactory.setPlayerStatistics($scope.playerStats[player.$key]);
 
-            $state.go('app.playerDetail', {playerId: player.id});
+            $state.go('app.playerDetail', {playerId: player.$key});
         }
     })
 

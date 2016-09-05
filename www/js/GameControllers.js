@@ -86,7 +86,6 @@ angular.module('starter.GameControllers', [])
 
     .controller('Games_DetailCtrl', function ($scope, $ionicScrollDelegate, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
         $scope.gameId = $stateParams.gameId;
-        $scope.useNickNames = false;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.teamId = localStorageFactory.getTeamId();
@@ -102,6 +101,7 @@ angular.module('starter.GameControllers', [])
         $scope.basis = {};
         $scope.changes = {};
         $scope.scrollEnabled = false;
+		$scope.useNickNames = true;
 
 
 
@@ -109,12 +109,28 @@ angular.module('starter.GameControllers', [])
             $scope.gameDate = new Date(+gameSnap.val().date);
             $scope.isPast = $scope.gameDate < new Date();
             $scope.game = gameSnap.val();
+			
             //update buttons
             $scope.present = Attendance.checkAttendance($scope.game.Present, User.getUID());
             $scope.absent = Attendance.checkAttendance($scope.game.Absent, User.getUID());
             $scope.unknown = (!$scope.present && !$scope.absent);
             $scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
 
+			if(typeof $scope.game.Present !== 'undefined')
+				$scope.numberPresent = Object.keys($scope.game.Present).length;
+			else
+				$scope.numberPresent = 0;
+			
+			if(typeof $scope.game.Absent !== 'undefined')
+				$scope.numberAbsent = Object.keys($scope.game.Absent).length;
+			else
+				$scope.numberAbsent = 0;
+			
+			if(typeof $scope.unknownPlayers !== 'undefined')
+				$scope.numberUnknown = Object.keys($scope.unknownPlayers).length;
+			else
+				$scope.numberUnknown = 0;
+			
             if (typeof $scope.inactivePlayers !== 'undefined') {
                 $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
             }

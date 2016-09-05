@@ -195,6 +195,7 @@ angular.module('starter.services', [])
             },
             deactivatePlayer: function (teamId, uid) {
                 teamsRef.child(teamId).child("Players").child(uid).once('value', function (data) {
+					console.log(data.val());
                     teamsRef.child(teamId).child("InActive").child(uid).update(data.val());
                     teamsRef.child(teamId).child("Players").child(uid).remove();
                 });
