@@ -100,7 +100,9 @@ angular.module('starter.GameControllers', [])
 
         $scope.gameLog = {};
         $scope.basis = {};
+        $scope.changes = {};
         $scope.scrollEnabled = false;
+
 
 
         Games.getGamesRef($scope.teamId, $scope.seasonId).child($scope.gameId).on('value', function (gameSnap) {
@@ -116,7 +118,6 @@ angular.module('starter.GameControllers', [])
             if (typeof $scope.inactivePlayers !== 'undefined') {
                 $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
             }
-            $scope.fieldPlayers = angular.copy($scope.players);
             Statistics.getStatisticsRef($scope.teamId, $scope.seasonId).child($scope.gameId).on('value', function (statsSnap) {
 
                 var stats = statsSnap.val();
@@ -126,13 +127,15 @@ angular.module('starter.GameControllers', [])
                     if (typeof stats.Basis !== 'undefined') {
 
                         if (typeof stats.externalPlayers !== 'undefined') {
-                            $scope.fieldPlayers = angular.extend($scope.fieldPlayers, stats.externalPlayers);
+                            $scope.players = angular.extend($scope.players, stats.externalPlayers);
                         }
                         $scope.basis = stats.Basis;
                         $scope.showBasis = true;
                     }
                     $scope.homeScore = 0;
                     $scope.awayScore = 0;
+
+
 
                     if (typeof stats.GameLog !== 'undefined') {
                         $scope.gameLog = stats.GameLog;
@@ -166,6 +169,7 @@ angular.module('starter.GameControllers', [])
                 else {
                     $scope.tactic = 0;
                 }
+                console.log($scope.changes);
             });
         });
 
@@ -743,8 +747,9 @@ angular.module('starter.GameControllers', [])
         };
 
         $scope.isScrollEnabled = function (value) {
-            value ? $ionicScrollDelegate.getScrollView().options.scrollingY = true :
-                $ionicScrollDelegate.getScrollView().options.scrollingY = false;
+            console.log(value);
+            value ? $ionicScrollDelegate.freezeAllScrolls(false) :
+                $ionicScrollDelegate.freezeAllScrolls(true);
 
         }
 

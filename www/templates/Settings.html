@@ -81,8 +81,10 @@
 			<div ng-if="isAdmin == true" class="buttons">
 					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="updatePlayers()">Refresh all players!</button>
 					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="addSeasons()">voeg Seasons layer toe aan DB!</button>
+					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="updatePositionsToObjects()">voegfdsbhudfaguvy DB!</button>
+
 			</div>
-			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)" 
+			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)">
 				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
 			</select>
 			<div ng-if="showData == true">

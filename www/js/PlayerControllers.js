@@ -1,45 +1,45 @@
 angular.module('starter.PlayerControllers', [])
 
-.controller('PlayersCtrl', function ($scope, Teams, User, $state, $stateParams, localStorageFactory, $firebaseArray) {
+    .controller('PlayersCtrl', function ($scope, Teams, User, $state, $stateParams, localStorageFactory, $firebaseArray) {
 
-    $scope.isAdmin = localStorageFactory.getAdmin();
-    $scope.teamId = localStorageFactory.getTeamId();
-    $scope.players = localStorageFactory.getPlayers();
-	$scope.inactivePlayers = localStorageFactory.getInactivePlayers();
-	$scope.playerStats = localStorageFactory.getStatistics();
-	
-	for (var player in $scope.players) {
-		$scope.players[player].id = player;
-	}
+        $scope.isAdmin = localStorageFactory.getAdmin();
+        $scope.teamId = localStorageFactory.getTeamId();
+        $scope.players = localStorageFactory.getPlayers();
+        $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
+        $scope.playerStats = localStorageFactory.getStatistics();
 
-    $scope.invitePlayer = function () {
-        $state.go('app.invite', {teamId: $scope.teamId});
-    };
+        for (var player in $scope.players) {
+            $scope.players[player].id = player;
+        }
 
-    $scope.activatePlayer = function (uid) {
-        Teams.activatePlayer($scope.teamId, uid);
-    };
+        $scope.invitePlayer = function () {
+            $state.go('app.invite', {teamId: $scope.teamId});
+        };
 
-    $scope.deactivatePlayer = function (uid) {
-        Teams.deactivatePlayer($scope.teamId, uid);
-    };
-	
-	$scope.ShowPlayerDetails = function (player) {
-		console.log(player);
-		console.log($scope.playerStats);
-		
-		localStorageFactory.setPlayerStatistics($scope.playerStats[player.id]);
+        $scope.activatePlayer = function (uid) {
+            Teams.activatePlayer($scope.teamId, uid);
+        };
 
-		$state.go('app.playerDetail', {playerId: player.id});
-	}
-})
+        $scope.deactivatePlayer = function (uid) {
+            Teams.deactivatePlayer($scope.teamId, uid);
+        };
 
-.controller('PlayerDetailCtrl', function ($scope, Statistics, localStorageFactory, firebaseRef, Games, $filter, $stateParams) {
+        $scope.ShowPlayerDetails = function (player) {
+            console.log(player);
+            console.log($scope.playerStats);
+
+            localStorageFactory.setPlayerStatistics($scope.playerStats[player.id]);
+
+            $state.go('app.playerDetail', {playerId: player.id});
+        }
+    })
+
+    .controller('PlayerDetailCtrl', function ($scope, Statistics, localStorageFactory, firebaseRef, Games, $filter, $stateParams) {
 
         $scope.playerId = $stateParams.playerId;
         var sourceStats = localStorageFactory.getPlayerStatistics();
         $scope.teamId = localStorageFactory.getTeamId();
-		$scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
 
@@ -48,7 +48,7 @@ angular.module('starter.PlayerControllers', [])
             $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
         }
         //console.log(sourceStats);
-        Games.getGamesRef($scope.teamId,$scope.seasonId).once("value", function (gamesSnap) {
+        Games.getGamesRef($scope.teamId, $scope.seasonId).once("value", function (gamesSnap) {
             $scope.games = gamesSnap.val();
 
             if (typeof sourceStats.gametimeList !== 'undefined') {
@@ -84,26 +84,26 @@ angular.module('starter.PlayerControllers', [])
         };
 
     })
-	
-.controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins, Seasons, ionicDatePicker) {
+
+    .controller('SettingsCtrl', function ($scope, fireBaseData, User, Settings, Attendance, Statistics, Teams, localStorageFactory, firebaseRef, Admins, Seasons, ionicDatePicker) {
 
         $scope.teamId = localStorageFactory.getTeamId();
-		$scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.settings = localStorageFactory.getSettings();
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.players = localStorageFactory.getPlayers();
-		$scope.inactivePlayers = localStorageFactory.getInactivePlayers();
-		$scope.availableNumbers = {};
+        $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
+        $scope.availableNumbers = {};
         $scope.externalList = {};
         $scope.nbsp = " ";
-		$scope.showData = false;
-		$scope.selectedPlayer;
-		$scope.newStart = Date.parse(new Date());
-		$scope.newEnd = new Date();
-		$scope.newEnd.setFullYear(new Date().getFullYear() + 1);
-		$scope.newEnd = Date.parse($scope.newEnd);
+        $scope.showData = false;
+        $scope.selectedPlayer;
+        $scope.newStart = Date.parse(new Date());
+        $scope.newEnd = new Date();
+        $scope.newEnd.setFullYear(new Date().getFullYear() + 1);
+        $scope.newEnd = Date.parse($scope.newEnd);
 
-		var startObj = {
+        var startObj = {
             callback: function (val) {  //Mandatory
                 if (typeof(val) === 'undefined') {
                     //console.log('Date not selected');
@@ -113,13 +113,13 @@ angular.module('starter.PlayerControllers', [])
                 }
             },
             // disabledDates: [            //Optional
-                // new Date(2016, 2, 16),
-                // new Date(2015, 3, 16),
-                // new Date(2015, 4, 16),
-                // new Date(2015, 5, 16),
-                // new Date('Wednesday, August 12, 2015'),
-                // new Date("08-16-2016"),
-                // new Date(1439676000000)
+            // new Date(2016, 2, 16),
+            // new Date(2015, 3, 16),
+            // new Date(2015, 4, 16),
+            // new Date(2015, 5, 16),
+            // new Date('Wednesday, August 12, 2015'),
+            // new Date("08-16-2016"),
+            // new Date(1439676000000)
             // ],
             //from: new Date(2012, 1, 1), //Optional
             //to: new Date(2016, 10, 30), //Optional
@@ -128,8 +128,8 @@ angular.module('starter.PlayerControllers', [])
             closeOnSelect: false,       //Optional
             templateType: 'popup'       //Optional
         };
-		
-		var endObj = {
+
+        var endObj = {
             callback: function (val) {  //Mandatory
                 if (typeof(val) === 'undefined') {
                     //console.log('Date not selected');
@@ -139,13 +139,13 @@ angular.module('starter.PlayerControllers', [])
                 }
             },
             // disabledDates: [            //Optional
-                // new Date(2016, 2, 16),
-                // new Date(2015, 3, 16),
-                // new Date(2015, 4, 16),
-                // new Date(2015, 5, 16),
-                // new Date('Wednesday, August 12, 2015'),
-                // new Date("08-16-2016"),
-                // new Date(1439676000000)
+            // new Date(2016, 2, 16),
+            // new Date(2015, 3, 16),
+            // new Date(2015, 4, 16),
+            // new Date(2015, 5, 16),
+            // new Date('Wednesday, August 12, 2015'),
+            // new Date("08-16-2016"),
+            // new Date(1439676000000)
             // ],
             //from: new Date(2012, 1, 1), //Optional
             //to: new Date(2016, 10, 30), //Optional
@@ -155,27 +155,27 @@ angular.module('starter.PlayerControllers', [])
             templateType: 'popup'       //Optional
         };
 
-        $scope.openDatePicker = function(type){
-			if(type == "start"){
-				ionicDatePicker.openDatePicker(startObj);
-			}
-			else if(type == "end"){
-				ionicDatePicker.openDatePicker(endObj);
-			}
+        $scope.openDatePicker = function (type) {
+            if (type == "start") {
+                ionicDatePicker.openDatePicker(startObj);
+            }
+            else if (type == "end") {
+                ionicDatePicker.openDatePicker(endObj);
+            }
         }
-		
-		// create available numbers
-		for(var x = 1;x <= 45;x++){
-			$scope.availableNumbers[x] = x;
-		}
-		// now remove already taken numbers based on the  player array
-		for(key in $scope.players){
-			//console.log($scope.players[key]);	
-			if (typeof $scope.players[key].defaultNumber !== 'undefined') {
-				delete $scope.availableNumbers[$scope.players[key].defaultNumber];
-			}
-		}
-			
+
+        // create available numbers
+        for (var x = 1; x <= 45; x++) {
+            $scope.availableNumbers[x] = x;
+        }
+        // now remove already taken numbers based on the  player array
+        for (key in $scope.players) {
+            //console.log($scope.players[key]);
+            if (typeof $scope.players[key].defaultNumber !== 'undefined') {
+                delete $scope.availableNumbers[$scope.players[key].defaultNumber];
+            }
+        }
+
         $scope.connected = firebaseRef.connectedRef().on("value", function (snap) {
             if (snap.val() === true) {
                 Settings.getRef().child($scope.teamId).child("Settings").on("value", function (settingsSnap) {
@@ -196,16 +196,16 @@ angular.module('starter.PlayerControllers', [])
                 });
             }
         });
-		
-		Admins.ref().child($scope.teamId).on('value', function (adminsSnap) {
-			$scope.admins = adminsSnap.val();
-		});
-		
-		Seasons.ref().child($scope.teamId).on('value', function (seasonsSnap) {
-			$scope.seasons = seasonsSnap.val();
-		});
-		
-		
+
+        Admins.ref().child($scope.teamId).on('value', function (adminsSnap) {
+            $scope.admins = adminsSnap.val();
+        });
+
+        Seasons.ref().child($scope.teamId).on('value', function (seasonsSnap) {
+            $scope.seasons = seasonsSnap.val();
+        });
+
+
         $scope.toggleGroup = function (group) {
             if ($scope.isGroupShown(group)) {
                 $scope.shownGroup = null;
@@ -228,119 +228,119 @@ angular.module('starter.PlayerControllers', [])
                 alert("wachtwoorden zijn niet gelijk");
             }
         };
-		
-		$scope.addAdmin = function (id) {
-			Admins.linkAdmin($scope.teamId,id);	
-		}
-		
-		$scope.deactivateAdmin = function(id){
-			Admins.unlinkAdmin($scope.teamId,id);
-		}
-		
-		$scope.playerSelected = function (player) {
-            $scope.selectedNumber = $scope.players[player].defaultNumber;
-			if($scope.selectedNumber == -1)
-				$scope.selectedNumber = null;
-			//console.log($scope.selectedNumber);
-			$scope.showData = true;
+
+        $scope.addAdmin = function (id) {
+            Admins.linkAdmin($scope.teamId, id);
         }
-		$scope.changeNumber = function (player, newNumber) {
-			if (typeof player === 'undefined' || typeof newNumber === -1 ){
+
+        $scope.deactivateAdmin = function (id) {
+            Admins.unlinkAdmin($scope.teamId, id);
+        }
+
+        $scope.playerSelected = function (player) {
+            $scope.selectedNumber = $scope.players[player].defaultNumber;
+            if ($scope.selectedNumber == -1)
+                $scope.selectedNumber = null;
+            //console.log($scope.selectedNumber);
+            $scope.showData = true;
+        }
+        $scope.changeNumber = function (player, newNumber) {
+            if (typeof player === 'undefined' || typeof newNumber === -1) {
                 alert("vul beide velden in");
             }
-			alert("rugnummer wordt gewijzigd van "+ $scope.players[player].defaultNumber + " naar " + newNumber);
-			
-			// update local player and scope variable for available numbers
-			$scope.availableNumbers[$scope.players[player].defaultNumber] = $scope.players[player].defaultNumber;
-			$scope.players[player].defaultNumber = newNumber;
-			delete $scope.availableNumbers[newNumber];
-			
-			// update firebase
-			Teams.updatePlayer($scope.teamId,player,$scope.players[player].firstName,$scope.players[player].insertion,$scope.players[player].lastName,$scope.players[player].defaultNumber,$scope.players[player].nickName);
-			
-			// update local storage
-			localStorageFactory.setPlayers($scope.players);
-			$scope.showNumbers = false;
-			$scope.selectedPlayer = {};
-				
-		}
-		
-		$scope.updatePlayer = function (player) {
-		
-			// update firebase
-			Teams.updatePlayer($scope.teamId,player,$scope.players[player].firstName,$scope.players[player].insertion,$scope.players[player].lastName,$scope.players[player].defaultNumber,$scope.players[player].nickName);
-			localStorageFactory.setPlayers($scope.players);
-		}
-		
-		$scope.updatePlayers = function () {
-		
-			// update local player and scope variable for available numbers
-			for( player in $scope.players ){
-				
-				// update firebase
-				Teams.updatePlayer($scope.teamId,player,$scope.players[player].firstName,$scope.players[player].insertion,$scope.players[player].lastName,$scope.players[player].defaultNumber,$scope.players[player].nickName,"Players");
-			}
-			for( player in $scope.inactivePlayers ){
-				// update firebase
-				Teams.updatePlayer($scope.teamId,player,$scope.inactivePlayers[player].firstName,$scope.inactivePlayers[player].insertion,$scope.inactivePlayers[player].lastName,$scope.inactivePlayers[player].defaultNumber,$scope.inactivePlayers[player].nickName,"InActive");
-				
-			}
-			
-		}
-		
-		$scope.addSeasons = function () {
-		console.log("updateDB");
-			var totalRef = firebaseRef.ref();
-			totalRef.child('Games').once('value', function (totalSnap) {
-				$scope.data = totalSnap.val();
-				for (teamId in $scope.data) { // team layer
-					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Games");
-					totalRef.child('Games').child(teamId).remove();
-					totalRef.child('Games').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
-				}
-			});
-			totalRef.child('Statistics').once('value', function (totalSnap) {
-				$scope.data = totalSnap.val();
-				for (teamId in $scope.data) { // team layer
-					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Games");
-					totalRef.child('Statistics').child(teamId).remove();
-					totalRef.child('Statistics').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
-				}
-			});
-			totalRef.child('Practises').once('value', function (totalSnap) {
-				$scope.data = totalSnap.val();
-				for (teamId in $scope.data) { // team layer
-					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Practises");
-					totalRef.child('Practises').child(teamId).remove();
-					totalRef.child('Practises').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
-				}
-			});
-			totalRef.child('Events').once('value', function (totalSnap) {
-				$scope.data = totalSnap.val();
-				for (teamId in $scope.data) { // team layer
-					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Events");
-					totalRef.child('Events').child(teamId).remove();
-					totalRef.child('Events').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
-				}
-			});			
-			totalRef.child('Duties').once('value', function (totalSnap) {
-				$scope.data = totalSnap.val();
-				for (teamId in $scope.data) { // team layer
-					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Duties");
-					totalRef.child('Duties').child(teamId).remove();
-					totalRef.child('Duties').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
-				}
-			});
-			totalRef.child('Finance').once('value', function (totalSnap) {
-				$scope.data = totalSnap.val();
-				for (teamId in $scope.data) { // team layer
-					console.log(teamId,$scope.data[teamId], $scope.seasonId, "TEAM - Finance");
-					totalRef.child('Finance').child(teamId).remove();
-					totalRef.child('Finance').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
-				}
-			});			
-		}
-		
+            alert("rugnummer wordt gewijzigd van " + $scope.players[player].defaultNumber + " naar " + newNumber);
+
+            // update local player and scope variable for available numbers
+            $scope.availableNumbers[$scope.players[player].defaultNumber] = $scope.players[player].defaultNumber;
+            $scope.players[player].defaultNumber = newNumber;
+            delete $scope.availableNumbers[newNumber];
+
+            // update firebase
+            Teams.updatePlayer($scope.teamId, player, $scope.players[player].firstName, $scope.players[player].insertion, $scope.players[player].lastName, $scope.players[player].defaultNumber, $scope.players[player].nickName);
+
+            // update local storage
+            localStorageFactory.setPlayers($scope.players);
+            $scope.showNumbers = false;
+            $scope.selectedPlayer = {};
+
+        }
+
+        $scope.updatePlayer = function (player) {
+
+            // update firebase
+            Teams.updatePlayer($scope.teamId, player, $scope.players[player].firstName, $scope.players[player].insertion, $scope.players[player].lastName, $scope.players[player].defaultNumber, $scope.players[player].nickName);
+            localStorageFactory.setPlayers($scope.players);
+        }
+
+        $scope.updatePlayers = function () {
+
+            // update local player and scope variable for available numbers
+            for (player in $scope.players) {
+
+                // update firebase
+                Teams.updatePlayer($scope.teamId, player, $scope.players[player].firstName, $scope.players[player].insertion, $scope.players[player].lastName, $scope.players[player].defaultNumber, $scope.players[player].nickName, "Players");
+            }
+            for (player in $scope.inactivePlayers) {
+                // update firebase
+                Teams.updatePlayer($scope.teamId, player, $scope.inactivePlayers[player].firstName, $scope.inactivePlayers[player].insertion, $scope.inactivePlayers[player].lastName, $scope.inactivePlayers[player].defaultNumber, $scope.inactivePlayers[player].nickName, "InActive");
+
+            }
+
+        }
+
+        $scope.addSeasons = function () {
+            console.log("updateDB");
+            var totalRef = firebaseRef.ref();
+            totalRef.child('Games').once('value', function (totalSnap) {
+                $scope.data = totalSnap.val();
+                for (teamId in $scope.data) { // team layer
+                    console.log(teamId, $scope.data[teamId], $scope.seasonId, "TEAM - Games");
+                    totalRef.child('Games').child(teamId).remove();
+                    totalRef.child('Games').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+                }
+            });
+            totalRef.child('Statistics').once('value', function (totalSnap) {
+                $scope.data = totalSnap.val();
+                for (teamId in $scope.data) { // team layer
+                    console.log(teamId, $scope.data[teamId], $scope.seasonId, "TEAM - Games");
+                    totalRef.child('Statistics').child(teamId).remove();
+                    totalRef.child('Statistics').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+                }
+            });
+            totalRef.child('Practises').once('value', function (totalSnap) {
+                $scope.data = totalSnap.val();
+                for (teamId in $scope.data) { // team layer
+                    console.log(teamId, $scope.data[teamId], $scope.seasonId, "TEAM - Practises");
+                    totalRef.child('Practises').child(teamId).remove();
+                    totalRef.child('Practises').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+                }
+            });
+            totalRef.child('Events').once('value', function (totalSnap) {
+                $scope.data = totalSnap.val();
+                for (teamId in $scope.data) { // team layer
+                    console.log(teamId, $scope.data[teamId], $scope.seasonId, "TEAM - Events");
+                    totalRef.child('Events').child(teamId).remove();
+                    totalRef.child('Events').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+                }
+            });
+            totalRef.child('Duties').once('value', function (totalSnap) {
+                $scope.data = totalSnap.val();
+                for (teamId in $scope.data) { // team layer
+                    console.log(teamId, $scope.data[teamId], $scope.seasonId, "TEAM - Duties");
+                    totalRef.child('Duties').child(teamId).remove();
+                    totalRef.child('Duties').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+                }
+            });
+            totalRef.child('Finance').once('value', function (totalSnap) {
+                $scope.data = totalSnap.val();
+                for (teamId in $scope.data) { // team layer
+                    console.log(teamId, $scope.data[teamId], $scope.seasonId, "TEAM - Finance");
+                    totalRef.child('Finance').child(teamId).remove();
+                    totalRef.child('Finance').child(teamId).child($scope.seasonId).set($scope.data[teamId]);
+                }
+            });
+        }
+
         $scope.changeExtInt = function (playerExt, playerInt) {
             if (typeof playerExt === 'undefined' || typeof playerInt === 'undefined') {
                 alert("vul beide velden in");
@@ -400,17 +400,221 @@ angular.module('starter.PlayerControllers', [])
             }
 
         }
-		
-		$scope.addSeason = function(title){
-			//console.log(($scope.newStart), ($scope.newEnd));
-			Seasons.addSeason($scope.teamId,title, $scope.newStart, $scope.newEnd);
-		}
-		$scope.deleteSeason = function(id){
-			Seasons.deleteSeason($scope.teamId,id);
-		}
-		
-	})
-.controller('InvitesCtrl', function ($scope, User, Teams, Mail, $state, $ionicHistory, $stateParams) {
+
+        $scope.addSeason = function (title) {
+            //console.log(($scope.newStart), ($scope.newEnd));
+            Seasons.addSeason($scope.teamId, title, $scope.newStart, $scope.newEnd);
+        }
+        $scope.deleteSeason = function (id) {
+            Seasons.deleteSeason($scope.teamId, id);
+        }
+
+        // TIJDELIJK!
+        $scope.updatePositionsToObjects = function () {
+            console.log("updateDB");
+            var totalRef = firebaseRef.ref();
+            totalRef.child('Statistics').once('value', function (totalSnap) {
+                $scope.data = totalSnap.val();
+                console.log("updateDB2");
+                for (teamId in $scope.data) { // team layer
+                    console.log($scope.data[teamId]);
+                    for (seasonId in $scope.data[teamId]) { // team season layer
+                        console.log("updateDB42");
+                        for (gameId in $scope.data[teamId][seasonId]) { // team layer
+                            for (player in $scope.data[teamId][seasonId][gameId]['Basis']) { // basis in  layer
+                                var posObj = {gridX: 0, gridY: 0};
+                                var playerObj = $scope.data[teamId][seasonId][gameId]['Basis'][player];
+                                console.log(playerObj)
+                                switch (playerObj) {
+                                    case "1":
+                                        posObj = {gridX: 5, gridY: 0};
+                                        break;
+                                    case "2":
+                                        posObj = {gridX: 2, gridY: 3};
+                                        break;
+                                    case "3":
+                                        posObj = {gridX: 4, gridY: 2};
+                                        break;
+                                    case "4":
+                                        posObj = {gridX: 6, gridY: 2};
+                                        break;
+                                    case "5":
+                                        posObj = {gridX: 8, gridY: 3};
+                                        break;
+                                    case "6":
+                                        posObj = {gridX: 2, gridY: 6};
+                                        break;
+                                    case "7":
+                                        posObj = {gridX: 5, gridY: 5};
+                                        break;
+                                    case "8":
+                                        posObj = {gridX: 8, gridY: 6};
+                                        break;
+                                    case "9":
+                                        posObj = {gridX: 3, gridY: 9};
+                                        break;
+                                    case "10":
+                                        posObj = {gridX: 5, gridY: 7};
+                                        break;
+                                    case "11":
+                                        posObj = {gridX: 7, gridY: 9};
+                                        break;
+                                    default:
+                                        posObj = playerObj;
+                                        break;
+
+                                }
+                                firebaseRef.ref().child("Statistics").child(teamId).child(seasonId).child(gameId)
+                                    .child("Basis").child(player).set(posObj);
+
+                            }
+                            var gamelogItem;
+                            for (item in $scope.data[teamId][seasonId][gameId]["GameLog"]) { // gamelog layer
+                                gamelogItem = $scope.data[teamId][seasonId][gameId]["GameLog"][item];
+                                if (gamelogItem.hasOwnProperty("position")) {
+                                    var posObj = {gridX: 0, gridY: 0};
+                                    switch (gamelogItem.position) {
+                                        case "1":
+                                            posObj = {gridX: 5, gridY: 0};
+                                            break;
+                                        case "2":
+                                            posObj = {gridX: 2, gridY: 3};
+                                            break;
+                                        case "3":
+                                            posObj = {gridX: 4, gridY: 2};
+                                            break;
+                                        case "4":
+                                            posObj = {gridX: 6, gridY: 2};
+                                            break;
+                                        case "5":
+                                            posObj = {gridX: 8, gridY: 3};
+                                            break;
+                                        case "6":
+                                            posObj = {gridX: 2, gridY: 6};
+                                            break;
+                                        case "7":
+                                            posObj = {gridX: 5, gridY: 5};
+                                            break;
+                                        case "8":
+                                            posObj = {gridX: 8, gridY: 6};
+                                            break;
+                                        case "9":
+                                            posObj = {gridX: 3, gridY: 9};
+                                            break;
+                                        case "10":
+                                            posObj = {gridX: 5, gridY: 7};
+                                            break;
+                                        case "11":
+                                            posObj = {gridX: 7, gridY: 9};
+                                            break;
+                                        default:
+                                            posObj = gamelogItem.position;
+                                            break;
+
+                                    }
+                                    firebaseRef.ref().child("Statistics").child(teamId).child(seasonId).child(gameId)
+                                        .child("GameLog").child(item).update({position: posObj});
+                                }
+                                if (gamelogItem.hasOwnProperty("position1")) {
+                                    var posObj = {gridX: 0, gridY: 0};
+                                    switch (gamelogItem.position1) {
+                                        case "1":
+                                            posObj = {gridX: 5, gridY: 0};
+                                            break;
+                                        case "2":
+                                            posObj = {gridX: 2, gridY: 3};
+                                            break;
+                                        case "3":
+                                            posObj = {gridX: 4, gridY: 2};
+                                            break;
+                                        case "4":
+                                            posObj = {gridX: 6, gridY: 2};
+                                            break;
+                                        case "5":
+                                            posObj = {gridX: 8, gridY: 3};
+                                            break;
+                                        case "6":
+                                            posObj = {gridX: 2, gridY: 6};
+                                            break;
+                                        case "7":
+                                            posObj = {gridX: 5, gridY: 5};
+                                            break;
+                                        case "8":
+                                            posObj = {gridX: 8, gridY: 6};
+                                            break;
+                                        case "9":
+                                            posObj = {gridX: 3, gridY: 9};
+                                            break;
+                                        case "10":
+                                            posObj = {gridX: 5, gridY: 7};
+                                            break;
+                                        case "11":
+                                            posObj = {gridX: 7, gridY: 9};
+                                            break;
+                                        default:
+                                            posObj = gamelogItem.position1;
+                                            break;
+
+                                    }
+                                    firebaseRef.ref().child("Statistics").child(teamId).child(seasonId).child(gameId)
+                                        .child("GameLog").child(item).update({position: posObj});
+                                }
+                                if (gamelogItem.hasOwnProperty("position2")) {
+                                    var posObj = {gridX: 0, gridY: 0};
+                                    switch (gamelogItem.position2) {
+                                        case "1":
+                                            posObj = {gridX: 5, gridY: 0};
+                                            break;
+                                        case "2":
+                                            posObj = {gridX: 2, gridY: 3};
+                                            break;
+                                        case "3":
+                                            posObj = {gridX: 4, gridY: 2};
+                                            break;
+                                        case "4":
+                                            posObj = {gridX: 6, gridY: 2};
+                                            break;
+                                        case "5":
+                                            posObj = {gridX: 8, gridY: 3};
+                                            break;
+                                        case "6":
+                                            posObj = {gridX: 2, gridY: 6};
+                                            break;
+                                        case "7":
+                                            posObj = {gridX: 5, gridY: 5};
+                                            break;
+                                        case "8":
+                                            posObj = {gridX: 8, gridY: 6};
+                                            break;
+                                        case "9":
+                                            posObj = {gridX: 3, gridY: 9};
+                                            break;
+                                        case "10":
+                                            posObj = {gridX: 5, gridY: 7};
+                                            break;
+                                        case "11":
+                                            posObj = {gridX: 7, gridY: 9};
+                                            break;
+                                        default:
+                                            posObj = gamelogItem.position2;
+                                            break;
+                                    }
+                                    firebaseRef.ref().child("Statistics").child(teamId).child(seasonId).child(gameId)
+                                        .child("GameLog").child(item).update({position: posObj});
+                                }
+                                //console.log(key, value);
+
+                                //console.log(" item", item);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+    })
+    .controller('InvitesCtrl', function ($scope, User, Teams, Mail, $state, $ionicHistory, $stateParams) {
         $scope.teamId = $stateParams.teamId;
         //console.log( $scope.teamId);
         $scope.getTeamName = Teams.getTeamName($scope.teamId).then(function (data) {
