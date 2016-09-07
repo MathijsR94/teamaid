@@ -1,4 +1,4 @@
-<ion-view view-title="Instellingen">
+<ion-view cache-view="false" view-title="Instellingen">
   <ion-content>
   
 	<ion-list>
@@ -78,15 +78,21 @@
 			Speler Info
 		</ion-item>
 		<ion-item class="item-accordion" ng-show="isGroupShown('UpdatePlayer')">
-			<div ng-if="isAdmin == true" class="buttons">
+			<!-- <div ng-if="isAdmin == true" class="buttons">
 					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="updatePlayers()">Refresh all players!</button>
 					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="addSeasons()">voeg Seasons layer toe aan DB!</button>
 					Tijdelijk :::  new structure update: <button class="button button-bq" ng-click="updatePositionsToObjects()">voegfdsbhudfaguvy DB!</button>
-
+			</div> -->
+			<div ng-if="isAdmin == true">
+				<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)">
+					<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
+				</select>
 			</div>
-			<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)">
-				<option ng-repeat="(id,value) in players" value="{{id}}" player-name player='value' nick-name='useNickNames' />
-			</select>
+			<div ng-if="isAdmin == false">
+				<select class="button button-block center" ng-model="selectedPlayer" ng-change="playerSelected(selectedPlayer)">
+					<option value='{{userId}}' player-name player='players[userId]' nick-name='useNickNames' />
+				</select>
+			</div>
 			<div ng-if="showData == true">
 				<label class="item item-input">
 					<span class="input-label">Voornaam:</span>

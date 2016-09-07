@@ -98,6 +98,7 @@ angular.module('starter.PlayerControllers', [])
         $scope.settings = localStorageFactory.getSettings();
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.players = localStorageFactory.getPlayers();
+		$scope.userId = User.getUID();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.availableNumbers = {};
         $scope.externalList = {};
@@ -244,6 +245,7 @@ angular.module('starter.PlayerControllers', [])
         }
 
         $scope.playerSelected = function (player) {
+			$scope.selectedPlayer = player; //console.log(player);
             $scope.selectedNumber = $scope.players[player].defaultNumber;
             if ($scope.selectedNumber == -1)
                 $scope.selectedNumber = null;
