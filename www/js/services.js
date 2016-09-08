@@ -195,8 +195,10 @@ angular.module('starter.services', [])
             },
             deactivatePlayer: function (teamId, uid) {
                 teamsRef.child(teamId).child("Players").child(uid).once('value', function (data) {
-					console.log(data.val());
-                    teamsRef.child(teamId).child("InActive").child(uid).update(data.val());
+					//console.log(data.val());
+					var player = data.val();
+					player.defaultNumber = -1; // remove default number when player gets deactivated!
+                    teamsRef.child(teamId).child("InActive").child(uid).update(player);
                     teamsRef.child(teamId).child("Players").child(uid).remove();
                 });
             },

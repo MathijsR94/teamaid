@@ -3,7 +3,12 @@ angular.module('starter.FinanceControllers', [])
         $scope.isAdmin = localStorageFactory.getAdmin();
         $scope.teamId = localStorageFactory.getTeamId();
 		$scope.seasonId = localStorageFactory.getSeasonId();
+        $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.players = localStorageFactory.getPlayers();
+
+		if (typeof $scope.inactivePlayers !== 'undefined') {
+			$scope.players = angular.extend($scope.players, $scope.inactivePlayers);
+		}
 
         $scope.getCredits = Finance.getCredits($scope.teamId,$scope.seasonId).then(function (data) {
             $scope.credits = data;
@@ -30,9 +35,12 @@ angular.module('starter.FinanceControllers', [])
     .controller('CreditsCtrl', function ($scope, Teams, localStorageFactory, User, Finance, $state, $ionicHistory, Utility) {
         $scope.teamId = localStorageFactory.getTeamId();
 		$scope.seasonId = localStorageFactory.getSeasonId();
-        //$scope.nbsp = " "; // whitespace
+		$scope.inactivePlayers = localStorageFactory.getInactivePlayers();
         $scope.players = localStorageFactory.getPlayers();
 
+		if (typeof $scope.inactivePlayers !== 'undefined') {
+			$scope.players = angular.extend($scope.players, $scope.inactivePlayers);
+		}
         $scope.isEmpty = function (obj) {
             return Utility.isEmpty(obj);
         }

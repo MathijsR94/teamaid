@@ -26,16 +26,12 @@ angular.module('starter.PlayerControllers', [])
         };
 
         $scope.deactivatePlayer = function (uid) {
-			console.log(uid);
             Teams.deactivatePlayer($scope.teamId, uid);		
         };
 
         $scope.ShowPlayerDetails = function (player) {
-            //console.log(player);
             console.log($scope.playerStats[player.$key]);
-
             localStorageFactory.setPlayerStatistics($scope.playerStats[player.$key]);
-
             $state.go('app.playerDetail', {playerId: player.$key});
         }
     })
