@@ -8411,7 +8411,7 @@ img {
   white-space: pre; }
 
 .soccer-field {
-  background: url(../img/speelveld.svg) no-repeat;
+  background: url(./img/speelveld.svg) no-repeat;
   background-size: 100% 100%; }
 
 .player {
@@ -8828,3 +8828,40 @@ header h1 {
 #game-stats ion-item.stat > .item-content {
   padding-top: 0;
   padding-bottom: 0; }
+
+.left img {
+  float: left;
+  margin-right: 10px;
+  height: 100%;
+  font-size: 1.5em;
+  width: 16px; }
+
+.left i {
+  float: left;
+  margin-right: 10px;
+  height: 100%;
+  top: 7px;
+  position: relative;
+  font-size: 1.5em;
+  width: 16px; }
+
+.right i {
+  float: right;
+  margin-left: 10px;
+  height: 100%;
+  top: 7px;
+  position: relative;
+  font-size: 1.5em;
+  width: 16px; }
+
+.right h2, .right p, .right span {
+  float: right; }
+
+.changes .assertive {
+  color: #ef473a; }
+
+.changes .balanced {
+  color: #33cd5f; }
+
+#game-stats ion-item {
+  border: 1px solid #ccc !important; }
