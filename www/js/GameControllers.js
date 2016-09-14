@@ -102,19 +102,19 @@ angular.module('starter.GameControllers', [])
         $scope.changes = {};
         $scope.scrollEnabled = false;
 		$scope.useNickNames = true;
-
-
+		$scope.ActivePlayers = angular.copy($scope.players);
 
         Games.getGamesRef($scope.teamId, $scope.seasonId).child($scope.gameId).on('value', function (gameSnap) {
             $scope.gameDate = new Date(+gameSnap.val().date);
             $scope.isPast = $scope.gameDate < new Date();
             $scope.game = gameSnap.val();
 			
+			
             //update buttons
             $scope.present = Attendance.checkAttendance($scope.game.Present, User.getUID());
             $scope.absent = Attendance.checkAttendance($scope.game.Absent, User.getUID());
             $scope.unknown = (!$scope.present && !$scope.absent);
-            $scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.players);
+            $scope.unknownPlayers = Attendance.checkUnknown($scope.game.Present, $scope.game.Absent, $scope.ActivePlayers);
 
 			if(typeof $scope.game.Present !== 'undefined')
 				$scope.numberPresent = Object.keys($scope.game.Present).length;
