@@ -1,11 +1,9 @@
 <ion-view view-title="Statistieken Wedstrijd">
     <ion-content>
         <div class="row">
-            <div class="col">
-                <h1 class="center">{{game.home}} vs {{game.away}}</h1>
-
-                <h3 class="center">{{homeScore}} - {{awayScore}}</h3>
-            </div>
+            <div class="col col-40"><h4 class="center">{{game.home}}</h4></div>
+            <div class="col col-20"><h3 class="center">{{homeScore}} - {{awayScore}}</h3></div>
+            <div class="col col-40"><h4 class="center">{{game.away}}</h4></div>
         </div>
         <!-- <button class="button button-block"  ng-click="update()">update</button> -->
         <ion-list id="game-stats">
@@ -16,44 +14,59 @@
                 &nbsp;
                 Wedstrijd verslag
             </ion-item>
-            <ion-item class="item-accordion stat" ng-show="isGroupShown('gameLog')" ng-repeat="event in gameLog | orderBy:'time'">
-                <section id="cd-timeline">
-                    <div class="cd-timeline-block">
-                        <div class="cd-timeline-img" ng-class="{'balanced' : event.statsType === 'OurGoals'}">
-                           <i ng-if="event.statsType === 'OurGoals'" class="icon ion-ios-football"></i>
-                        </div>
-                        <!-- cd-timeline-img -->
+            <ion-item class="item-accordion stat" ng-show="isGroupShown('gameLog')"
+                      ng-repeat="event in gameLog | orderBy:'time'">
+                <section class="row no-padding">
+                    <div class="col no-padding"
+                         ng-class="event.statsType === 'OurGoals' || event.statsType === 'Changes' ? 'left' : 'right'">
+                        <div class="row no-padding">
+                            <div class="col">
+                                <i ng-if="event.statsType === 'OurGoals'"
+                                   class="icon ion-ios-football"></i>
+                                <i ng-if="event.statsType === 'Theirgoals'"
+                                   class="icon ion-ios-football"></i>
+                                <i ng-if="event.statsType === 'GameEvents'"
+                                   class="icon ion-ios-list"></i>
+                                <img src="../img/red-card.svg" width="16" height="16"
+                                     ng-if="event.statsType === 'red'"
+                                        />
+                                <img src="../img/yellow-card.svg" width="16" height="16"
+                                     ng-if="event.statsType === 'yellow'"
+                                        />
+                                <img src="../img/yellow-red-card.svg" width="16" height="16"
+                                     ng-if="event.statsType === 'yellow2'"
+                                        />
+                                <i ng-if="event.statsType === 'Changes'"
+                                   class="icon ion-loop"></i>
 
-                        <div class="cd-timeline-content">
-                            <h2>
-                                <span ng-if="event.statsType === 'GameEvents'">Event </span>
-                                <span ng-if="event.statsType === 'OurGoals'">Goal voor</span>
-                                <span ng-if="event.statsType === 'TheirGoals'">Goal tegen </span>
-							<span ng-if="event.statsType === 'Cards'">Kaart
-							<span ng-if="event.type === 'red'">Rood</span>
-							<span ng-if="event.type === 'yellow'">Geel</span>
-							<span ng-if="event.type === 'yellow2'">Tweede geel</span>
-							<player-name player='players[event.player]' nick-name='useNickNames'></player-name>
-							</span>
-							<span ng-if="event.statsType === 'Changes'"> Wissel
-							<span ng-if="event.type === 'Position'">Positie<player-name
+                                <player-name player='players[event.player]' nick-name='useNickNames'></player-name>
+                                </span>
+
+                                <div ng-if="event.statsType === 'Changes'" class="changes">
+                                    <span>Wissel</span>
+							<span ng-if="event.type === 'Position'">Positie <player-name
                                     player='players[event.player1]' nick-name='useNickNames'></player-name> voor <player-name
                                     player='players[event.player2]' nick-name='useNickNames'></player-name> </span>
-							<span ng-if="event.type === 'Move'">Move<player-name player='players[event.player]'
-                                                                                 nick-name='useNickNames'></player-name></span>
-							<span ng-if="event.type === 'In/Out'"><player-name player='players[event.playerIn]'
-                                                                               nick-name='useNickNames'></player-name> voor <player-name
-                                    player='players[event.playerOut]' nick-name='useNickNames'></player-name> </span>
-							</span>
-                                {{event.comment}}
-                            </h2>
-                            <p>
-                                <standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
-                                <span ng-if="event.statsType === 'OurGoals'"><player-name player='players[event.player]'
-                                                                                          nick-name='useNickNames'></player-name></span>
-                            </p>
+							<span ng-if="event.type === 'Move'">Verplaatst<player-name player='players[event.player]'
+                                                                                       nick-name='useNickNames'></player-name></span>
+
+                                    <p ng-if="event.type === 'In/Out'" class="balanced">
+                                        <player-name
+                                                player='players[event.playerIn]'
+                                                nick-name='useNickNames'></player-name>
+                                    </p>
+                                    <p ng-if="event.type === 'In/Out'" class="assertive">
+                                        <player-name
+                                                player='players[event.playerOut]'
+                                                nick-name='useNickNames'></player-name>
+                                    </p>
+                                </div>
+                                <p>
+                                    <standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
+                                <span ng-if="event.statsType === 'OurGoals'">{{event.comment}}</span>
+                                </p>
+                            </div>
                         </div>
-                        <!-- cd-timeline-content -->
                     </div>
                     <ion-option-button class="button-assertive"
                                        ng-click="$event.stopPropagation(); onItemDelete(event)">Delete

@@ -183,6 +183,16 @@ app.directive('playingField', function () {
             source.src = fieldImg;
             var shirt = new Image();
             shirt.src = "./img/shirt.svg";
+            var yellowCard = new Image();
+            yellowCard.src = "./img/yellow-card.svg";
+            var redCard = new Image();
+            redCard.src = "./img/red-card.svg";
+            var ourGoalIcon = new Image();
+            ourGoalIcon.src = "./img/our-goal.svg";
+            var theirGoalIcon = new Image();
+            theirGoalIcon.src = "./img/their-goal.svg";
+            var eventIcon = new Image();
+            eventIcon.src = "./img/list.svg";
             var basis = false;
 
             var WIDTH;
@@ -476,6 +486,7 @@ app.directive('playingField', function () {
                     canvas.height = HEIGHT;
                     context.drawImage(source, 0, 0, WIDTH, HEIGHT);
                     context.lineWidth = 0.1;
+                    context.textAlign = "center";
                     var nickName = "";
 					
                     for (var key in scope.drawPlayers) {
@@ -490,11 +501,11 @@ app.directive('playingField', function () {
                         }
                         if (key != playerDown) {
                             var obj = scope.drawPlayers[key];
-                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY * 0.8);
-                            context.fillText(nickName, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY) + gridSizeY * 0.95, gridSizeX);
+                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+                            context.fillText(nickName, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY + 10), gridSizeX * 2);
                         } else {
-                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY * 0.8);
-                            context.fillText(nickName, moveX, moveY + gridSizeY * 0.95, gridSizeX);
+                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
+                            context.fillText(nickName, moveX + gridSizeX * 0.5, moveY + gridSizeY + 10, gridSizeX * 2);
                         }
                     }
                     for (var key in scope.drawChanges) {
@@ -510,44 +521,50 @@ app.directive('playingField', function () {
                         }
                         if (key != changeDown) {
                             var obj = scope.drawChanges[key];
-                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY * 0.8);
-                            context.fillText(nickName, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY) + gridSizeY * 0.95, gridSizeX);
+                            context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+                            context.fillText(nickName, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY + 10), gridSizeX * 2);
 
                         } else {
-                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY * 0.8);
-                            context.fillText(nickName, moveX, moveY + gridSizeY * 0.95, gridSizeX);
+                            context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
+                            context.fillText(nickName, moveX + gridSizeX * 0.5, moveY + gridSizeY + 10, gridSizeX * 2);
                         }
                     }
 					if(scope.type === 4){ // only show events when type  === 4
 						for (var event in events) {
+                            var image;
 							if (!events.hasOwnProperty(event)) continue;
 							switch(event){
 								case "yellowCard":
 									context.fillStyle = "#FFFF00";
+                                    image = yellowCard;
 								break;
 								case "redCard":
 									context.fillStyle = "#FF0000";
-								break;
+                                    image = redCard;
+                                    break;
 								case "ourGoal":
 									context.fillStyle = "#00FF00";
-								break;
+                                    image = ourGoalIcon;
+                                    break;
 								case "theirGoal":
 									context.fillStyle = "#0000FF";
-								break;
+                                    image = theirGoalIcon;
+                                    break;
 								case "gameEvent":
 									context.fillStyle = "#000000";
-								break;
+                                    image = eventIcon;
+                                    break;
 							}
 							if (event != eventDown) {
 								var obj = events[event];
-								context.fillRect(obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY * 0.8 );
-								context.fillStyle = "#000000";
-								context.fillText(event, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + (offsetY) + gridSizeY * 0.95, gridSizeX);
-							}
+								context.drawImage(image, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY );
+                                context.fillStyle = "#000000";
+                                //context.fillText(event, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY + 10), gridSizeX);
+                            }
 							else {
-								context.fillRect(moveX, moveY, gridSizeX, gridSizeY * 0.8);
+								context.drawImage(image, moveX, moveY, gridSizeX, gridSizeY);
 								context.fillStyle = "#000000";
-								context.fillText(event, moveX, moveY + gridSizeY * 0.95, gridSizeX);
+								//context.fillText(event, moveX, moveY + gridSizeY, gridSizeX);
 							}
 							context.fillStyle = "#000000";
 						}
