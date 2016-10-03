@@ -115,17 +115,6 @@ angular.module('starter.PlayerControllers', [])
                     $scope.newStart = val;
                 }
             },
-            // disabledDates: [            //Optional
-            // new Date(2016, 2, 16),
-            // new Date(2015, 3, 16),
-            // new Date(2015, 4, 16),
-            // new Date(2015, 5, 16),
-            // new Date('Wednesday, August 12, 2015'),
-            // new Date("08-16-2016"),
-            // new Date(1439676000000)
-            // ],
-            //from: new Date(2012, 1, 1), //Optional
-            //to: new Date(2016, 10, 30), //Optional
             inputDate: new Date($scope.newStart),      //Optional
             mondayFirst: true,          //Optional
             closeOnSelect: false,       //Optional
@@ -141,17 +130,6 @@ angular.module('starter.PlayerControllers', [])
                     $scope.newEnd = val;
                 }
             },
-            // disabledDates: [            //Optional
-            // new Date(2016, 2, 16),
-            // new Date(2015, 3, 16),
-            // new Date(2015, 4, 16),
-            // new Date(2015, 5, 16),
-            // new Date('Wednesday, August 12, 2015'),
-            // new Date("08-16-2016"),
-            // new Date(1439676000000)
-            // ],
-            //from: new Date(2012, 1, 1), //Optional
-            //to: new Date(2016, 10, 30), //Optional
             inputDate: new Date($scope.newEnd),      //Optional
             mondayFirst: true,          //Optional
             closeOnSelect: false,       //Optional
@@ -260,12 +238,12 @@ angular.module('starter.PlayerControllers', [])
             delete $scope.availableNumbers[newNumber];
 
             // update firebase
-            Teams.updatePlayer($scope.teamId, player, $scope.players[player].firstName, $scope.players[player].insertion, $scope.players[player].lastName, $scope.players[player].defaultNumber, $scope.players[player].nickName);
-
+            Teams.updatePlayer($scope.teamId, player, $scope.players[player].firstName, $scope.players[player].insertion, $scope.players[player].lastName, $scope.players[player].defaultNumber, $scope.players[player].nickName,"Players");
+            $scope.showData = false;
+            $scope.selectedPlayer = {};
             // update local storage
             localStorageFactory.setPlayers($scope.players);
-            $scope.showNumbers = false;
-            $scope.selectedPlayer = {};
+
 
         }
 

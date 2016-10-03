@@ -488,6 +488,7 @@ app.directive('playingField', function () {
                     context.lineWidth = 0.1;
                     context.textAlign = "center";
                     var nickName = "";
+                    var shirtNo = "";
 					
                     for (var key in scope.drawPlayers) {
                         // skip loop if the property is from prototype
@@ -499,12 +500,20 @@ app.directive('playingField', function () {
 						else {
                             nickName = scope.players[key].firstName;
                         }
+                        if ((typeof scope.players[key].defaultNumber === 'undefined') || (scope.players[key].defaultNumber !== -1)) {
+                            shirtNo = scope.players[key].defaultNumber;
+                        }
+                        else {
+                            shirtNo = "";
+                        }
                         if (key != playerDown) {
                             var obj = scope.drawPlayers[key];
                             context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
+                            context.fillText(shirtNo, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY  * 0.5), gridSizeX);
                             context.fillText(nickName, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY + 10), gridSizeX * 2);
                         } else {
                             context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
+                            context.fillText(shirtNo, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY  * 0.5), gridSizeX);
                             context.fillText(nickName, moveX + gridSizeX * 0.5, moveY + gridSizeY + 10, gridSizeX * 2);
                         }
                     }
@@ -614,7 +623,7 @@ app.directive('playingField', function () {
                 var changeIndex = 0;
                 for (player in scope.drawChanges) {
                     scope.drawChanges[player] = {gridX: 0, gridY: changeIndex};
-                    changeIndex += 1;
+                    changeIndex += 2;
                 }
             }
 

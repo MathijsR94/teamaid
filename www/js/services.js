@@ -849,6 +849,14 @@ angular.module('starter.services', [])
                 });
                 return deferred.promise;
             },
+            updateTimes: function (teamId, seasonId, gameId, firstHalfStart, firstHalfEnd, secondHalfStart, secondHalfEnd) {
+                statsRef.child(teamId).child(seasonId).child(gameId).update({
+                    firstHalfStart: firstHalfStart,
+                    firstHalfEnd: firstHalfEnd,
+                    secondHalfStart: secondHalfStart,
+                    secondHalfEnd: secondHalfEnd
+                })
+            },
             updateStat: function (teamId, seasonId, gameId, statId, time, comment) {
                 statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog").child(statId).update({
                     time: time,

@@ -106,10 +106,11 @@ angular.module('starter.GameControllers', [])
 
         Games.getGamesRef($scope.teamId, $scope.seasonId).child($scope.gameId).on('value', function (gameSnap) {
             $scope.gameDate = new Date(+gameSnap.val().date);
-            $scope.isPast = $scope.gameDate < new Date();
+            var curDate = new Date();
+            curDate.setDate(curDate.getDate() - 1);
+            $scope.isPast = $scope.gameDate < curDate;
             $scope.game = gameSnap.val();
-			
-			
+
             //update buttons
             $scope.present = Attendance.checkAttendance($scope.game.Present, User.getUID());
             $scope.absent = Attendance.checkAttendance($scope.game.Absent, User.getUID());
@@ -732,6 +733,9 @@ angular.module('starter.GameControllers', [])
         $scope.storeExternalNames = function () {
             Statistics.storeExternals($scope.teamId, $scope.seasonId, $scope.gameId, $scope.externalPlayerNames);
         };
+        $scope.storeTimes = function () {
+            Statistics.updateTimes($scope.teamId, $scope.seasonId, $scope.gameId, $scope.firstHalfStart, $scope.firstHalfEnd, $scope.secondHalfStart, $scope.secondHalfEnd);
+        };
         $scope.storeBasis = function () {
             // check for conflict!
             console.log($scope.basisLineUp, $scope.basisChanges, $scope.GameLog);
@@ -973,7 +977,7 @@ angular.module('starter.GameControllers', [])
 
     })
 
-    .controller('Games_StatsEditCtrl', function ($scope, Statistics, $stateParams, localStorageFactory, Games, Statistics, $ionicHistory) {
+    .controller('Games_StatsEditCtrl', function ($scope, Statistics, $stateParams, localStorageFactory, Games, Statistics,ionicTimePicker, $ionicHistory) {
         $scope.players = localStorageFactory.getPlayers();
         $scope.statId = $stateParams.statId;
         $scope.gameId = $stateParams.gameId;
@@ -1017,22 +1021,28 @@ angular.module('starter.GameControllers', [])
             })
         })
 
-        $scope.timePickerCallback = function (val) {
-            if (typeof (val) === 'undefined') {
-                //console.log('Time not selected');
-            } else {
-                //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
-                $scope.stat.time = val;
-            }
+        var statTimeObj = {
+            callback: function (val) {      //Mandatory
+                if (typeof (val) === 'undefined') {
+                    //console.log('Time not selected');
+                } else {
+                    //console.log('Selected time is : ', val);    // `val` will contain the selected time in epoch
+                    $scope.stat.time = val;
+                }
+            },
+            inputTime: $scope.stat.time,   //Optional
+            format: 24,         //Optional
+            step: 1,           //Optional
+            setLabel: 'Set'    //Optional
         };
+
+        $scope.openStatTimePicker = function () {
+            statTimeObj.inputTime = $scope.stat.time;
+            ionicTimePicker.openTimePicker(statTimeObj);
+        }
 
         $scope.update = function (time, comment) {
             if (typeof comment !== 'undefined') { // protect against undefined
-                console.log(time);
-                console.log(comment);
-                console.log($scope.teamId);
-                console.log($scope.gameId);
-                console.log($scope.stat);
                 Statistics.updateStat($scope.teamId, $scope.seasonId, $scope.gameId, $scope.statId, time, comment);
                 console.log("update succesfull");
                 $ionicHistory.goBack();
