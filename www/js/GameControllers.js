@@ -496,6 +496,7 @@ angular.module('starter.GameControllers', [])
         $scope.useNickNames = false;
         $scope.ShowDelete = true;
         $scope.scrollEnabled = false;
+        $scope.slideIndex = 0;
 				
 		var eventPopup; //global popupobject
 
@@ -753,6 +754,12 @@ angular.module('starter.GameControllers', [])
             else {
                 Statistics.updateBasis($scope.teamId, $scope.seasonId, $scope.gameId, $scope.basisLineUp);
             }
+        };
+
+
+        $scope.goToSlide = function(index) {
+            $scope.slideIndex = index;
+            console.log($scope.slideIndex);
         };
 
         $scope.editStat = function (stat) {

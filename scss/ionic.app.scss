@@ -623,3 +623,67 @@ header h1 {
   padding-top: 0;
   padding-bottom: 0;
 }
+
+.left img {
+  float: left;
+  margin-right: 10px;
+  height: 100%;
+  font-size: 1.5em;
+  width: 16px;
+}
+
+.right img {
+  float: right;
+  margin-left: 10px;
+  height: 100%;
+  font-size: 1.5em;
+  width: 16px;
+}
+.left i {
+  float: left;
+  margin-right: 10px;
+  height: 100%;
+  top: 7px;
+  position: relative;
+  font-size: 1.5em;
+  width: 16px;
+}
+
+.right i {
+  float: right;
+  margin-left: 10px;
+  height: 100%;
+  position: relative;
+  font-size: 1.5em;
+  width: 16px;
+  //top: 7px;
+}
+
+.right h2, .right p, .right span {
+  float: right;
+}
+
+.right span {
+  font-size: 0.8em;
+}
+
+.changes .assertive {
+  color: $assertive;
+}
+
+
+.changes .balanced {
+  color: $balanced;
+}
+
+.changes span {
+  font-size: 0.875em;
+}
+
+#game-stats ion-item {
+  border: 1px solid #ccc !important;
+}
+
+.no-clear {
+  clear: none !important;
+}
