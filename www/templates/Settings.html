@@ -14,6 +14,16 @@
 				<ion-toggle ng-model="settings.dutyEvents" ng-change="changeSetting('dutyEvents',settings.dutyEvents)">Evenementen</ion-toggle>
 			</ion-item>
 		</div>
+		<div ng-if="isAdmin == true">
+			<ion-item class="item-stable" ng-click="toggleGroup('statistics')" ng-class="{active: isGroupShown('statistics')}">
+				&nbsp;
+				Statistieken Settings
+				<i class="icon" ng-class="isGroupShown('statistics') ? 'ion-chevron-up' : 'ion-chevron-down'"></i>
+			</ion-item>
+			<ion-item class="item-accordion" ng-show="isGroupShown('statistics')">
+				<ion-toggle ng-model="settings.statsCup" ng-change="changeSetting('statsCup',settings.statsCup)">Beker Wedstrijden</ion-toggle>
+			</ion-item>
+		</div>
 		<ion-item class="item-stable" ng-click="toggleGroup('changePW')" ng-class="{active: isGroupShown('changePW')}">
 			  <i class="icon" ng-class="isGroupShown('changePW') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
 			&nbsp;

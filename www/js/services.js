@@ -285,22 +285,24 @@ angular.module('starter.services', [])
                 });
                 return deferred.promise;
             },
-            createGame: function (teamId, seasonId, gameDate, gameTime, collectTime, home, away) {
+            createGame: function (teamId, seasonId, gameDate, gameTime, collectTime, type, home, away) {
                 var teamGamesRef = gamesRef.child(teamId).child(seasonId);
                 var games = $firebaseArray(teamGamesRef);
 
                 games.$add({
                     date: gameDate,
                     time: gameTime,
+					type: type,
                     collect: collectTime,
                     home: home,
                     away: away
                 });
             },
-            updateGame: function (teamId, seasonId, gameId, date, time, collectTime, home, away) {
+            updateGame: function (teamId, seasonId, gameId, date, time, collectTime,type, home, away) {
                 gamesRef.child(teamId).child(seasonId).child(gameId).update({
                     date: date,
                     time: time,
+					type: type,
                     collect: collectTime,
                     home: home,
                     away: away

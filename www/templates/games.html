@@ -69,7 +69,7 @@
                       class="item-accordion no-padding" ng-show="isGroupShown('past')">
                 <div class="row no-padding">
                     <div class="col-25 no-padding"><span class="smaller">{{game.date | date: 'dd-MM-yyyy'}}</span> <br/>
-                        <standard-time-no-meridian etime='game.time'></standard-time-no-meridian>
+                       {{game.type}} <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> 
                     </div>
                     <div class="col-75 no-padding">{{game.home}} vs {{game.away}}</div>
                     <ion-delete-button class="ion-minus-circled"

@@ -37,7 +37,6 @@ angular.module('starter.GameControllers', [])
                 $scope.games.$remove(item);
                 //remove linked statistics!
             }
-
         }
 
         $scope.getDetail = function (game) {
@@ -265,6 +264,11 @@ angular.module('starter.GameControllers', [])
             $scope.gameDate = game.date;
             //console.log($scope.gameDate);
             //console.log(game.date);
+			if (typeof (game.type) === 'undefined') {
+				$scope.type = 'Competition';
+            } else {
+				$scope.type = game.type;
+			}
             $scope.title = "Selecteer datum";
             $scope.gameTime = game.time;
             $scope.game = game;
@@ -285,17 +289,6 @@ angular.module('starter.GameControllers', [])
                     $scope.gameDate = val;
                 }
             },
-            disabledDates: [            //Optional
-                // new Date(2016, 2, 16),
-                // new Date(2015, 3, 16),
-                // new Date(2015, 4, 16),
-                // new Date(2015, 5, 16),
-                // new Date('Wednesday, August 12, 2015'),
-                // new Date("08-16-2016"),
-                // new Date(1439676000000)
-            ],
-            //from: new Date(2012, 1, 1), //Optional
-            //to: new Date(2016, 10, 30), //Optional
             inputDate: new Date($scope.gameDate),      //Optional
             mondayFirst: true,          //Optional
             closeOnSelect: false,       //Optional
@@ -360,9 +353,12 @@ angular.module('starter.GameControllers', [])
         }
 
         $scope.updateGame = function (home, away) {
-            Games.updateGame($scope.teamId, $scope.seasonId, $scope.gameId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
+            Games.updateGame($scope.teamId, $scope.seasonId, $scope.gameId, $scope.gameDate, $scope.gameTime, $scope.collectTime, $scope.type, home, away);
             $ionicHistory.goBack();
         }
+		$scope.changeType = function(type) {
+			$scope.type = type;
+		}
     })
 
     .controller('newGamesCtrl', function ($scope, User, Games, Teams, localStorageFactory, $ionicHistory, ionicDatePicker, ionicTimePicker) {
@@ -374,6 +370,7 @@ angular.module('starter.GameControllers', [])
         $scope.gameDate.setHours(0, 0, 0, 0);
         $scope.gameDate = Date.parse($scope.gameDate);
         $scope.title = "Selecteer datum";
+		$scope.type = 'Competition';
         $scope.gameTime = 52200;
         $scope.collectTime = 48600;
 
@@ -386,12 +383,14 @@ angular.module('starter.GameControllers', [])
                 var away = $scope.teamName;
                 var home = opponent;
             }
-            console.log($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
-            Games.createGame($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
-            //console.dir($ionicHistory);
+            //console.log($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, home, away);
+            Games.createGame($scope.teamId, $scope.seasonId, $scope.gameDate, $scope.gameTime, $scope.collectTime, $scope.type, home, away);
             $ionicHistory.goBack();
         };
-
+		
+		$scope.changeType = function(type) {
+			$scope.type = type;
+		}
 
         var gameDateObj = {
             callback: function (val) {  //Mandatory

@@ -7,7 +7,12 @@
                         <span>Datum
 							<button class="button button-block button-stable" ng-click="openDatePicker('gameDate')"> {{ gameDate | date:'dd - MMMM - yyyy' }} </button>
                         </span>
-
+						<span>Type
+							<select class="button button-block button-stable" ng-model="type" ng-change="changeType(type)"> 
+								<option value="Competition" >Competition</option>
+								<option value="Cup" >Cup</option>
+							</select>
+                        </span>
                         <span>Wedstrijd Aanvang
 							<button class="button button-block button-stable" ng-click="openTimePicker('gameTime')"> <standard-time-no-meridian etime='gameTime'></standard-time-no-meridian></button>
 						</span>

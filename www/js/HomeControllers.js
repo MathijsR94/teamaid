@@ -1,5 +1,5 @@
 angular.module('starter.HomeControllers', [])
-    .controller('HomeCtrl', function ($scope, User, Teams,Statistics, localStorageFactory, firebaseRef, Games) {
+    .controller('HomeCtrl', function ($scope, User, Teams, Statistics, Games, localStorageFactory, firebaseRef, Games) {
         var ref = firebaseRef.ref();
 		var playerStats = {};
 		$scope.teamId = localStorageFactory.getTeamId();
@@ -53,6 +53,7 @@ angular.module('starter.HomeControllers', [])
 							}
 
 							if (typeof teamData.val().Settings !== 'undefined'){
+								$scope.settings = teamData.val().Settings;
 								localStorageFactory.setSettings(teamData.val().Settings);
 							}
 							else{
@@ -78,130 +79,143 @@ angular.module('starter.HomeControllers', [])
 										totGoals: 0
 									};
 								}
-								console.log($scope.stats);
+								
+								
+								
+								//console.log($scope.stats);
 								$scope.stats = {};
 								if($scope.seasonId !== null){
-									Statistics.getRef().child($scope.teamId).child($scope.seasonId).once('value', function (statsSnap) {
-										for (var key in statsSnap.val()) { // walk trough each game
-											var gameStats = statsSnap.val()[key];
-											var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.secondHalfEnd - gameStats.secondHalfStart)) / 60;
-
-											for (player in gameStats.Basis) {
-												if (player.indexOf("external") === -1) {
-													playerStats[player]['totGameTime'] += maxGameTime;  // initially add a fill length game to each basis player
-													playerStats[player].gametimeList[key] = {game: key};
-													playerStats[player].gametimeList[key].gametime = maxGameTime;
+									$scope.getGames = Games.getGamesArray($scope.teamId, $scope.seasonId).then(function (games) {
+										$scope.games = games;
+										Statistics.getRef().child($scope.teamId).child($scope.seasonId).once('value', function (statsSnap) {
+											for (var key in statsSnap.val()) { // walk trough each game
+												var  game = $scope.games.$getRecord(key);
+												if( typeof game.type === 'undefined'){
+													game.type = 'Competition';
 												}
-											}
+												//console.log(($scope.settings.statsCup === false && game.type !== 'Cup')|| $scope.settings.statsCup === true );
+												if(($scope.settings.statsCup === false && game.type !== 'Cup')|| $scope.settings.statsCup === true ){
+													var gameStats = statsSnap.val()[key];
+													var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.secondHalfEnd - gameStats.secondHalfStart)) / 60;
 
-											var fieldPlayers = angular.copy(gameStats.Basis);
-											var firstOrSecond = false;
-											var remainingTime = 0;
-
-											// sort the GameLog --- this is not working correctly!!
-											// var sortedLog = $filter('orderObjectBy')(gameStats.GameLog, "time");
-											// console.log(gameStats.GameLog, "old");
-											// console.log(sortedLog);
-											//---------------------------------------
-
-											// main iteration loop
-											for (var itemKey in gameStats.GameLog) {
-												switch (gameStats.GameLog[itemKey].statsType) {
-
-													case "Changes":
-														var change = gameStats.GameLog[itemKey];
-														// update fieldPlayers ( used for cards later on )
-
-														if (change.type === "In/Out") { //change type, in/out or  position
-															fieldPlayers[change.playerIn] = fieldPlayers[change.playerOut]; // transfer position
-															delete fieldPlayers[change.playerOut];
-
-															remainingTime = calcReaminingTime(change.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
-
-															if (change.playerOut.indexOf("external") == -1) { // only calculate if player is not external
-																playerStats[change.playerOut]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted. ( this  will be transferred to the player who will be changed in )
-																playerStats[change.playerOut].gametimeList[key].gametime -= remainingTime; //subtract remaining time from already granted gametime
-															}
-															if (change.playerIn.indexOf("external") == -1) { // only calculate if player is not external
-																playerStats[change.playerIn]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
-																playerStats[change.playerIn].gametimeList[key] = {game: key};
-																playerStats[change.playerIn].gametimeList[key].gametime = remainingTime;
-															}
+													for (player in gameStats.Basis) {
+														if (player.indexOf("external") === -1) {
+															playerStats[player]['totGameTime'] += maxGameTime;  // initially add a fill length game to each basis player
+															playerStats[player].gametimeList[key] = {game: key};
+															playerStats[player].gametimeList[key].gametime = maxGameTime;
 														}
-														break;
-													case "Cards":
-														var card = gameStats.GameLog[itemKey];
-														//console.log(card);
-														if (card.player.indexOf("external") == -1) {
-															if (card.type === "red") {
-																playerStats[card.player]['totRed'] += 1; // sum count red cards
-																playerStats[card.player].cardsList[itemKey] = {
-																	game: key,
-																	gamelogId: itemKey
-																};
-															}
+													}
 
-															if (card.type === "yellow" || card.type === 'yellow2') { // sum count  yellow cards
-																playerStats[card.player]['totYellow'] += 1;
-																playerStats[card.player].cardsList[itemKey] = {
-																	game: key,
-																	gamelogId: itemKey
-																};
-															}
-															if (card.type === "red" || card.type === "yellow2") {
+													var fieldPlayers = angular.copy(gameStats.Basis);
+													var firstOrSecond = false;
+													var remainingTime = 0;
 
-																if (card.player in fieldPlayers) { // is this player on the field??
-																	//reduce player's gametime
+													// sort the GameLog --- this is not working correctly!!
+													// var sortedLog = $filter('orderObjectBy')(gameStats.GameLog, "time");
+													// console.log(gameStats.GameLog, "old");
+													// console.log(sortedLog);
+													//---------------------------------------
 
-																	remainingTime = calcReaminingTime(card.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
+													// main iteration loop
+													for (var itemKey in gameStats.GameLog) {
+														switch (gameStats.GameLog[itemKey].statsType) {
 
-																	//console.log(card.type, playerStats[card.player], remainingTime);
-																	if (card.player.indexOf("external") == -1) { // only calculate if player is not external
-																		playerStats[card.player]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted.
-																		playerStats[card.player].gametimeList[key].gametime -= remainingTime;
+															case "Changes":
+																var change = gameStats.GameLog[itemKey];
+																// update fieldPlayers ( used for cards later on )
+
+																if (change.type === "In/Out") { //change type, in/out or  position
+																	fieldPlayers[change.playerIn] = fieldPlayers[change.playerOut]; // transfer position
+																	delete fieldPlayers[change.playerOut];
+
+																	remainingTime = calcReaminingTime(change.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
+
+																	if (change.playerOut.indexOf("external") == -1) { // only calculate if player is not external
+																		playerStats[change.playerOut]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted. ( this  will be transferred to the player who will be changed in )
+																		playerStats[change.playerOut].gametimeList[key].gametime -= remainingTime; //subtract remaining time from already granted gametime
+																	}
+																	if (change.playerIn.indexOf("external") == -1) { // only calculate if player is not external
+																		playerStats[change.playerIn]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
+																		playerStats[change.playerIn].gametimeList[key] = {game: key};
+																		playerStats[change.playerIn].gametimeList[key].gametime = remainingTime;
 																	}
 																}
-															}
-														}
-														break;
+																break;
+															case "Cards":
+																var card = gameStats.GameLog[itemKey];
+																//console.log(card);
+																if (card.player.indexOf("external") == -1) {
+																	if (card.type === "red") {
+																		playerStats[card.player]['totRed'] += 1; // sum count red cards
+																		playerStats[card.player].cardsList[itemKey] = {
+																			game: key,
+																			gamelogId: itemKey
+																		};
+																	}
 
-													case "OurGoals":
-														var goal = gameStats.GameLog[itemKey];
-														if (goal.player.indexOf("external") == -1) { // only calculate if player is not external
-															playerStats[goal.player]['totGoals'] += 1; // update totGoals
-															playerStats[goal.player].goalsList[itemKey] = {game: key, gamelogId: itemKey};
-														}
-														break;
+																	if (card.type === "yellow" || card.type === 'yellow2') { // sum count  yellow cards
+																		playerStats[card.player]['totYellow'] += 1;
+																		playerStats[card.player].cardsList[itemKey] = {
+																			game: key,
+																			gamelogId: itemKey
+																		};
+																	}
+																	if (card.type === "red" || card.type === "yellow2") {
 
-													default:
-														break;
+																		if (card.player in fieldPlayers) { // is this player on the field??
+																			//reduce player's gametime
+
+																			remainingTime = calcReaminingTime(card.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
+
+																			//console.log(card.type, playerStats[card.player], remainingTime);
+																			if (card.player.indexOf("external") == -1) { // only calculate if player is not external
+																				playerStats[card.player]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted.
+																				playerStats[card.player].gametimeList[key].gametime -= remainingTime;
+																			}
+																		}
+																	}
+																}
+																break;
+
+															case "OurGoals":
+																var goal = gameStats.GameLog[itemKey];
+																if (goal.player.indexOf("external") == -1) { // only calculate if player is not external
+																	playerStats[goal.player]['totGoals'] += 1; // update totGoals
+																	playerStats[goal.player].goalsList[itemKey] = {game: key, gamelogId: itemKey};
+																}
+																break;
+
+															default:
+																break;
+														}
+													}
 												}
 											}
-										}
-										localStorageFactory.setStatistics(playerStats);
-										localStorageFactory.setGames([]);
-										localStorageFactory.setPractises([]);
-										localStorageFactory.setEvents([]);
-										$scope.stats = playerStats[$scope.uid];
+											localStorageFactory.setStatistics(playerStats);
+											localStorageFactory.setGames([]);
+											localStorageFactory.setPractises([]);
+											localStorageFactory.setEvents([]);
+											$scope.stats = playerStats[$scope.uid];
 
-										Games.getGamesArray($scope.teamId,$scope.seasonId).then(function(games) {
-											var games = games;
-											var gameIds = [];
+											Games.getGamesArray($scope.teamId,$scope.seasonId).then(function(games) {
+												var games = games;
+												var gameIds = [];
 
-											for(var key in $scope.stats.gametimeList) {
-												gameIds.push(key);
-											}
+												for(var key in $scope.stats.gametimeList) {
+													gameIds.push(key);
+												}
 
-											//console.log(gameIds);
-											//for(var i = 0; i < games.length; i++) {
-												//console.log(games[i].$id);
-												//if(gameIds[i] == games[i].$id)
-													//console.log('test');
-											//}
+												//console.log(gameIds);
+												//for(var i = 0; i < games.length; i++) {
+													//console.log(games[i].$id);
+													//if(gameIds[i] == games[i].$id)
+														//console.log('test');
+												//}
+											});
+												//console.log($scope.stats);
 										});
-											//console.log($scope.stats);
-									});
-									//-------------------
+										//-------------------
+									});	
 								}
 							})
 						}
