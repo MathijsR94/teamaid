@@ -38,23 +38,23 @@
 
                         <div class="button-bar">
                             <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }"
-                               ng-click="changeAttendance('present');">aanwezig</a>
+                               ng-click="changeAttendance('present');">Present</a>
                             <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }"
-                               ng-click="changeAttendance('absent');">afwezig</a>
+                               ng-click="changeAttendance('absent');">Absent</a>
                             <!--<a ng-class="{ 'button button-royal' : unknown , 'button button-stable' : !unknown}">onbekend</a>-->
                         </div>
                     </div>
                         <div class="row responsive-sm">
                             <div class="col">
                                 <p class="balanced center">Aanwezig:{{numberPresent}}</p>
-                                <p class="assertive center">Afwezig {{numberAbsent}}</p>
-                                <p class="center">Onbekend {{numberUnknown}}</p>
+                                <p class="assertive center">Afwezig: {{numberAbsent}}</p>
+                                <p class="royal center">Onbekend: {{numberUnknown}}</p>
                             </div>
                             </div>
                     <div class="row responsive-sm">
                             <div class="col">
                                 <div class="item item-divider">
-                                    <span>Aanwezig ({{numberPresent}})</span>
+                                    <span>Present ({{numberPresent}})</span>
                                 </div>
                                 <ion-item ng-repeat="(id,value) in game.Present">
                                     <player-name player='players[id]' nick-name='useNickNames'></player-name>
@@ -65,13 +65,13 @@
                                     </ion-option-button>
                                     <ion-option-button class="button-royal" ng-if="isAdmin"
                                                        ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">
-                                        U
+                                        O
                                     </ion-option-button>
                                 </ion-item>
                             </div>
                             <div class="col">
                                 <div class="item item-divider">
-                                    <span>Afwezig ({{numberAbsent}})</span>
+                                    <span>Absent ({{numberAbsent}})</span>
                                 </div>
                                 <ion-item ng-repeat="(id,value) in game.Absent">
                                     <player-name player='players[id]' nick-name='useNickNames'></player-name>
@@ -82,7 +82,7 @@
                                     <!-- <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button> -->
                                     <ion-option-button class="button-royal" ng-if="isAdmin"
                                                        ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">
-                                        U
+                                        O
                                     </ion-option-button>
                                 </ion-item>
                             </div>
