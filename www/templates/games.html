@@ -2,7 +2,8 @@
     <ion-header-bar class="bar-stable bar-subheader">
         <div class="buttons">
             <button ng-if="isAdmin" class="button button-icon icon"
-                    ng-click="showDelete()" ng-class="ShowDelete ? 'ion-minus-circled' : 'ion-ios-minus-outline'"></button>
+                    ng-click="showDelete()"
+                    ng-class="ShowDelete ? 'ion-minus-circled' : 'ion-ios-minus-outline'"></button>
         </div>
         <h1 class="title"></h1>
 
@@ -20,7 +21,8 @@
         </div>
         <ion-list class="card item-text-wrap no-margin" show-delete="ShowDelete" can-swipe="isAdmin">
 
-            <ion-item ng-repeat="game in games | orderBy: 'date' | isFuture | limitTo:limit" ng-click="getDetail(game)" class="no-padding">
+            <ion-item ng-repeat="game in games | orderBy: 'date' | isFuture | limitTo:limit" ng-click="getDetail(game)"
+                      class="no-padding">
 
                 <div class="row no-padding">
                     <div class="col-25 no-padding"><span class="smaller">{{game.date | date: 'dd-MM-yyyy'}}</span> <br/>
@@ -55,14 +57,15 @@
         <!--<i class="icon" ng-class="isGroupShown('past') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>-->
 
         <!--<div class="row content-margin">-->
-            <!--<div class="col">-->
-                <!--<h4 class="section-heading">Geschiedenis</h4>-->
-                <!--<hr class="hr-left">-->
-            <!--</div>-->
+        <!--<div class="col">-->
+        <!--<h4 class="section-heading">Geschiedenis</h4>-->
+        <!--<hr class="hr-left">-->
+        <!--</div>-->
         <!--</div>-->
 
         <ion-item class="item-light" ng-click="toggleGroup('past')" ng-class="{active: isGroupShown('past')}">
-            <b>Geschiedenis</b>  <i class="float-right" ng-class="isGroupShown('past') ? 'dripicons-chevron-up' : 'dripicons-chevron-down'"></i>
+            <b>Geschiedenis</b> <i class="float-right"
+                                   ng-class="isGroupShown('past') ? 'dripicons-chevron-up' : 'dripicons-chevron-down'"></i>
         </ion-item>
         <!--</ion-item>-->
         <ion-list class="card item-text-wrap no-margin" show-delete="ShowDelete" can-swipe="isAdmin">
@@ -70,10 +73,17 @@
                       class="item-accordion no-padding" ng-show="isGroupShown('past')">
                 <div class="row no-padding">
                     <div class="col-25 no-padding"><span class="smaller">{{game.date | date: 'dd-MM-yyyy'}}</span> <br/>
-                       {{game.type}} <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> 
+                        {{game.type}}
+                        <standard-time-no-meridian etime='game.time'></standard-time-no-meridian>
                     </div>
-                    <div class="col-75 no-padding">{{game.home}} <span ng-if="game.score !== undefined">{{game.score}}</span><span ng-if="game.score === undefined"> vs </span> {{game.away}}<br/>
-                         ({{game.noPresent}})({{game.noAbsent}})({{game.noUnknown}})
+                    <div class="col-75 no-padding">{{game.home}} <span class="score" ng-if="game.score !== undefined">{{game.score}}</span><span
+                            ng-if="game.score === undefined"> vs </span> {{game.away}}<br/>
+
+
+                        <div class="margin-top"><span class="balanced margin-right">P: {{game.noPresent}}</span><span
+                                class="assertive margin-right">A: {{game.noAbsent}}</span><span
+                                class="royal margin-right">O: {{game.noUnknown}}</span>
+                        </div>
                     </div>
                     <ion-delete-button class="ion-minus-circled"
                                        ng-click="onItemDelete(game)">
