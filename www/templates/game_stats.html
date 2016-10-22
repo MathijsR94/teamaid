@@ -6,15 +6,15 @@
             <div class="col col-40"><h4 class="center">{{game.away}}</h4></div>
         </div>
 
-        <div class="button-bar">
-            <button class="button" ng-click="goToSlide(0)">Verslag</button>
-            <button class="button" ng-click="goToSlide(1)">Tijden</button>
-            <button class="button" ng-click="goToSlide(2)">Basis</button>
-            <button class="button" ng-click="goToSlide(3)">Actueel</button>
+        <div class="button-bar m-b-20">
+            <button class="button" ng-click="goToSlide(0)" ng-class="slideIndex == 0 ? 'primary active' : ''">Verslag</button>
+            <button class="button" ng-click="goToSlide(1)" ng-class="slideIndex == 1 ? 'primary active' : ''">Tijden</button>
+            <button class="button" ng-click="goToSlide(2)" ng-class="slideIndex == 2 ? 'primary active' : ''" >Basis</button>
+            <button class="button" ng-click="goToSlide(3)" ng-class="slideIndex == 3 ? 'primary active' : ''">Actueel</button>
         </div>
         <!-- <button class="button button-block"  ng-click="update()">update</button> -->
 
-        <ion-slide-box id="game-stats" active-slide="slideIndex">
+        <ion-slide-box id="game-stats" active-slide="slideIndex" ng-init="disableSwipe()" show-pager="false">
             <ion-slide>
                 <div>
                     <ion-item class="item stat"
@@ -70,10 +70,8 @@
                                             <span ng-if="event.statsType === 'OurGoals'">{{event.comment}}</span>
                                         </p>
 
-                                        <p ng-if="event.statsType === 'TheirGoals'">Goal tegen</p>
-
                                         <p ng-if="event.statsType === 'TheirGoals'" class="">{{event.comment}}</p>
-
+                                        <p ng-if="event.statsType === 'GameEvents'">{{event.comment}}</p>
 
                                     </div>
                                 </div>
@@ -121,11 +119,8 @@
             </ion-slide>
             <ion-slide>
                 <ion-item class="item-accordion">
-                    <div class="row">
-                        <div class="col">Basis elftal:</div>
-                    </div>
                     <label class="item item-input item-select">
-                        <span class="input-label">externe spelers</span>
+                        <span class="input-label">Externe spelers</span>
                         <select ng-model="externalPlayers" ng-change="updatePlayerList(externalPlayers)">
                             <option value="0">0</option>
                             <option value="1">1</option>

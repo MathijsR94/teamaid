@@ -83,7 +83,7 @@ angular.module('starter.GameControllers', [])
         }
     })
 
-    .controller('Games_DetailCtrl', function ($scope, $ionicScrollDelegate, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
+    .controller('Games_DetailCtrl', function ($scope, $ionicScrollDelegate, $ionicSlideBoxDelegate, Games, $ionicSideMenuDelegate, User, Teams, Attendance, Settings, Statistics, localStorageFactory, $stateParams) {
         $scope.gameId = $stateParams.gameId;
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
@@ -102,6 +102,11 @@ angular.module('starter.GameControllers', [])
         $scope.scrollEnabled = false;
 		$scope.useNickNames = true;
 		$scope.ActivePlayers = angular.copy($scope.players);
+        $scope.isPast = true
+
+        $scope.disableSwipe = function() {
+            $ionicSlideBoxDelegate.enableSlide(false);
+        };
 
         Games.getGamesRef($scope.teamId, $scope.seasonId).child($scope.gameId).on('value', function (gameSnap) {
             $scope.gameDate = new Date(+gameSnap.val().date);
@@ -252,6 +257,12 @@ angular.module('starter.GameControllers', [])
                 if (obj.hasOwnProperty(key)) size++;
             }
             return size;
+        };
+
+        $scope.slideIndex = 0;
+        $scope.goToSlide = function(index) {
+            $scope.slideIndex = index;
+            $ionicSlideBoxDelegate.slide(index);
         };
 
     })
@@ -474,10 +485,9 @@ angular.module('starter.GameControllers', [])
                     break;
             }
         }
-
     })
 
-    .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, localStorageFactory, $ionicSideMenuDelegate, $ionicScrollDelegate, $ionicPopup, ionicTimePicker) {
+    .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, localStorageFactory, $ionicSideMenuDelegate, $ionicScrollDelegate, $ionicPopup, ionicTimePicker, $ionicSlideBoxDelegate) {
         $scope.gameId = $stateParams.gameId;
         $scope.selectedType = "";
         $scope.typeStats = ["wissel", "positie wissel", "goal voor", "goal tegen", "gele kaart", "rode kaart", "event"];
@@ -501,6 +511,10 @@ angular.module('starter.GameControllers', [])
         $scope.slideIndex = 0;
 				
 		var eventPopup; //global popupobject
+
+        $scope.disableSwipe = function() {
+            $ionicSlideBoxDelegate.enableSlide(false);
+        };
 
         $ionicSideMenuDelegate.canDragContent(false);
         $scope.getGameLog = Statistics.getGameLogArray($scope.teamId, $scope.seasonId, $scope.gameId).then(function (gameLog) {
@@ -761,7 +775,7 @@ angular.module('starter.GameControllers', [])
 
         $scope.goToSlide = function(index) {
             $scope.slideIndex = index;
-            console.log($scope.slideIndex);
+            $ionicSlideBoxDelegate.slide(index);
         };
 
         $scope.editStat = function (stat) {
@@ -982,6 +996,21 @@ angular.module('starter.GameControllers', [])
                 ]
             });
         }
+
+        $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+            // data.slider is the instance of Swiper
+            $scope.slider = data.slider;
+        });
+
+        $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
+            console.log('Slide change is beginning');
+        });
+
+        $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
+            // note: the indexes are 0-based
+            $scope.activeIndex = data.activeIndex;
+            $scope.previousIndex = data.previousIndex;
+        });
 
 
     })

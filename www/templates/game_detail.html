@@ -1,139 +1,201 @@
 <ion-view view-title="Wedstrijd info">
     <ion-content>
+
         <ion-list>
             <div class="header">
                 <h3 class="center">{{game.home}} vs {{game.away}}</h3>
 
                 <h3 class="center">{{homeScore}} - {{awayScore}}</h3>
                 <span class="center">Datum: {{ game.date | date:'dd - MM - yyyy' }}</span>
-        <span class="center">Aanvang wedstrijd: <standard-time-no-meridian etime='game.time'></standard-time-no-meridian></span>
-        <span class="center">Verzameltijd: <standard-time-no-meridian etime='game.collect'></standard-time-no-meridian></span>
+                <span class="center">Aanvang wedstrijd: <standard-time-no-meridian
+                        etime='game.time'></standard-time-no-meridian></span>
+                <span class="center">Verzameltijd: <standard-time-no-meridian
+                        etime='game.collect'></standard-time-no-meridian></span>
 
                 <div ng-if="settings.dutyGames === true">
-                    <span ng-repeat="(id,value) in game.Duty" class="center">Corvee: <player-name player='players[id]' nick-name='useNickNames'></player-name></span>
+                    <span ng-repeat="(id,value) in game.Duty" class="center">Corvee: <player-name player='players[id]'
+                                                                                                  nick-name='useNickNames'></player-name></span>
                 </div>
             </div>
-            <div ng-show="!isPast">
-                <h3 class="center">Geef hier je beschikbaarheid op</h3>
-                <span class="center">Ik ben</span>
 
-                <div class="button-bar">
-                    <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }"
-                       ng-click="changeAttendance('present');">aanwezig</a>
-                    <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }"
-                       ng-click="changeAttendance('absent');">afwezig</a>
-                    <!--<a ng-class="{ 'button button-royal' : unknown , 'button button-stable' : !unknown}">onbekend</a>-->
-                </div>
+            <div class="button-bar m-b-20">
+                <button class="button" ng-click="goToSlide(0)" ng-class="slideIndex == 0 ? 'primary active' : ''">
+                    Aanwezigheid
+                </button>
+                <button class="button" ng-click="goToSlide(1)" ng-class="slideIndex == 1 ? 'primary active' : ''">
+                    Verslag
+                </button>
+                <button class="button" ng-click="goToSlide(2)" ng-class="slideIndex == 2 ? 'primary active' : ''">
+                    Basis
+                </button>
             </div>
-            <br>
 
-            <ion-item class="item-stable" ng-click="toggleGroup('attendance')"
-                      ng-class="{active: isGroupShown('attendance')}">
-                <i class="icon"
-                   ng-class="isGroupShown('attendance') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-                &nbsp;
-                Aanwezigheid (<font color='green'>{{numberPresent}}</font>)(<font color='red'>{{numberAbsent}}</font>)({{numberUnknown}})
-            </ion-item>
-            <ion-item class="item-accordion" ng-show="isGroupShown('attendance')">
-                <div class="row responsive-sm">
-                    <div class="col">
-                        <div class="item item-divider">
-                            <span>Aanwezig ({{numberPresent}})</span>
+            <ion-slide-box id="game-stats" active-slide="slideIndex" ng-init="disableSwipe()" show-pager="false">
+                <ion-slide>
+                    <div ng-if="!isPast">
+                        <h3 class="center">Geef hier je beschikbaarheid op</h3>
+                        <span class="center">Ik ben</span>
+
+                        <div class="button-bar">
+                            <a ng-class="{ 'button button-balanced' : present , 'button button-stable' : !present }"
+                               ng-click="changeAttendance('present');">aanwezig</a>
+                            <a ng-class="{ 'button button-assertive' : absent , 'button button-stable' : !absent  }"
+                               ng-click="changeAttendance('absent');">afwezig</a>
+                            <!--<a ng-class="{ 'button button-royal' : unknown , 'button button-stable' : !unknown}">onbekend</a>-->
                         </div>
-                        <ion-item ng-repeat="(id,value) in game.Present">
-                            <player-name player='players[id]' nick-name='useNickNames'></player-name>
-                            <!-- <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> -->
-                            <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A
-                            </ion-option-button>
-                            <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U
-                            </ion-option-button>
+                    </div>
+                        <div class="row responsive-sm">
+                            <div class="col">
+                                <p class="balanced center">Aanwezig:{{numberPresent}}</p>
+                                <p class="assertive center">Afwezig {{numberAbsent}}</p>
+                                <p class="center">Onbekend {{numberUnknown}}</p>
+                            </div>
+                            </div>
+                    <div class="row responsive-sm">
+                            <div class="col">
+                                <div class="item item-divider">
+                                    <span>Aanwezig ({{numberPresent}})</span>
+                                </div>
+                                <ion-item ng-repeat="(id,value) in game.Present">
+                                    <player-name player='players[id]' nick-name='useNickNames'></player-name>
+                                    <!-- <ion-option-button class="button-balanced" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('present',id)">P</ion-option-button> -->
+                                    <ion-option-button class="button-assertive" ng-if="isAdmin"
+                                                       ng-click="$event.stopPropagation(); forceAttendance('absent',id)">
+                                        A
+                                    </ion-option-button>
+                                    <ion-option-button class="button-royal" ng-if="isAdmin"
+                                                       ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">
+                                        U
+                                    </ion-option-button>
+                                </ion-item>
+                            </div>
+                            <div class="col">
+                                <div class="item item-divider">
+                                    <span>Afwezig ({{numberAbsent}})</span>
+                                </div>
+                                <ion-item ng-repeat="(id,value) in game.Absent">
+                                    <player-name player='players[id]' nick-name='useNickNames'></player-name>
+                                    <ion-option-button class="button-balanced" ng-if="isAdmin"
+                                                       ng-click="$event.stopPropagation(); forceAttendance('present',id)">
+                                        P
+                                    </ion-option-button>
+                                    <!-- <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button> -->
+                                    <ion-option-button class="button-royal" ng-if="isAdmin"
+                                                       ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">
+                                        U
+                                    </ion-option-button>
+                                </ion-item>
+                            </div>
+                            <div class="col">
+                                <div class="item item-divider">
+                                    <span>Onbekend ({{numberUnknown}})</span>
+                                </div>
+
+                                <ion-list>
+                                    <ion-item ng-repeat="(key,player) in unknownPlayers">
+                                        <player-name player='player' nick-name='useNickNames'></player-name>
+                                        <ion-option-button class="button-balanced" ng-if="isAdmin"
+                                                           ng-click="$event.stopPropagation(); forceAttendance('present',key)">
+                                            P
+                                        </ion-option-button>
+                                        <ion-option-button class="button-assertive" ng-if="isAdmin"
+                                                           ng-click="$event.stopPropagation(); forceAttendance('absent',key)">
+                                            A
+                                        </ion-option-button>
+                                        <!-- <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',key)">U</ion-option-button> -->
+
+                                    </ion-item>
+                                </ion-list>
+                            </div>
+                        </div>
+                </ion-slide>
+                <ion-slide>
+                    <div id="game-stats">
+                        <ion-item class="item stat" ng-repeat="event in gameLog | orderObjectBy:'time'">
+                            <div>
+                                <section class="row no-padding">
+                                    <div class="col no-padding"
+                                         ng-class="event.statsType === 'TheirGoals' ? 'right' : 'left'">
+                                        <div class="row no-padding">
+                                            <div class="col">
+                                                <i ng-if="event.statsType === 'OurGoals'"
+                                                   class="icon ion-ios-football"></i>
+                                                <i ng-if="event.statsType === 'GameEvents'"
+                                                   class="icon ion-ios-list"></i>
+                                                <img src="../img/red-card.svg" width="16" height="16"
+                                                     ng-if="event.statsType === 'Cards' && event.type === 'red'"
+                                                        />
+                                                <img src="../img/yellow-card.svg" width="16" height="16"
+                                                     ng-if="event.statsType === 'Cards' && event.type === 'yellow'"
+                                                        />
+                                                <img src="../img/yellow-red-card.svg" width="16" height="16"
+                                                     ng-if="event.statsType === 'Cards' && event.type === 'yellow2'"
+                                                        />
+                                                <i ng-if="event.statsType === 'Changes'"
+                                                   class="icon ion-loop"></i>
+                                                <i ng-if="event.statsType === 'TheirGoals'"
+                                                   class="icon ion-ios-football"></i>
+                                                <player-name player='players[event.player]'
+                                                             nick-name='useNickNames'></player-name>
+
+
+                                                <div ng-if="event.statsType === 'Changes'" class="changes">
+                                                    <span>Wissel</span>
+							<span ng-if="event.type === 'Position'">Positie <player-name
+                                    player='players[event.player1]' nick-name='useNickNames'></player-name> voor <player-name
+                                    player='players[event.player2]' nick-name='useNickNames'></player-name> </span>
+							<span ng-if="event.type === 'Move'">Verplaatst<player-name player='players[event.player]'
+                                                                                       nick-name='useNickNames'></player-name></span>
+
+                                    <span ng-if="event.type === 'In/Out'" class="balanced">
+                                        <player-name
+                                                player='players[event.playerIn]'
+                                                nick-name='useNickNames'></player-name>
+                                    </span>
+                                                </div>
+
+                                                <p>
+                                                    <standard-time-no-meridian
+                                                            etime='event.time'></standard-time-no-meridian>
+                                <span ng-if="event.type === 'In/Out'" class="assertive">
+                                        <player-name
+                                                player='players[event.playerOut]'
+                                                nick-name='useNickNames'></player-name>
+                                    </span>
+                                                    <span ng-if="event.statsType === 'OurGoals'">{{event.comment}}</span>
+                                                </p>
+
+                                                <p ng-if="event.statsType === 'TheirGoals'" class="">
+                                                    {{event.comment}}</p>
+
+                                                <p ng-if="event.statsType === 'GameEvents'">{{event.comment}}</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ion-option-button class="button-assertive"
+                                                       ng-click="$event.stopPropagation(); onItemDelete(event)">Delete
+                                    </ion-option-button>
+                                    <ion-option-button class="button-dark"
+                                                       ng-click="$event.stopPropagation(); editStat(event)">Edit
+                                    </ion-option-button>
+
+                                </section>
+                            </div>
+
                         </ion-item>
                     </div>
-                    <div class="col">
-                        <div class="item item-divider">
-                            <span>Afwezig ({{numberAbsent}})</span>
+                </ion-slide>
+                <ion-slide>
+                    <div ng-if="showBasis === true && slideIndex == 2">
+                            <playing-field draw-players="basis" draw-changes="changes" players="players"
+                                           scroll-enabled="isScrollEnabled(value)" type="1" grid="false"
+                                           drawspeed="100"></playing-field>
                         </div>
-                        <ion-item ng-repeat="(id,value) in game.Absent">
-                            <player-name player='players[id]' nick-name='useNickNames'></player-name>
-                            <ion-option-button class="button-balanced" ng-if="isAdmin"
-                                               ng-click="$event.stopPropagation(); forceAttendance('present',id)">P
-                            </ion-option-button>
-                            <!-- <ion-option-button class="button-assertive" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('absent',id)">A</ion-option-button> -->
-                            <ion-option-button class="button-royal" ng-if="isAdmin"
-                                               ng-click="$event.stopPropagation(); forceAttendance('unknown',id)">U
-                            </ion-option-button>
-                        </ion-item>
-                    </div>
-                    <div class="col">
-                        <div class="item item-divider">
-                            <span>Onbekend ({{numberUnknown}})</span>
+                        <div ng-if="showBasis === false && slideIndex == 2">
+                            De basis opstelling is nog niet bekend
                         </div>
-
-                        <ion-list>
-                            <ion-item ng-repeat="(key,player) in unknownPlayers">
-                                <player-name player='player' nick-name='useNickNames'></player-name>
-                                <ion-option-button class="button-balanced" ng-if="isAdmin"
-                                                   ng-click="$event.stopPropagation(); forceAttendance('present',key)">P
-                                </ion-option-button>
-                                <ion-option-button class="button-assertive" ng-if="isAdmin"
-                                                   ng-click="$event.stopPropagation(); forceAttendance('absent',key)">A
-                                </ion-option-button>
-                                <!-- <ion-option-button class="button-royal" ng-if="isAdmin" ng-click="$event.stopPropagation(); forceAttendance('unknown',key)">U</ion-option-button> -->
-
-                            </ion-item>
-                        </ion-list>
-                    </div>
-                </div>
-            </ion-item>
-            <ion-item class="item-stable" ng-click="toggleGroup('gameLog')"
-                      ng-class="{active: isGroupShown('gameLog')}">
-                <i class="icon"
-                   ng-class="isGroupShown('gameLog') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-                &nbsp;
-                Wedstrijd verslag
-            </ion-item>
-            <ion-item class="item-accordion row" ng-repeat="event in gameLog | orderObjectBy:'time'"
-                      ng-show="isGroupShown('gameLog')">
-                <div class="col col-20">
-                    <standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
-                </div>
-                <div class="col col-20"><span ng-if="event.statsType === 'GameEvents'"> Event </span>
-                    <span ng-if="event.statsType === 'OurGoals'"> <i class="icon ion-ios-football positive"></i> Goal voor, <player-name
-                            player='players[event.player]' nick-name='useNickNames'></player-name></span>
-                    <span ng-if="event.statsType === 'TheirGoals'"><i
-                            class="icon ion-ios-football assertive"></i></span>
-        <span ng-if="event.statsType === 'Cards'"> Kaart
-        <span ng-if="event.type === 'red'">Rood,  </span>
-        <span ng-if="event.type === 'yellow'">Geel,  </span>
-        <span ng-if="event.type === 'yellow2'">Tweede geel,  </span>
-        <player-name player='players[event.player]' nick-name='useNickNames'></player-name>
-        </span>
-        <span ng-if="event.statsType === 'Changes'"> Wissel
-        <span ng-if="event.type === 'Position'">Positie,  <player-name player='players[event.player1]'
-                                                                       nick-name='useNickNames'></player-name> voor <player-name
-                player='players[event.player2]' nick-name='useNickNames'></player-name> </span>
-        <span ng-if="event.type === 'In/Out'">,  <player-name player='players[event.playerIn]'
-                                                              nick-name='useNickNames'></player-name> voor <player-name
-                player='players[event.playerOut]' nick-name='useNickNames'></player-name> </span>
-        </span>
-                    , {{event.comment}}
-                </div>
-            </ion-item>
-            <ion-item class="item-stable" ng-click="toggleGroup('BasisTeam')"
-                      ng-class="{active: isGroupShown('BasisTeam')}">
-                <i class="icon"
-                   ng-class="isGroupShown('BasisTeam') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
-                &nbsp;
-                basis opstelling
-            </ion-item>
-            <ion-item class="item-accordion" ng-show="isGroupShown('BasisTeam')">
-                <div ng-if="showBasis === true">
-                    <playing-field draw-players="basis" draw-changes="changes" players="players" scroll-enabled="isScrollEnabled(value)" type="1" grid="false" drawspeed="100"></playing-field>
-                </div>
-                <div ng-if="showBasis === false">
-                    De basis opstelling is nog niet bekend
-                </div>
-            </ion-item>
+                </ion-slide>
         </ion-list>
     </ion-content>
 </ion-view>
