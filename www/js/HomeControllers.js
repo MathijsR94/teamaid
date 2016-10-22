@@ -6,22 +6,22 @@ angular.module('starter.HomeControllers', [])
 		$scope.seasonId = localStorageFactory.getSeasonId();
         $scope.uid = User.getUID();
 
-		
+
 		ref.child('Teams').once('value', function (teams) {
 			$scope.teams = teams.val();
 		})
-		
+
 		$scope.setTeamId = function(id){
 			localStorageFactory.setTeamId(id);
 		}
-		
+
 		$scope.setSeasonId = function(id){
 			localStorageFactory.setSeasonId(id);
 		}
 		ref.child('Users').child($scope.uid).child('Teams').once('value', function (teams) {
 			localStorageFactory.setTeams(teams.val());
 			$scope.userTeams = teams.val();
-					
+
 			$scope.$watch('teamId', function(newValue, oldValue) {
 				if($scope.teamId !== null){
 					console.log("Team is loaded");
@@ -71,9 +71,9 @@ angular.module('starter.HomeControllers', [])
 						else{
 							localStorageFactory.setTeamName({});
 						}
-					
+
 					})
-					
+
 					ref.child('Admins').child($scope.teamId).once('value', function (admin) {
 						localStorageFactory.setAdmin(admin.val(), $scope.uid);
 					});
