@@ -250,7 +250,7 @@ angular.module('starter.PlayerControllers', [])
         $scope.updatePlayer = function (player) {
 
             // update firebase
-            Teams.updatePlayer($scope.teamId, player, $scope.players[player].firstName, $scope.players[player].insertion, $scope.players[player].lastName, $scope.players[player].defaultNumber, $scope.players[player].nickName);
+            Teams.updatePlayer($scope.teamId, player, $scope.players[player].firstName, $scope.players[player].insertion, $scope.players[player].lastName, $scope.players[player].defaultNumber, $scope.players[player].nickName, "Players");
             localStorageFactory.setPlayers($scope.players);
         }
 

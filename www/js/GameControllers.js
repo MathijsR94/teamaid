@@ -130,6 +130,9 @@ angular.module('starter.GameControllers', [])
 				$scope.numberUnknown = Object.keys($scope.unknownPlayers).length;
 			else
 				$scope.numberUnknown = 0;
+
+
+            Games.updateAttendance($scope.teamId, $scope.seasonId, $scope.gameId, $scope.numberPresent, $scope.numberAbsent,$scope.numberUnknown);
 			
             if (typeof $scope.inactivePlayers !== 'undefined') {
                 $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
@@ -589,7 +592,7 @@ angular.module('starter.GameControllers', [])
                     $scope.changes = actual.changes;
                     $scope.homeScore = actual.homeScore;
                     $scope.awayScore = actual.awayScore;
-
+                    Games.updateScore($scope.teamId, $scope.seasonId, $scope.gameId, $scope.homeScore, $scope.awayScore);
                 }
             })
 

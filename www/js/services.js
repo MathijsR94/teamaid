@@ -308,6 +308,21 @@ angular.module('starter.services', [])
                     away: away
                 });
             },
+            updateScore: function (teamId, seasonId, gameId, homeScore, awayScore) {
+                var score = homeScore + " - " + awayScore;
+                gamesRef.child(teamId).child(seasonId).child(gameId).update({
+                    score: score
+                });
+            },
+            updateAttendance: function (teamId, seasonId, gameId, present, absent, unknown) {
+                console.log("test",teamId, seasonId, gameId, present, absent, unknown);
+
+                gamesRef.child(teamId).child(seasonId).child(gameId).update({
+                    noPresent: present,
+                    noAbsent: absent,
+                    noUnknown: unknown
+                });
+            },
             setGame: function (gameId) {
                 localStorage.setItem("selectedGame", gameId);
                 selectedGame = gameId;
