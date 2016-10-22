@@ -26,7 +26,8 @@
                     <div class="col-25 no-padding"><span class="smaller">{{game.date | date: 'dd-MM-yyyy'}}</span> <br/>
                         <standard-time-no-meridian etime='game.time'></standard-time-no-meridian>
                     </div>
-                    <div class="col-75 no-padding">{{game.home}} vs {{game.away}}</div>
+                    <div class="col-75 no-padding">{{game.home}} - {{game.away}}</div>
+
                     <ion-delete-button class="ion-minus-circled"
                                        ng-click="onItemDelete(game)">
                     </ion-delete-button>
@@ -71,7 +72,9 @@
                     <div class="col-25 no-padding"><span class="smaller">{{game.date | date: 'dd-MM-yyyy'}}</span> <br/>
                        {{game.type}} <standard-time-no-meridian etime='game.time'></standard-time-no-meridian> 
                     </div>
-                    <div class="col-75 no-padding">{{game.home}} vs {{game.away}}</div>
+                    <div class="col-75 no-padding">{{game.home}} <span ng-if="game.score !== undefined">{{game.score}}</span><span ng-if="game.score === undefined"> vs </span> {{game.away}}<br/>
+                         ({{game.noPresent}})({{game.noAbsent}})({{game.noUnknown}})
+                    </div>
                     <ion-delete-button class="ion-minus-circled"
                                        ng-click="onItemDelete(game)">
                     </ion-delete-button>
