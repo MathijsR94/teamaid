@@ -16,7 +16,7 @@
 
         <ion-slide-box id="game-stats" active-slide="slideIndex" ng-init="disableSwipe()" show-pager="false">
             <ion-slide>
-                <div>
+                <div ng-if="slideIndex == 0">
                     <ion-item class="item stat"
                               ng-repeat="event in gameLog | orderBy:'time'">
                         <section class="row no-padding">
@@ -89,7 +89,7 @@
                 </div>
             </ion-slide>
             <ion-slide>
-                <div>
+                <div  ng-if="slideIndex == 1">
                     <ion-item class="item-accordion">
                         <div class="col col-30 float-left">Eerste helft:</div>
                         <div class="col">
@@ -118,7 +118,7 @@
                 </div>
             </ion-slide>
             <ion-slide>
-                <ion-item class="item-accordion">
+                <ion-item class="item-accordion"  ng-if="slideIndex == 2">
                     <label class="item item-input item-select">
                         <span class="input-label">Externe spelers</span>
                         <select ng-model="externalPlayers" ng-change="updatePlayerList(externalPlayers)">
@@ -157,7 +157,7 @@
                 </ion-item>
             </ion-slide>
             <ion-slide>
-                <div>
+                <div ng-if="slideIndex == 3">
                     <playing-field draw-players="actualPlayers" draw-changes="changes" players="players"
                                    scroll-enabled="isScrollEnabled(value)"
                                    event-function="eventDelegator(type, basis, eventData)" type="4" grid="false"

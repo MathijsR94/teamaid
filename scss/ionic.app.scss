@@ -710,7 +710,7 @@ span.score {
   background: #455a64;
   color: #fff;
   padding: 5px;
-  margin: 0 10px;
+  margin: 0 5px;
 }
 
 .margin-right {
@@ -719,4 +719,13 @@ span.score {
 
 .margin-top {
   margin-top: 10px;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+#gamelist .item-content {
+  padding: 16px;
 }
