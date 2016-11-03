@@ -107,7 +107,9 @@ angular.module('starter.GameControllers', [])
         $scope.disableSwipe = function() {
             $ionicSlideBoxDelegate.enableSlide(false);
         };
-
+		
+		$ionicSideMenuDelegate.canDragContent(false);
+		
         Games.getGamesRef($scope.teamId, $scope.seasonId).child($scope.gameId).on('value', function (gameSnap) {
             $scope.gameDate = new Date(+gameSnap.val().date);
             var curDate = new Date();
@@ -249,7 +251,7 @@ angular.module('starter.GameControllers', [])
             }
         }
 
-        $ionicSideMenuDelegate.canDragContent(false);
+        
 
         Object.size = function (obj) {
             var size = 0, key;
@@ -610,7 +612,8 @@ angular.module('starter.GameControllers', [])
                 }
             })
 
-        })
+        });
+				
 		var firstHalfStartTimeObj = {
             callback: function (val) {      //Mandatory
                 if (typeof (val) === 'undefined') {
@@ -774,7 +777,8 @@ angular.module('starter.GameControllers', [])
 
 
         $scope.goToSlide = function(index) {
-            $scope.slideIndex = index;
+			console.log(index);
+			$scope.slideIndex = index;
             $ionicSlideBoxDelegate.slide(index);
         };
 
@@ -997,20 +1001,20 @@ angular.module('starter.GameControllers', [])
             });
         }
 
-        $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
-            // data.slider is the instance of Swiper
-            $scope.slider = data.slider;
-        });
+        // $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+            // // data.slider is the instance of Swiper
+            // $scope.slider = data.slider;
+        // });
 
-        $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
-            console.log('Slide change is beginning');
-        });
+        // $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
+            // console.log('Slide change is beginning');
+        // });
 
-        $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
-            // note: the indexes are 0-based
-            $scope.activeIndex = data.activeIndex;
-            $scope.previousIndex = data.previousIndex;
-        });
+        // $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
+            // // note: the indexes are 0-based
+            // $scope.activeIndex = data.activeIndex;
+            // $scope.previousIndex = data.previousIndex;
+        // });
 
 
     })
