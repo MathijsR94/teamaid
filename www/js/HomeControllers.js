@@ -90,6 +90,10 @@ angular.module('starter.HomeControllers', [])
 							gametimeList: {},
 							goalsList: {},
 							cardsList: {},
+							totGamePresent: 0,
+							totBasis: 0,
+							totChanges: 0,
+						    maxGameTime: 0, 
 							totGameTime: 0,
 							totYellow: 0,
 							totRed: 0,
@@ -110,12 +114,22 @@ angular.module('starter.HomeControllers', [])
 										game.type = 'Competition';
 									}
 									//console.log(($scope.settings.statsCup === false && game.type !== 'Cup')|| $scope.settings.statsCup === true );
-									if (($scope.settings.statsCup === false && game.type !== 'Cup') || $scope.settings.statsCup === true) {
-										var gameStats = statsSnap.val()[key];
-										var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.secondHalfEnd - gameStats.secondHalfStart)) / 60;
+									if (($scope.settings.statsCup === false && game.type !== 'Cup') || $scope.settings.statsCup === true) { // exclude  cup games from stats
+
+									    var gameStats = statsSnap.val()[key];
+									    var maxGameTime = ((gameStats.firstHalfEnd - gameStats.firstHalfStart) + (gameStats.secondHalfEnd - gameStats.secondHalfStart)) / 60;
+
+									    // keep track of number of games player was present
+									    for (player in game.Present) {
+									        if (player.indexOf("external") === -1) {
+									            playerStats[player]['totGamePresent'] += 1;  // add this game to the total of all games player is present
+									            playerStats[player]['maxGameTime'] += maxGameTime; //keep track of the maximum minutes someone  might have made
+									        }
+									    }
 
 										for (player in gameStats.Basis) {
-											if (player.indexOf("external") === -1) {
+										    if (player.indexOf("external") === -1) {
+										        playerStats[player]['totBasis'] += 1;
 												playerStats[player]['totGameTime'] += maxGameTime;  // initially add a fill length game to each basis player
 												playerStats[player].gametimeList[key] = {game: key};
 												playerStats[player].gametimeList[key].gametime = maxGameTime;
@@ -149,11 +163,13 @@ angular.module('starter.HomeControllers', [])
 														if (change.playerOut.indexOf("external") == -1) { // only calculate if player is not external
 															playerStats[change.playerOut]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted. ( this  will be transferred to the player who will be changed in )
 															playerStats[change.playerOut].gametimeList[key].gametime -= remainingTime; //subtract remaining time from already granted gametime
+															playerStats[change.playerOut]['totChanges'] += 1; //count number of changes this player has had
 														}
 														if (change.playerIn.indexOf("external") == -1) { // only calculate if player is not external
 															playerStats[change.playerIn]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
 															playerStats[change.playerIn].gametimeList[key] = {game: key};
 															playerStats[change.playerIn].gametimeList[key].gametime = remainingTime;
+															playerStats[change.playerIn]['totChanges'] += 1; //count number of changes this player has had
 														}
 													}
 													break;
@@ -210,6 +226,19 @@ angular.module('starter.HomeControllers', [])
 										}
 									}
 								}
+							    // calculate the coefficient of all players
+								for (player in playerStats) {
+								    //100% = maxGameTime
+								    // totGameTime = actual time
+								    // coefGameTime = percentage of max the has been played
+								    if (playerStats[player]['totGameTime'] > 0 && playerStats[player]['maxGameTime'] > 0){
+								        playerStats[player]['coefGameTime'] = (playerStats[player]['totGameTime'] / playerStats[player]['maxGameTime']) * 100; // time 10 for percentage
+								    } else {
+								        playerStats[player]['coefGameTime'] = 0;
+                                    }
+								    console.log(player, playerStats[player]['coefGameTime']);
+								}
+
 								localStorageFactory.setStatistics(playerStats);
 								localStorageFactory.setGames([]);
 								localStorageFactory.setPractises([]);
@@ -223,15 +252,7 @@ angular.module('starter.HomeControllers', [])
 									for (var key in $scope.stats.gametimeList) {
 										gameIds.push(key);
 									}
-
-									//console.log(gameIds);
-									//for(var i = 0; i < games.length; i++) {
-									//console.log(games[i].$id);
-									//if(gameIds[i] == games[i].$id)
-									//console.log('test');
-									//}
 								});
-								//console.log($scope.stats);
 							});
 							//-------------------
 						});

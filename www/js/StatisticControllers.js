@@ -1,6 +1,6 @@
 angular.module('starter.StatisticControllers', [])
     .controller('StatisticsCtrl', function ($scope, Statistics, localStorageFactory, $filter, $state) {
-
+        $scope.useNickNames = true;
         // Get the size of an object
         //console.log($scope.players);
 		$scope.playerStats = localStorageFactory.getStatistics();
@@ -8,7 +8,11 @@ angular.module('starter.StatisticControllers', [])
        
 	    // extend players me the stats from Local storage
 		for (player in $scope.players) {
-			$scope.players[player].totGameTime = $scope.playerStats[player].totGameTime;
+		    $scope.players[player].totGameTime = $scope.playerStats[player].totGameTime;
+		    $scope.players[player].coefGameTime = Math.round($scope.playerStats[player].coefGameTime);
+		    $scope.players[player].maxGameTime = $scope.playerStats[player].maxGameTime;
+		    $scope.players[player].totChanges = $scope.playerStats[player].totChanges;
+		    $scope.players[player].totGamePresent = $scope.playerStats[player].totGamePresent;
 			$scope.players[player].totGoals = $scope.playerStats[player].totGoals;
 			$scope.players[player].totRed = $scope.playerStats[player].totRed;
 			$scope.players[player].totYellow = $scope.playerStats[player].totYellow;
@@ -17,7 +21,9 @@ angular.module('starter.StatisticControllers', [])
         $scope.selected = [];
         $scope.selected["firstName"] = true;
         $scope.selected["totGoals"] = true;
-        $scope.selected["totGameTime"] = true;
+        $scope.selected["coefGameTime"] = true;
+        $scope.selected["totChanges"] = true;
+        $scope.selected["totGameTime"] = true; 
         $scope.selected["totRed"] = true;
         $scope.selected["totYellow"] = true;
         $scope.orderByField = "";

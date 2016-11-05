@@ -1,31 +1,39 @@
 <ion-view cache-view="false" view-title="Statistieken" has-subheader>
-  <ion-header-bar class="bar-stable bar-subheader">
-    <div class="row">
-      <div class="col-25 float-left center no-padding" ng-click="order('lastName')">
-          Naam <span ng-if="orderByField=='lastName'"><span ng-show="selected['lastName']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['lastName']" class="dripicons-arrow-thin-down"></span></span>
-      </div>
-      <div class="col-20 float-left center" ng-click="order('totGoals')">
-          Goals <span ng-if="orderByField=='totGoals'"><span ng-show="selected['totGoals']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totGoals']" class="dripicons-arrow-thin-down"></span></span>
-      </div>
-      <div class="col-10 float-left center" ng-click="order('totGameTime')">
-          Min <span ng-if="orderByField=='totGameTime'"><span ng-show="selected['totGameTime']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totGameTime']" class="dripicons-arrow-thin-down"></span></span>
-      </div>
-      <div class="col-10 float-left center" ng-click="order('totYellow')">
-          Geel <span ng-if="orderByField=='totYellow'"><span ng-show="selected['totYellow']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totYellow']" class="dripicons-arrow-thin-down"></span></span>
-      </div>
-      <div class=" col-10 float-left center" ng-click="order('totRed')">
-          Rood <span ng-if="orderByField=='totRed'"><span ng-show="selected['totRed']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totRed']" class="dripicons-arrow-thin-down"></span></span>
-      </div>
-    </div>
-  </ion-header-bar>
-  <ion-content class="content-margin">
+    <ion-header-bar class="bar-stable bar-subheader">
+        <div class="row">
+            <div class="col-25 float-left center no-padding" ng-click="order('lastName')">
+                Naam <span ng-if="orderByField=='lastName'"><span ng-show="selected['lastName']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['lastName']" class="dripicons-arrow-thin-down"></span></span>
+            </div>
+            <div class="col-20 float-left center" ng-click="order('totGoals')">
+                Goals <span ng-if="orderByField=='totGoals'"><span ng-show="selected['totGoals']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totGoals']" class="dripicons-arrow-thin-down"></span></span>
+            </div>
+            <div class="col-10 float-left center" ng-click="order('coefGameTime')">
+                %<span ng-if="orderByField=='coefGameTime'"><span ng-show="selected['coefGameTime']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['coefGameTime']" class="dripicons-arrow-thin-down"></span></span>
+            </div>
+            <div class="col-10 float-left center" ng-click="order('totChanges')">
+                <> <span ng-if="orderByField=='totChanges'"><span ng-show="selected['totChanges']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totChanges']" class="dripicons-arrow-thin-down"></span></span>
+            </div>
+            <div class="col-10 float-left center" ng-click="order('totGameTime')">
+                Min <span ng-if="orderByField=='totGameTime'"><span ng-show="selected['totGameTime']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totGameTime']" class="dripicons-arrow-thin-down"></span></span>
+            </div>
+            <!--<div class="col-10 float-left center" ng-click="order('totYellow')">
+                Geel <span ng-if="orderByField=='totYellow'"><span ng-show="selected['totYellow']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totYellow']" class="dripicons-arrow-thin-down"></span></span>
+            </div>
+            <div class=" col-10 float-left center" ng-click="order('totRed')">
+                Rood <span ng-if="orderByField=='totRed'"><span ng-show="selected['totRed']" class="dripicons-arrow-thin-up"></span><span ng-hide="selected['totRed']" class="dripicons-arrow-thin-down"></span></span>
+            </div>-->
+        </div>
+    </ion-header-bar>
+    <ion-content class="content-margin">
 
-      <div class="row item" ng-repeat="player in sortedPlayers track by $index" ng-click="ShowPlayerDetails(player)" >
+        <div class="row item" ng-repeat="player in sortedPlayers track by $index" ng-click="ShowPlayerDetails(player)">
             <div ng-class="orderByField=='lastName' ? 'bold' : ''" class="col col-25 whitespace float-left"><player-name player='player' nick-name='useNickNames'></player-name></div>
             <div ng-class="orderByField=='totGoals' ? 'bold' : ''" class="col col-20 float-left center">{{player.totGoals}}</div>
+            <div ng-class="orderByField=='coefGameTime' ? 'bold' : ''" class="col col-10 float-left center">{{player.coefGameTime}}% <!--({{player.maxGameTime}}/{{player.totGameTime}})--></div>
+            <div ng-class="orderByField=='totChanges' ? 'bold' : ''" class="col col-10 float-left center">{{player.totChanges}}</div>
             <div ng-class="orderByField=='totGameTime' ? 'bold' : ''" class="col col-10 float-left center">{{player.totGameTime}}</div>
-            <div ng-class="orderByField=='totYellow' ? 'bold' : ''" class="col col-10 float-left center">{{player.totYellow}}</div>
-            <div ng-class="orderByField=='totRed' ? 'bold' : ''" class="col col-10 float-left center">{{player.totRed}}</div>
-      </div>
-  </ion-content>
+            <!--<div ng-class="orderByField=='totYellow' ? 'bold' : ''" class="col col-10 float-left center">{{player.totYellow}}</div>
+            <div ng-class="orderByField=='totRed' ? 'bold' : ''" class="col col-10 float-left center">{{player.totRed}}</div>-->
+        </div>
+    </ion-content>
 </ion-view>
