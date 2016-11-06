@@ -26,6 +26,7 @@ var app = angular.module('starter', ['ionic',
     'starter.functions',
     'starter.services',
     'firebase',
+    'heatmap',
     'angular.filter'])
 
     .run(function ($ionicPlatform, $ionicPush) {

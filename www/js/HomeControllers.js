@@ -89,7 +89,7 @@ angular.module('starter.HomeControllers', [])
 							gametimeList: {},
 							goalsList: {},
 							cardsList: {},
-							heatmapData:{min:0,max:0,data:[]},
+							heatmapData: { min: 0, max: 0, data: {}},
 							totGamePresent: 0,
 							totBasis: 0,
 							totChanges: 0,

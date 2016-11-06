@@ -36,18 +36,48 @@ angular.module('starter.PlayerControllers', [])
         }
     })
 
-    .controller('PlayerDetailCtrl', function ($scope, Statistics, localStorageFactory, firebaseRef, Games, $filter, $stateParams) {
+    .controller('PlayerDetailCtrl', function ($scope, Statistics, localStorageFactory, firebaseRef, Games, $filter, $heatmap, $stateParams) {
+        var gridNoX = 11;
+        var gridNoY = 15;
 
         $scope.playerId = $stateParams.playerId;
         $scope.playerStats = localStorageFactory.getStatistics();
         var sourceStats = $scope.playerStats[$scope.playerId];
-
+        
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.players = localStorageFactory.getPlayers();
         $scope.inactivePlayers = localStorageFactory.getInactivePlayers();
+        $scope.heatmapData =  {min:0,max:0,data:[]};
+
+        $scope.localHeatmapData = { max: sourceStats.heatmapData.max, min: sourceStats.heatmapData.min, data: [] };
+
+        console.log(sourceStats.heatmapData.data);
+        var widthHeatmap = document.getElementById('heatmap').clientWidth;
+        var heightHeatmap = document.getElementById('heatmap').clientHeight;
+        console.log(widthHeatmap);
+
+        for (entry in sourceStats.heatmapData.data) {
+            sourceStats.heatmapData.data[entry].radius = 100;
+            sourceStats.heatmapData.data[entry].x = Math.round(sourceStats.heatmapData.data[entry].x * (widthHeatmap / gridNoX));
+            sourceStats.heatmapData.data[entry].y = Math.round(sourceStats.heatmapData.data[entry].y * (heightHeatmap / gridNoY));
+            $scope.localHeatmapData.data.push(sourceStats.heatmapData.data[entry]);
+        }
+        // temp
+
+        
+        $scope.heatmapConfig = {
+            blur: 0.5,
+            opacity: 0
+        };
+
+        $scope.updateData = function () {
+            console.log($scope.localHeatmapData);
+            $scope.heatmapData = $scope.localHeatmapData;
+        };
 
 
+        //temp
         if (typeof $scope.inactivePlayers !== 'undefined') {
             $scope.players = angular.extend($scope.players, $scope.inactivePlayers);
         }
