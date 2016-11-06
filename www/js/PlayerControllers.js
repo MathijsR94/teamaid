@@ -39,7 +39,9 @@ angular.module('starter.PlayerControllers', [])
     .controller('PlayerDetailCtrl', function ($scope, Statistics, localStorageFactory, firebaseRef, Games, $filter, $stateParams) {
 
         $scope.playerId = $stateParams.playerId;
-        var sourceStats = localStorageFactory.getPlayerStatistics();
+        $scope.playerStats = localStorageFactory.getStatistics();
+        var sourceStats = $scope.playerStats[$scope.playerId];
+
         $scope.teamId = localStorageFactory.getTeamId();
         $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.players = localStorageFactory.getPlayers();

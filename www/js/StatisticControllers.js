@@ -57,8 +57,8 @@ angular.module('starter.StatisticControllers', [])
         };
 
         $scope.ShowPlayerDetails = function (player) {
-            console.log($scope.playerStats[player.id]);
-            localStorageFactory.setPlayerStatistics($scope.playerStats[player.id]);
+            //console.log($scope.playerStats[player.id]);
+            //localStorageFactory.setPlayerStatistics($scope.playerStats[player.id]);
 
             $state.go('app.playerDetail', {playerId: player.id});
         }

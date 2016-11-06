@@ -874,11 +874,20 @@ angular.module('starter.services', [])
                     secondHalfEnd: secondHalfEnd
                 })
             },
-            updateStat: function (teamId, seasonId, gameId, statId, time, comment) {
-                statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog").child(statId).update({
-                    time: time,
-                    comment: comment
-                })
+            updateStat: function (teamId, seasonId, gameId, statId, time, comment, assist) {
+                if (typeof assist === 'undefined') {
+                    statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog").child(statId).update({
+                        time: time,
+                        comment: comment
+                    })
+                }
+                else {
+                    statsRef.child(teamId).child(seasonId).child(gameId).child("GameLog").child(statId).update({
+                        time: time,
+                        comment: comment,
+                        assist : assist
+                    })
+                }
             }
         };
     })

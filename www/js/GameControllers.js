@@ -492,7 +492,7 @@ angular.module('starter.GameControllers', [])
     .controller('Games_StatsCtrl', function ($scope, Teams, Games, User, Statistics, $state, $stateParams, localStorageFactory, $ionicSideMenuDelegate, $ionicScrollDelegate, $ionicPopup, ionicTimePicker, $ionicSlideBoxDelegate) {
         $scope.gameId = $stateParams.gameId;
         $scope.selectedType = "";
-        $scope.typeStats = ["wissel", "positie wissel", "goal voor", "goal tegen", "gele kaart", "rode kaart", "event"];
+        //$scope.typeStats = ["wissel", "positie wissel", "goal voor", "goal tegen", "gele kaart", "rode kaart", "event"];
         $scope.externalPlayerNames = {};
         $scope.game = {}; // empty game object
         $scope.homeScore = 0;
@@ -500,16 +500,16 @@ angular.module('starter.GameControllers', [])
         $scope.teamId = localStorageFactory.getTeamId(); // get TeamId from local storage
         $scope.seasonId = localStorageFactory.getSeasonId();
         $scope.gameLog = [];
-        $scope.nbsp = " "; // whitespace
+        // $scope.nbsp = " "; // whitespace
         $scope.title = "Selecteer datum";
-        $scope.tactic = 0;
+        //$scope.tactic = 0;
         $scope.basisLineUp = {};
         $scope.basisChanges = {}
         $scope.actualPlayers = {};
         $scope.changes = {};
         $scope.useNickNames = false;
         $scope.ShowDelete = true;
-        $scope.scrollEnabled = false;
+        $scope.scrollEnabled = true;
         $scope.slideIndex = 0;
 				
 		var eventPopup; //global popupobject
@@ -777,7 +777,7 @@ angular.module('starter.GameControllers', [])
 
 
         $scope.goToSlide = function(index) {
-			console.log(index);
+			//console.log(index);
 			$scope.slideIndex = index;
             $ionicSlideBoxDelegate.slide(index);
         };
@@ -794,10 +794,9 @@ angular.module('starter.GameControllers', [])
         };
 
         $scope.isScrollEnabled = function (value) {
-            console.log(value);
+            //console.log(value);
             value ? $ionicScrollDelegate.freezeAllScrolls(false) :
                 $ionicScrollDelegate.freezeAllScrolls(true);
-
         }
 
         $scope.eventDelegator = function (type, basis, eventData) {
@@ -886,7 +885,7 @@ angular.module('starter.GameControllers', [])
                         $scope.showPopup("Goal",true,true,false,true);
 						eventPopup.then(function (result) {
 							if(typeof result !== 'undefined'){
-								console.log("ourGoal", true, eventData.player, $scope.eventTime, result.comment);
+							    console.log("ourGoal", true, eventData.player, $scope.eventTime, result.comment, result.assist);
 								Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, true, eventData.player, result.assist, $scope.eventTime, result.comment);
 							}
 						});
@@ -896,7 +895,7 @@ angular.module('starter.GameControllers', [])
 						
 						eventPopup.then(function (result) {
 							if(typeof result !== 'undefined'){
-								console.log("theirGoal", false, 'undefined', $scope.eventTime, result.comment);
+							    console.log("theirGoal", false, 'undefined', $scope.eventTime, result.comment, result.assist);
 								Statistics.newGoal($scope.teamId, $scope.seasonId, $scope.gameId, false, 'undefined', result.assist, $scope.eventTime, result.comment);
 							}
 						});
@@ -988,9 +987,9 @@ angular.module('starter.GameControllers', [])
 							if (typeof $scope.data.comment === 'undefined') { // protect against undefined
 								$scope.data.comment = " ";
 							}
-							if (typeof $scope.assist === 'undefined') { // protect against undefined
+							if (typeof $scope.data.assist === 'undefined') { // protect against undefined
 								$scope.data.assist = -1;
-							}
+							}	
                             return $scope.data;
                         }
                     },
@@ -1000,23 +999,6 @@ angular.module('starter.GameControllers', [])
                 ]
             });
         }
-
-        // $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
-            // // data.slider is the instance of Swiper
-            // $scope.slider = data.slider;
-        // });
-
-        // $scope.$on("$ionicSlides.slideChangeStart", function(event, data){
-            // console.log('Slide change is beginning');
-        // });
-
-        // $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
-            // // note: the indexes are 0-based
-            // $scope.activeIndex = data.activeIndex;
-            // $scope.previousIndex = data.previousIndex;
-        // });
-
-
     })
 
     .controller('Games_StatsEditCtrl', function ($scope, Statistics, $stateParams, localStorageFactory, Games, Statistics,ionicTimePicker, $ionicHistory) {
@@ -1083,9 +1065,9 @@ angular.module('starter.GameControllers', [])
             ionicTimePicker.openTimePicker(statTimeObj);
         }
 
-        $scope.update = function (time, comment) {
+        $scope.update = function (time, comment, assist) {
             if (typeof comment !== 'undefined') { // protect against undefined
-                Statistics.updateStat($scope.teamId, $scope.seasonId, $scope.gameId, $scope.statId, time, comment);
+                Statistics.updateStat($scope.teamId, $scope.seasonId, $scope.gameId, $scope.statId, time, comment, assist);
                 console.log("update succesfull");
                 $ionicHistory.goBack();
             }

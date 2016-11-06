@@ -56,12 +56,18 @@
 				</div>
 			</div>
 			<div ng-if="stat.statsType === 'OurGoals'"> <!-- this is the div voor goals voor-->
-				<label class="item item-input item-select">
-					<span class="input-label">Speler</span>
-					<select ng-model="stat.player"  disabled="disabled">
-						<option ng-repeat="(id,value) in presentPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
-					</select>
-				</label>
+                <label class="item item-input item-select">
+                    <span class="input-label">Speler</span>
+                    <select ng-model="stat.player" disabled="disabled">
+                        <option ng-repeat="(id,value) in presentPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+                    </select>
+                </label>
+                <label class="item item-input item-select">
+                    <span class="input-label">Assist</span>
+                    <select ng-model="stat.assist">
+                        <option ng-repeat="(id,value) in presentPlayers" value="{{id}}" player-name player='players[id]' nick-name='useNickNames' />
+                    </select>
+                </label>
 				<label class="item item-input">
 					Tijdstip:
 					<button class="button button-stable" ng-click="openStatTimePicker()">
@@ -73,7 +79,7 @@
 					<input type="text" ng-model="stat.comment"/>
 				</label>
 				<div class="buttons">
-					<button class="button button-block" ng-click="updateOurGoal(stat.time,stat.comment)">save</button>
+					<button class="button button-block" ng-click="update(stat.time,stat.comment,stat.assist)">save</button>
 				</div>
 			</div>
 			<div ng-if="stat.statsType  === 'TheirGoals'"> <!-- this is the div voor goals tegen-->
@@ -113,7 +119,7 @@
 					<input type="text" ng-model="stat.comment"/>
 				</label>
 				<div class="buttons">
-					<button class="button button-block" ng-click="update(stat.time,stat.comment,yellow2)">save</button>
+					<button class="button button-block" ng-click="update(stat.time,stat.comment)">save</button>
 				</div>
 			</div>
 			<div ng-if="stat.statsType === 'Cards' && stat.type ==='red'"> <!-- this is the div voor rode kaart-->

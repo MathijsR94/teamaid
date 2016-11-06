@@ -232,7 +232,7 @@ angular.module('starter.HomeControllers', [])
 								    // totGameTime = actual time
 								    // coefGameTime = percentage of max the has been played
 								    if (playerStats[player]['totGameTime'] > 0 && playerStats[player]['maxGameTime'] > 0){
-								        playerStats[player]['coefGameTime'] = (playerStats[player]['totGameTime'] / playerStats[player]['maxGameTime']) * 100; // time 10 for percentage
+								        playerStats[player]['coefGameTime'] = Math.round((playerStats[player]['totGameTime'] / playerStats[player]['maxGameTime']) * 100); // time 10 for percentage
 								    } else {
 								        playerStats[player]['coefGameTime'] = 0;
                                     }

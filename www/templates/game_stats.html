@@ -16,74 +16,74 @@
 
 			<ion-slide-box id="game-stats" active-slide="slideIndex" ng-init="disableSwipe()" show-pager="false">
 				<ion-slide>
-						<ion-item class="item stat" ng-repeat="event in gameLog | orderBy:'time'">
-							<section class="row no-padding">
-								<div class="col no-padding"
-									 ng-class="event.statsType === 'TheirGoals' ? 'right' : 'left'">
-									<div class="row no-padding">
-										<div class="col">
-											<i ng-if="event.statsType === 'OurGoals'"
-											   class="icon ion-ios-football"></i>
-											<i ng-if="event.statsType === 'GameEvents'"
-											   class="icon ion-ios-list"></i>
-											<img src="../img/red-card.svg" width="16" height="16"
-												 ng-if="event.statsType === 'Cards' && event.type === 'red'"
-													/>
-											<img src="../img/yellow-card.svg" width="16" height="16"
-												 ng-if="event.statsType === 'Cards' && event.type === 'yellow'"
-													/>
-											<img src="../img/yellow-red-card.svg" width="16" height="16"
-												 ng-if="event.statsType === 'Cards' && event.type === 'yellow2'"
-													/>
-											<i ng-if="event.statsType === 'Changes'"
-											   class="icon ion-loop"></i>
-											<i ng-if="event.statsType === 'TheirGoals'"
-											   class="icon ion-ios-football"></i>
-											<player-name player='players[event.player]'
-														 nick-name='useNickNames'></player-name>
+                    <ion-list>
+                        <ion-item class="item stat" ng-repeat="event in gameLog | orderBy:'time'">
+                            <section class="row no-padding">
+                                <div class="col no-padding"
+                                     ng-class="event.statsType === 'TheirGoals' ? 'right' : 'left'">
+                                    <div class="row no-padding">
+                                        <div class="col">
+                                            <i ng-if="event.statsType === 'OurGoals'"
+                                               class="icon ion-ios-football"></i>
+                                            <i ng-if="event.statsType === 'GameEvents'"
+                                               class="icon ion-ios-list"></i>
+                                            <img src="../img/red-card.svg" width="16" height="16"
+                                                 ng-if="event.statsType === 'Cards' && event.type === 'red'" />
+                                            <img src="../img/yellow-card.svg" width="16" height="16"
+                                                 ng-if="event.statsType === 'Cards' && event.type === 'yellow'" />
+                                            <img src="../img/yellow-red-card.svg" width="16" height="16"
+                                                 ng-if="event.statsType === 'Cards' && event.type === 'yellow2'" />
+                                            <i ng-if="event.statsType === 'Changes'"
+                                               class="icon ion-loop"></i>
+                                            <i ng-if="event.statsType === 'TheirGoals'"
+                                               class="icon ion-ios-football"></i>
+                                            <player-name player='players[event.player]'
+                                                         nick-name='useNickNames'></player-name>
 
 
-											<div ng-if="event.statsType === 'Changes'" class="changes">
-												<span>Wissel</span>
-								<span ng-if="event.type === 'Position'">Positie <player-name
-										player='players[event.player1]' nick-name='useNickNames'></player-name> voor <player-name
-										player='players[event.player2]' nick-name='useNickNames'></player-name> </span>
-								<span ng-if="event.type === 'Move'">Verplaatst<player-name player='players[event.player]'
-																						   nick-name='useNickNames'></player-name></span>
+                                            <div ng-if="event.statsType === 'Changes'" class="changes">
+                                                <span>Wissel</span>
+                                                <span ng-if="event.type === 'Position'">
+                                                    Positie <player-name player='players[event.player1]' nick-name='useNickNames'></player-name> voor <player-name player='players[event.player2]' nick-name='useNickNames'></player-name>
+                                                </span>
+                                                <span ng-if="event.type === 'Move'">
+                                                    Verplaatst<player-name player='players[event.player]'
+                                                                           nick-name='useNickNames'></player-name>
+                                                </span>
 
-										<span ng-if="event.type === 'In/Out'" class="balanced">
-											<player-name
-													player='players[event.playerIn]'
-													nick-name='useNickNames'></player-name>
-										</span>
-											</div>
+                                                <span ng-if="event.type === 'In/Out'" class="balanced">
+                                                    <player-name player='players[event.playerIn]'
+                                                                 nick-name='useNickNames'></player-name>
+                                                </span>
+                                            </div>
 
-											<p>
-												<standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
-									<span ng-if="event.type === 'In/Out'" class="assertive">
-											<player-name
-													player='players[event.playerOut]'
-													nick-name='useNickNames'></player-name>
-										</span>
-												<span ng-if="event.statsType === 'OurGoals'">{{event.comment}}</span>
-											</p>
+                                            <p>
+                                                <standard-time-no-meridian etime='event.time'></standard-time-no-meridian>
+                                                <span ng-if="event.type === 'In/Out'" class="assertive">
+                                                    <player-name player='players[event.playerOut]'
+                                                                 nick-name='useNickNames'></player-name>
+                                                </span>
+                                                <span ng-if="event.statsType === 'OurGoals'">{{event.comment}}</span>
+                                            </p>
 
-											<p ng-if="event.statsType === 'TheirGoals'" class="">{{event.comment}}</p>
-											<p ng-if="event.statsType === 'GameEvents'">{{event.comment}}</p>
+                                            <p ng-if="event.statsType === 'TheirGoals'" class="">{{event.comment}}</p>
+                                            <p ng-if="event.statsType === 'GameEvents'">{{event.comment}}</p>
 
-										</div>
-									</div>
-								</div>
-								<ion-option-button class="button-assertive"
-												   ng-click="$event.stopPropagation(); onItemDelete(event)">Delete
-								</ion-option-button>
-								<ion-option-button class="button-dark"
-												   ng-click="$event.stopPropagation(); editStat(event)">Edit
-								</ion-option-button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ion-option-button class="button-assertive"
+                                                   ng-click="$event.stopPropagation(); onItemDelete(event)">
+                                    Delete
+                                </ion-option-button>
+                                <ion-option-button class="button-dark"
+                                                   ng-click="$event.stopPropagation(); editStat(event)">
+                                    Edit
+                                </ion-option-button>
 
-							</section>
-							</ion-item>
-
+                            </section>
+                        </ion-item>
+                    </ion-list>
 							<div>.</div>
 				</ion-slide>
 				<ion-slide>

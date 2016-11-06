@@ -4,6 +4,18 @@
             <h1 class="center"><player-name player='players[playerId]' nick-name='useNickNames'></player-name></h1>
         </div>
         <ion-list>
+            <div class="item" ng-click="toggleGroup('%')"
+                 ng-class="{active: isGroupShown('%')}">
+                <span class="highlight">coefficient : {{playerStats.coefGameTime}} %</span>
+                <i class="icon float-right"
+                   ng-class="isGroupShown('%') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+            </div>
+            <div  ng-show="isGroupShown('%')">
+                <div class="item row"><div class="col float-left"><b>Games present:  {{ playerStats.totGamePresent }}</b> </div></div>
+                <div class="item row"><div class="col float-left"><b> Maximum minuten: {{ playerStats.maxGameTime }}</b> </div></div>
+                <div class="item row"><div class="col float-left"><b> Gespeelde minuten: {{ playerStats.totGameTime }}</b> </div></div>
+                <div class="item row"><div class="col float-left"><b> Aantal wisselbeurten: {{ playerStats.totChanges }}</b> </div></div>
+            </div>
             <div class="item" ng-click="toggleGroup('gameTime')"
                  ng-class="{active: isGroupShown('gameTime')}">
                 <span class="highlight">Speelminuten : {{playerStats.totGameTime}}</span>
@@ -12,8 +24,12 @@
             </div>
             <div class="item row" ng-repeat="item in playerStats.gametimeList | orderObjectBy:'date'"
                  ng-show="isGroupShown('gameTime')">
-                <div class="col float-left"><b> {{games[item.game].home}} vs
-                    {{games[item.game].away}} </b></div>
+                <div class="col float-left">
+                    <b>
+                        {{games[item.game].home}} vs
+                        {{games[item.game].away}}
+                    </b>
+                </div>
                 <div class="col float-left">{{ item.date | date:'dd-MM-yyyy' }}</div>
                 <div class="col float-left">{{item.gametime}} minuten</div>
             </div>
@@ -24,8 +40,12 @@
             </div>
             <div class="item row" ng-repeat="item in playerStats.goalsList | orderObjectBy:'date'"
                  ng-show="isGroupShown('goals')">
-                <div class="col float-left"><b> {{games[item.game].home}} vs
-                {{games[item.game].away}} </b></div>
+                <div class="col float-left">
+                    <b>
+                        {{games[item.game].home}} vs
+                        {{games[item.game].away}}
+                    </b>
+                </div>
                 <div class="col float-left">Goal: {{ item.date | date:'dd-MM-yyyy' }} </div>
                 <div class="col float-left">{{statistics[item.game].GameLog[item.gamelogId].comment}}</div>
 
