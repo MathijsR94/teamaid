@@ -84,12 +84,12 @@ angular.module('starter.HomeControllers', [])
 
 				if($scope.seasonId !== null) {
 
-
 					for (player in $scope.players) {
 						playerStats[player] = {
 							gametimeList: {},
 							goalsList: {},
 							cardsList: {},
+							heatmapData:{min:0,max:0,data:[]},
 							totGamePresent: 0,
 							totBasis: 0,
 							totChanges: 0,
@@ -97,7 +97,7 @@ angular.module('starter.HomeControllers', [])
 							totGameTime: 0,
 							totYellow: 0,
 							totRed: 0,
-							totGoals: 0
+							totGoals: 0		
 						};
 					}
 
@@ -133,6 +133,15 @@ angular.module('starter.HomeControllers', [])
 												playerStats[player]['totGameTime'] += maxGameTime;  // initially add a fill length game to each basis player
 												playerStats[player].gametimeList[key] = {game: key};
 												playerStats[player].gametimeList[key].gametime = maxGameTime;
+
+										        // heatmap Data
+												var x = gameStats.Basis[player].gridX;
+												var y = gameStats.Basis[player].gridY;
+
+												if (typeof playerStats[player].heatmapData.data[x +'_'+ y ] === 'undefined'){
+												    playerStats[player].heatmapData.data[x +'_'+ y ] = { x: x, y: y, value: 0 };
+												} 
+												playerStats[player].heatmapData.data[x +'_'+ y ].value += maxGameTime;
 											}
 										}
 
@@ -152,27 +161,156 @@ angular.module('starter.HomeControllers', [])
 
 												case "Changes":
 													var change = gameStats.GameLog[itemKey];
-													// update fieldPlayers ( used for cards later on )
-
-													if (change.type === "In/Out") { //change type, in/out or  position
-														fieldPlayers[change.playerIn] = fieldPlayers[change.playerOut]; // transfer position
-														delete fieldPlayers[change.playerOut];
-
+													
+													if (change.type === "In/Out") { //change type, in/out 
+														
 														remainingTime = calcReaminingTime(change.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
 
 														if (change.playerOut.indexOf("external") == -1) { // only calculate if player is not external
 															playerStats[change.playerOut]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted. ( this  will be transferred to the player who will be changed in )
 															playerStats[change.playerOut].gametimeList[key].gametime -= remainingTime; //subtract remaining time from already granted gametime
 															playerStats[change.playerOut]['totChanges'] += 1; //count number of changes this player has had
+
+														    // heatmap Data
+															var x = fieldPlayers[change.playerOut].gridX;
+															var y = fieldPlayers[change.playerOut].gridY;
+															playerStats[change.playerOut].heatmapData.data[x +'_'+ y ].value -= remainingTime;
 														}
+
+													    // update fieldPlayers ( used for cards later on, also critical for moves )
+														fieldPlayers[change.playerIn] = fieldPlayers[change.playerOut]; // transfer position
+														delete fieldPlayers[change.playerOut];
+
 														if (change.playerIn.indexOf("external") == -1) { // only calculate if player is not external
 															playerStats[change.playerIn]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
 															playerStats[change.playerIn].gametimeList[key] = {game: key};
 															playerStats[change.playerIn].gametimeList[key].gametime = remainingTime;
 															playerStats[change.playerIn]['totChanges'] += 1; //count number of changes this player has had
+
+														    // heatmap Data
+															var x = fieldPlayers[change.playerIn].gridX;
+															var y = fieldPlayers[change.playerIn].gridY;
+															if (typeof playerStats[change.playerIn].heatmapData.data[x +'_'+ y ] === 'undefined') {
+															    playerStats[change.playerIn].heatmapData.data[x +'_'+ y ] = { x: x, y: y, value: 0 };
+															}
+															playerStats[change.playerIn].heatmapData.data[x +'_'+ y ].value += remainingTime;
 														}
 													}
+													if (change.type === "Out") { //change type, in/out 
+
+													    remainingTime = calcReaminingTime(change.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
+
+													    if (change.player.indexOf("external") == -1) { // only calculate if player is not external
+													        playerStats[change.player]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted. ( this  will be transferred to the player who will be changed in )
+													        playerStats[change.player].gametimeList[key].gametime -= remainingTime; //subtract remaining time from already granted gametime
+													        playerStats[change.player]['totChanges'] += 1; //count number of changes this player has had
+
+													        // heatmap Data
+													        var x = fieldPlayers[change.player].gridX;
+													        var y = fieldPlayers[change.player].gridY;
+													        playerStats[change.player].heatmapData.data[x +'_'+ y ].value -= remainingTime;
+													    }
+
+													    // update fieldPlayers ( used for cards later on, also critical for moves )n
+													    delete fieldPlayers[change.player];
+													}
+													if (change.type === "In") { //change type, in/out 
+
+													    remainingTime = calcReaminingTime(change.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
+
+													    // update fieldPlayers ( used for cards later on, also critical for moves )
+													    fieldPlayers[change.player] = change.position; // set position
+
+													    if (change.player.indexOf("external") == -1) { // only calculate if player is not external
+													        playerStats[change.player]['totGameTime'] += remainingTime;// update totGameTime, add remaining time to Totgametime.
+													        playerStats[change.player].gametimeList[key] = { game: key };
+													        playerStats[change.player].gametimeList[key].gametime = remainingTime;
+
+													        // heatmap Data
+													        var x = fieldPlayers[change.player].gridX;
+													        var y = fieldPlayers[change.player].gridY;
+													        if (typeof playerStats[change.player].heatmapData.data[x +'_'+ y ] === 'undefined') {
+													            playerStats[change.player].heatmapData.data[x +'_'+ y ] = { x: x, y: y, value: 0 };
+													        }
+													        playerStats[change.player].heatmapData.data[x +'_'+ y ].value += remainingTime;
+													    }
+													}
+													if (change.type === "Position") { //change type, position
+
+													    remainingTime = calcReaminingTime(change.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
+
+                                                        // finish of the old position 
+													    if (change.player1.indexOf("external") == -1) { // only calculate if player is not external
+													        // heatmap Data
+													        var x = fieldPlayers[change.player1].gridX;
+													        var y = fieldPlayers[change.player1].gridY;
+													        playerStats[change.player1].heatmapData.data[x +'_'+ y ].value -= remainingTime;
+													    }
+
+													    if (change.player2.indexOf("external") == -1) { // only calculate if player is not external
+													        // heatmap Data
+													        var x = fieldPlayers[change.player2].gridX;
+													        var y = fieldPlayers[change.player2].gridY;
+													        playerStats[change.player2].heatmapData.data[x +'_'+ y ].value -= remainingTime;
+													    }
+                                                        // transfer players
+                                                        // update fieldPlayers ( used for cards later on, also critical for moves )
+													    var pos2 = fieldPlayers[change.player2];
+													    fieldPlayers[change.player2] = fieldPlayers[change.player1]; // transfer pos1 to player 2
+													    fieldPlayers[change.player1] = pos2; // transfer pos 2 to player 1
+													    
+                                                        //add remaining time to the new position
+													    if (change.player1.indexOf("external") == -1) { // only calculate if player is not external
+													        // heatmap Data
+													        var x = fieldPlayers[change.player1].gridX;
+													        var y = fieldPlayers[change.player1].gridY;
+													        if (typeof playerStats[change.player1].heatmapData.data[x +'_'+ y ] === 'undefined') {
+													            playerStats[change.player1].heatmapData.data[x +'_'+ y ] = { x: x, y: y, value: 0 };
+													        }
+													        playerStats[change.player1].heatmapData.data[x +'_'+ y ].value += remainingTime;
+													    }
+
+													    if (change.player2.indexOf("external") == -1) { // only calculate if player is not external
+													        // heatmap Data
+													        var x = fieldPlayers[change.player2].gridX;
+													        var y = fieldPlayers[change.player2].gridY;
+													        if (typeof playerStats[change.player2].heatmapData.data[x +'_'+ y ] === 'undefined') {
+													            playerStats[change.player2].heatmapData.data[x +'_'+ y ] = { x: x, y: y, value: 0 };
+													        }
+													        playerStats[change.player2].heatmapData.data[x +'_'+ y ].value += remainingTime;
+													    }  
+													}
+													
 													break;
+
+											    case "Moves":
+											        if (change.type === "Move") { //change type, in/out 
+
+											            remainingTime = calcReaminingTime(change.time, gameStats.firstHalfStart, gameStats.firstHalfEnd, gameStats.secondHalfStart, gameStats.secondHalfEnd);
+
+											            // fisnish up the old position
+											            if (change.player.indexOf("external") == -1) { // only calculate if player is not external
+											                // heatmap Data
+											                var x = fieldPlayers[change.player].gridX;
+											                var y = fieldPlayers[change.player].gridY;
+											                playerStats[change.player].heatmapData.data[x +'_'+ y ].value -= remainingTime;
+											            }
+											           
+											            // update fieldPlayers ( used for cards later on, also critical for moves )
+											            fieldPlayers[change.player] = change.position; // set position
+
+                                                        // handle new position
+											            if (change.player.indexOf("external") == -1) { // only calculate if player is not external
+											                // heatmap Data
+											                var x = fieldPlayers[change.player].gridX;
+											                var y = fieldPlayers[change.player].gridY;
+											                if (typeof playerStats[change.player].heatmapData.data[x +'_'+ y ] === 'undefined') {
+											                    playerStats[change.player].heatmapData.data[x +'_'+ y ] = { x: x, y: y, value: 0 };
+											                }
+											                playerStats[change.player].heatmapData.data[x +'_'+ y ].value += remainingTime;
+											            }
+											        }
+											        break;
 												case "Cards":
 													var card = gameStats.GameLog[itemKey];
 													//console.log(card);
@@ -203,7 +341,13 @@ angular.module('starter.HomeControllers', [])
 																if (card.player.indexOf("external") == -1) { // only calculate if player is not external
 																	playerStats[card.player]['totGameTime'] -= remainingTime; // update totGameTime, subtract remaining time from gametime already granted.
 																	playerStats[card.player].gametimeList[key].gametime -= remainingTime;
+
+																    // heatmap Data
+																	var x = fieldPlayers[card.player].gridX;
+																	var y = fieldPlayers[card.player].gridY;
+																	playerStats[card.player].heatmapData.data[x +'_'+ y ].value -= remainingTime;
 																}
+																delete fieldPlayers[card.player];
 															}
 														}
 													}
@@ -235,8 +379,11 @@ angular.module('starter.HomeControllers', [])
 								        playerStats[player]['coefGameTime'] = Math.round((playerStats[player]['totGameTime'] / playerStats[player]['maxGameTime']) * 100); // time 10 for percentage
 								    } else {
 								        playerStats[player]['coefGameTime'] = 0;
-                                    }
-								    console.log(player, playerStats[player]['coefGameTime']);
+								    }
+
+								    // update the max value for the heatmap
+								    playerStats[player].heatmapData.max = playerStats[player]['totGameTime'];
+								    console.log(player, playerStats[player]);
 								}
 
 								localStorageFactory.setStatistics(playerStats);
