@@ -10,7 +10,7 @@
                 <i class="icon float-right"
                    ng-class="isGroupShown('%') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
             </div>
-            <div  ng-show="isGroupShown('%')">
+            <div ng-show="isGroupShown('%')">
                 <div class="item row"><div class="col float-left"><b>Games present:  {{ playerStats.totGamePresent }}</b> </div></div>
                 <div class="item row"><div class="col float-left"><b> Maximum minuten: {{ playerStats.maxGameTime }}</b> </div></div>
                 <div class="item row"><div class="col float-left"><b> Gespeelde minuten: {{ playerStats.totGameTime }}</b> </div></div>
@@ -66,6 +66,6 @@
             </div>
         </ion-list>
 
-        <heatmap id="heatmap" style='width:100%; height:100%; position:absolute;' data="heatmapData" config="heatmapConfig" ng-click="updateData()"></heatmap>
+        <heat-field heatmap-data="heatmapData" heatmap-config="heatmapConfig" grid="false"></heat-field>
     </ion-content>
 </ion-view>

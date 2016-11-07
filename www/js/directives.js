@@ -146,13 +146,123 @@ app.directive('dateTime', function () {
                         }
                         else { //(format === 'MM-DD-YYYY')
                             //console.log(newDate);
-                            return ( newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear());
+                            return (newDate.getDate() + "-" + (newDate.getMonth() + 1) + "-" + newDate.getFullYear());
                         }
                     }
                 }
             }
         }
     };
+});
+
+app.directive('heatField', function () {
+    return {
+        restrict: 'AE',
+        replace: false,
+        scope: {
+            grid: '=',
+            heatmapData: '=',
+            heatmapConfig: '=',
+            scrollEnabled: '&',
+            savePosChange: '&',
+            eventFunction: '&'
+        },
+        link: function (scope, elem, attrs) {
+            var originX = 77;
+            var originY = 100;
+            var gridNoX = 11;
+            var gridNoY = 15;
+            var fieldImg = "./img/Field.svg";
+            var context;
+            var cfg;
+            var canvas;
+            var source = new Image();
+            source.src = fieldImg;
+            var heatmapInstance;
+            var localHeatmapData;
+            var WIDTH;
+            var HEIGHT;
+            var offsetX;
+            var offsetY;
+            var gridSizeX;
+            var gridSizeY;
+
+
+            console.log(elem);
+            
+            function clear() {
+                context.clearRect(0, 0, WIDTH, HEIGHT);
+            }
+
+            function draw() {
+                clear();
+                if (context) {
+                    var defaultCfg = { width: WIDTH, height: HEIGHT };
+                    cfg = angular.merge({}, defaultCfg, scope.heatmapConfig || {});
+                    heatmapInstance.configure(cfg);                    
+                    heatmapInstance.repaint();
+                    context.globalAlpha = 0.7;
+                    context.drawImage(source, 0, 0, WIDTH, HEIGHT);
+                    
+                }
+            }
+
+
+            function init() {
+                var defaultCfg = { width: WIDTH, height: HEIGHT };
+                cfg = angular.merge({}, defaultCfg, scope.heatmapConfig || {});
+                cfg.container = elem[0];
+                heatmapInstance = h337.create(cfg);
+                sizeCalc();
+                //scope.heatmapInstance = heatmapInstance;
+                context = elem[0].children[0].getContext("2d");       
+                localHeatmapData = { max: 0, min: 0, data: [] };
+                for (entry in scope.heatmapData.data) {
+                    var datapoint = angular.copy(scope.heatmapData.data[entry]);
+                    datapoint.radius = gridSizeX*2;
+                    datapoint.x = Math.round(datapoint.x * gridSizeX + offsetX + (gridSizeX * 0.5));
+                    datapoint.y = Math.round(datapoint.y * gridSizeY + offsetY + (gridSizeY * 0.5));
+                    if (localHeatmapData.max < datapoint.value)
+                        localHeatmapData.max = datapoint.value;
+
+                    localHeatmapData.data.push(datapoint);
+                }
+                heatmapInstance.setData(localHeatmapData);
+               // console.log(heatmapInstance);
+
+                return setInterval(draw, 100);
+
+            }
+
+            init();
+
+            function sizeCalc() {
+                // perhaps upgrade to : window.getComputedStyle(domEl); later?
+
+                WIDTH = window.innerWidth - 30;// 16 px is padding of  the container
+                HEIGHT = originY / (originX / WIDTH);
+                offsetX = (WIDTH * 0.01); // tuning parameters left offset
+                offsetY = (HEIGHT * 0.038); // tuning parameters top offset
+                gridSizeX = (WIDTH - offsetX - (WIDTH * 0.01)) / gridNoX; // tuning parameters right offset
+                gridSizeY = (HEIGHT - offsetY - (HEIGHT * 0.04)) / gridNoY; //tuning parameters bottom offset
+
+                localHeatmapData = { max: 0, min: 0, data: [] };
+                for (entry in scope.heatmapData.data) {
+                    var datapoint = angular.copy(scope.heatmapData.data[entry]);
+                    datapoint.radius = gridSizeX*2;
+                    datapoint.x = Math.round(datapoint.x * gridSizeX + offsetX + (gridSizeX * 0.5));
+                    datapoint.y = Math.round(datapoint.y * gridSizeY + offsetY + (gridSizeY * 0.5));
+                    if (localHeatmapData.max < datapoint.value)
+                        localHeatmapData.max = datapoint.value;
+
+                    localHeatmapData.data.push(datapoint);
+                }
+                heatmapInstance.setData(localHeatmapData);
+            }
+
+            window.addEventListener("resize", sizeCalc);
+        }
+    }
 });
 
 app.directive('playingField', function () {
@@ -170,7 +280,7 @@ app.directive('playingField', function () {
             savePosChange: '&',
             eventFunction: '&'
         },
-        template: "<canvas>",
+        template: "<div><canvas>",
         link: function (scope, elem, attrs) {
             var originX = 77;
             var originY = 100;
@@ -178,6 +288,7 @@ app.directive('playingField', function () {
             var gridNoY = 15;
             var fieldImg = "./img/Field.svg";
             var canvas = elem[0];//document.getElementById("playing-field");
+            //var div = elem[0].children[0];
             var context;
             var source = new Image();
             source.src = fieldImg;
@@ -194,6 +305,7 @@ app.directive('playingField', function () {
             var eventIcon = new Image();
             eventIcon.src = "./img/list.svg";
             var basis = false;
+            var heatmap = false;
 
             var WIDTH;
             var HEIGHT;
@@ -210,18 +322,31 @@ app.directive('playingField', function () {
             var changeUp = -1;
             var eventDown = -1;
             var eventUp = -1;
-			
-            var editEnabled = false;
-            var events = { ourGoal: "",theirGoal: "",yellowCard: "", redCard: "", gameEvent:"" };
 
-            if (scope.type < 3) {
-                editEnabled = false;
-            } else if (scope.type >= 3) {
-                editEnabled = true;
-                if (scope.type === 3) {
+            var editEnabled = false;
+            var events = { ourGoal: "", theirGoal: "", yellowCard: "", redCard: "", gameEvent: "" };
+            //1= view only
+            //2= view only
+            //3= basis 
+            //4= stats
+            //5= heatmap
+            console.log(elem);
+            switch (scope.type) {
+                case 1:
+                    editEnabled = false;
+                    break;
+                case 2:
+                    editEnabled = false;
+                    break;
+                case 3:
+                    editEnabled = true;
                     basis = true;
-                }
-            }
+                    break;
+                case 4:
+                    editEnabled = true;
+                    break;
+                default: break;
+            };
 
 
             function collides(objects, x, y, downObject) {
@@ -278,11 +403,11 @@ app.directive('playingField', function () {
                 if (editEnabled) {
                     playerDown = collides(scope.drawPlayers, x, y, playerDown);
                     changeDown = collides(scope.drawChanges, x, y, changeDown);
-					if(scope.type === 4)
-						eventDown = collides(events, x, y, eventDown);
-					
+                    if (scope.type === 4)
+                        eventDown = collides(events, x, y, eventDown);
+
                     if (playerDown != -1 || changeDown != -1 || eventDown != -1) {
-                        scope.scrollEnabled({value: false});
+                        scope.scrollEnabled({ value: false });
                         move(x, y);
                     }
                 }
@@ -306,13 +431,13 @@ app.directive('playingField', function () {
 
             function up(x, y) {
                 if (editEnabled) {
-                    scope.scrollEnabled({value: true});
+                    scope.scrollEnabled({ value: true });
                     playerUp = collides(scope.drawPlayers, x, y, playerDown);
                     changeUp = collides(scope.drawChanges, x, y, changeDown);
-					
-					if(scope.type === 4)
-						eventUp = collides(events, x, y, eventDown);
-					
+
+                    if (scope.type === 4)
+                        eventUp = collides(events, x, y, eventDown);
+
                     var gridX = Math.floor((x - offsetX) / gridSizeX);
                     var gridY = Math.floor((y - offsetY) / gridSizeY);
                     var numberOfPlayers = 0;
@@ -341,23 +466,23 @@ app.directive('playingField', function () {
                             pos1: scope.drawPlayers[playerDown], pos2: scope.drawPlayers[playerUp],
                             comment: scope.players[playerDown].nickName + " wisselt positie met " + scope.players[playerUp].nickName
                         };
-                        scope.eventFunction({type: "posChange", basis: basis, eventData: eventData});
+                        scope.eventFunction({ type: "posChange", basis: basis, eventData: eventData });
                     }
                     if (bitMask == 0x1) { // move player on the field
-                        
-						if (gridX < 1 || gridX > gridNoX - 2 || gridY < 0 || gridY > gridNoY) {//move player to changes or from the field
+
+                        if (gridX < 1 || gridX > gridNoX - 2 || gridY < 0 || gridY > gridNoY) {//move player to changes or from the field
                             var eventData = {
                                 player: playerDown,
-								pos: scope.drawPlayers[playerDown],
+                                pos: scope.drawPlayers[playerDown],
                                 comment: scope.players[playerDown].nickName + " verlaat het veld "
                             };
-							if (basis) { // in basis mode  return player back to changes
-								scope.drawChanges[playerDown] = true;
-							}
-							updateChangePos();
-							
-                            scope.eventFunction({type: "changeOut", basis: basis, eventData: eventData});
-							
+                            if (basis) { // in basis mode  return player back to changes
+                                scope.drawChanges[playerDown] = true;
+                            }
+                            updateChangePos();
+
+                            scope.eventFunction({ type: "changeOut", basis: basis, eventData: eventData });
+
                         } else { // move player to other free position
                             scope.drawPlayers[playerDown].gridX = gridX;//Math.floor((x - offsetX) / gridSizeX);
                             scope.drawPlayers[playerDown].gridY = gridY;//Math.floor((y - offsetY) / gridSizeY);
@@ -366,26 +491,26 @@ app.directive('playingField', function () {
                                 pos: scope.drawPlayers[playerDown],
                                 comment: scope.players[playerDown].nickName + " verplaatst op het veld"
                             };
-                            scope.eventFunction({type: "posMove", basis: basis, eventData: eventData});
+                            scope.eventFunction({ type: "posMove", basis: basis, eventData: eventData });
                         }
                     }
                     if (bitMask == 0x4) { // place change on the field
                         if (numberOfPlayers < 11) { // check if the max number of players is not exceeded.
-							if (gridX >= 1 && gridX <= gridNoX - 2 && gridY >= 0 && gridY <= gridNoY) {//move change to the field
-								scope.drawPlayers[changeDown] = {
-									gridX: gridX, //Math.floor((x - offsetX) / gridSizeX),
-									gridY: gridY//gridYMath.floor((y - offsetY) / gridSizeY)
-								};
-								delete scope.drawChanges[changeDown];
-								updateChangePos();
+                            if (gridX >= 1 && gridX <= gridNoX - 2 && gridY >= 0 && gridY <= gridNoY) {//move change to the field
+                                scope.drawPlayers[changeDown] = {
+                                    gridX: gridX, //Math.floor((x - offsetX) / gridSizeX),
+                                    gridY: gridY//gridYMath.floor((y - offsetY) / gridSizeY)
+                                };
+                                delete scope.drawChanges[changeDown];
+                                updateChangePos();
 
-								var eventData = {
-									player: changeDown,
-									pos: scope.drawPlayers[changeDown],
-									comment: scope.players[changeDown].nickName + " is in het veld geplaatst"
-								};
-								scope.eventFunction({type: "changeIn", basis: basis, eventData: eventData});
-							}
+                                var eventData = {
+                                    player: changeDown,
+                                    pos: scope.drawPlayers[changeDown],
+                                    comment: scope.players[changeDown].nickName + " is in het veld geplaatst"
+                                };
+                                scope.eventFunction({ type: "changeIn", basis: basis, eventData: eventData });
+                            }
                         }
                     }
                     if (bitMask == 0x6) { // wissel player for change
@@ -402,7 +527,7 @@ app.directive('playingField', function () {
                             pos: scope.drawPlayers[changeDown],
                             comment: scope.players[changeDown].nickName + " komt in het veld voor " + scope.players[playerUp].nickName
                         };
-                        scope.eventFunction({type: "change", basis: basis, eventData: eventData});
+                        scope.eventFunction({ type: "change", basis: basis, eventData: eventData });
                     }
                     if (bitMask == 0x9) { // wissel change for player
                         scope.drawPlayers[changeUp] = scope.drawPlayers[playerDown]; // take over position
@@ -418,31 +543,31 @@ app.directive('playingField', function () {
                             pos1: scope.drawPlayers[changeUp],
                             comment: scope.players[changeUp].nickName + " komt in het veld voor" + scope.players[playerDown].nickName
                         };
-                        scope.eventFunction({type: "change", basis: basis, eventData: eventData});
+                        scope.eventFunction({ type: "change", basis: basis, eventData: eventData });
 
                     }
                     if (bitMask == 0x12) { // event on player
-						var eventData = {
-							player: playerUp,
-						};
-						scope.eventFunction({type: eventDown, basis: basis, eventData: eventData});
+                        var eventData = {
+                            player: playerUp,
+                        };
+                        scope.eventFunction({ type: eventDown, basis: basis, eventData: eventData });
                     }
-					if(bitMask == 0x10){ // event released on noone
-						switch(eventDown) {
-							case "theirGoal":
-								scope.eventFunction({type: eventDown, basis: basis, eventData: {}});
-								break;
-							case "gameEvent":
-								scope.eventFunction({type: eventDown, basis: basis, eventData: {}});
-								break;
-							default: break;
-						}
-					}
+                    if (bitMask == 0x10) { // event released on noone
+                        switch (eventDown) {
+                            case "theirGoal":
+                                scope.eventFunction({ type: eventDown, basis: basis, eventData: {} });
+                                break;
+                            case "gameEvent":
+                                scope.eventFunction({ type: eventDown, basis: basis, eventData: {} });
+                                break;
+                            default: break;
+                        }
+                    }
                     if (bitMask == 0x18) { // event on change
-						var eventData = {
-							player: changeUp,
-						};
-						scope.eventFunction({type: eventDown, basis: basis, eventData: eventData});
+                        var eventData = {
+                            player: changeUp,
+                        };
+                        scope.eventFunction({ type: eventDown, basis: basis, eventData: eventData });
                     }
 
                     updateChangePos();
@@ -489,7 +614,7 @@ app.directive('playingField', function () {
                     context.textAlign = "center";
                     var nickName = "";
                     var shirtNo = "";
-					
+
                     for (var key in scope.drawPlayers) {
                         // skip loop if the property is from prototype
                         if (!scope.drawPlayers.hasOwnProperty(key)) continue;
@@ -497,7 +622,7 @@ app.directive('playingField', function () {
                         if (typeof scope.players[key].nickName !== 'undefined') {
                             nickName = scope.players[key].nickName;
                         }
-						else {
+                        else {
                             nickName = scope.players[key].firstName;
                         }
                         if ((typeof scope.players[key].defaultNumber === 'undefined') || (scope.players[key].defaultNumber !== -1)) {
@@ -509,11 +634,11 @@ app.directive('playingField', function () {
                         if (key != playerDown) {
                             var obj = scope.drawPlayers[key];
                             context.drawImage(shirt, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
-                            context.fillText(shirtNo, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY  * 0.5), gridSizeX);
+                            context.fillText(shirtNo, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY * 0.5), gridSizeX);
                             context.fillText(nickName, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY + 10), gridSizeX * 2);
                         } else {
                             context.drawImage(shirt, moveX, moveY, gridSizeX, gridSizeY);
-                            context.fillText(shirtNo, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY  * 0.5), gridSizeX);
+                            context.fillText(shirtNo, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY * 0.5), gridSizeX);
                             context.fillText(nickName, moveX + gridSizeX * 0.5, moveY + gridSizeY + 10, gridSizeX * 2);
                         }
                     }
@@ -538,56 +663,56 @@ app.directive('playingField', function () {
                             context.fillText(nickName, moveX + gridSizeX * 0.5, moveY + gridSizeY + 10, gridSizeX * 2);
                         }
                     }
-					if(scope.type === 4){ // only show events when type  === 4
-						for (var event in events) {
+                    if (scope.type === 4) { // only show events when type  === 4
+                        for (var event in events) {
                             var image;
-							if (!events.hasOwnProperty(event)) continue;
-							switch(event){
-								case "yellowCard":
-									context.fillStyle = "#FFFF00";
+                            if (!events.hasOwnProperty(event)) continue;
+                            switch (event) {
+                                case "yellowCard":
+                                    context.fillStyle = "#FFFF00";
                                     image = yellowCard;
-								break;
-								case "redCard":
-									context.fillStyle = "#FF0000";
+                                    break;
+                                case "redCard":
+                                    context.fillStyle = "#FF0000";
                                     image = redCard;
                                     break;
-								case "ourGoal":
-									context.fillStyle = "#00FF00";
+                                case "ourGoal":
+                                    context.fillStyle = "#00FF00";
                                     image = ourGoalIcon;
                                     break;
-								case "theirGoal":
-									context.fillStyle = "#0000FF";
+                                case "theirGoal":
+                                    context.fillStyle = "#0000FF";
                                     image = theirGoalIcon;
                                     break;
-								case "gameEvent":
-									context.fillStyle = "#000000";
+                                case "gameEvent":
+                                    context.fillStyle = "#000000";
                                     image = eventIcon;
                                     break;
-							}
-							if (event != eventDown) {
-								var obj = events[event];
-								context.drawImage(image, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY );
+                            }
+                            if (event != eventDown) {
+                                var obj = events[event];
+                                context.drawImage(image, obj.gridX * gridSizeX + offsetX, obj.gridY * gridSizeY + offsetY, gridSizeX, gridSizeY);
                                 context.fillStyle = "#000000";
                                 //context.fillText(event, obj.gridX * gridSizeX + offsetX + (gridSizeX * 0.5), obj.gridY * gridSizeY + (offsetY) + (gridSizeY + 10), gridSizeX);
                             }
-							else {
-								context.drawImage(image, moveX, moveY, gridSizeX, gridSizeY);
-								context.fillStyle = "#000000";
-								//context.fillText(event, moveX, moveY + gridSizeY, gridSizeX);
-							}
-							context.fillStyle = "#000000";
-						}
-					}
+                            else {
+                                context.drawImage(image, moveX, moveY, gridSizeX, gridSizeY);
+                                context.fillStyle = "#000000";
+                                //context.fillText(event, moveX, moveY + gridSizeY, gridSizeX);
+                            }
+                            context.fillStyle = "#000000";
+                        }
+                    }
                 }
                 if (scope.grid) drawGrid(gridSizeX, gridSizeY);
             }
 
             function drawGrid(sizeX, sizeY) {
                 context.fillStyle = '#FF0000';
-                for (var y = (offsetY); y < canvas.height; y += sizeY) {
+                for (var y = (offsetY) ; y < canvas.height; y += sizeY) {
                     context.fillRect(0, y, canvas.width, 1);
                 }
-                for (var x = (offsetX); x < canvas.width; x += sizeX) {
+                for (var x = (offsetX) ; x < canvas.width; x += sizeX) {
                     context.fillRect(x, 0, 1, canvas.height);
                 }
             }
@@ -595,22 +720,26 @@ app.directive('playingField', function () {
             function init() {
                 // init changes position
                 updateChangePos();
-				
-				if(scope.type === 4)
-					updateEventPos();
-				
+
+                if (scope.type === 4)
+                    updateEventPos();
+
                 context = canvas.getContext("2d");
                 sizeCalc();
                 canvas.width = WIDTH;
                 canvas.height = HEIGHT;
+                
                 //console.log(scope.drawPlayers);
                 return setInterval(draw, scope.drawSpeed);
-				
+
             }
 
             init();
 
             function sizeCalc() {
+
+                // perhaps upgrade to : window.getComputedStyle(domEl); later?
+
                 WIDTH = window.innerWidth - 30;// 16 px is padding of  the container
                 HEIGHT = originY / (originX / WIDTH);
                 offsetX = (WIDTH * 0.01); // tuning parameters left offset
@@ -622,7 +751,7 @@ app.directive('playingField', function () {
             function updateChangePos() {
                 var changeIndex = 0;
                 for (player in scope.drawChanges) {
-                    scope.drawChanges[player] = {gridX: 0, gridY: changeIndex};
+                    scope.drawChanges[player] = { gridX: 0, gridY: changeIndex };
                     changeIndex += 2;
                 }
             }
@@ -630,7 +759,7 @@ app.directive('playingField', function () {
             function updateEventPos() {
                 var eventIndex = 0;
                 for (var event in events) {
-                    events[event] = {gridX: 10, gridY: eventIndex};
+                    events[event] = { gridX: 10, gridY: eventIndex };
                     eventIndex += 2;
                 }
             }
@@ -643,6 +772,7 @@ app.directive('playingField', function () {
         }
     }
 });
+
 
 app.directive('playerName', function () {
     return {
