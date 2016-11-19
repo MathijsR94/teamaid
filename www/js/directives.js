@@ -280,7 +280,7 @@ app.directive('playingField', function () {
             savePosChange: '&',
             eventFunction: '&'
         },
-        template: "<div><canvas>",
+        template: "<canvas>",
         link: function (scope, elem, attrs) {
             var originX = 77;
             var originY = 100;
