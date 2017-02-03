@@ -23,6 +23,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 @import "globals/variables";
+@import "playing_field";
 
 html, body, .ionic-body {
   font-family: 'Roboto', sans-serif;
@@ -751,4 +752,8 @@ canvas {
 
 .login button {
   margin-bottom: 10px;
+}
+
+.name span {
+  color: #fff;
 }

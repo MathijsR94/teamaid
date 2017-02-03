@@ -264,7 +264,6 @@ angular.module('starter.GameControllers', [])
         $scope.slideIndex = 0;
         $scope.goToSlide = function(index) {
             $scope.slideIndex = index;
-            $ionicSlideBoxDelegate.slide(index);
         };
 
     })

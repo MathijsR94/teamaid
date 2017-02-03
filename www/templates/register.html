@@ -2,22 +2,22 @@
     <ion-content>
         <div class="row row-center" ng-if="spinner !== true">
             <div class="col col-center">
-                <form name="registerForm" novalidate>
+                <form name="registerForm" novalidate >
 					
-                    <!-- <ion-toggle ng-model="nieuwTeam.checked" ng-change="pushNotificationChange()">
-					<span class="input-label" ng-if="nieuwTeam.checked != true">Bestaand Team</span>
-					<span class="input-label" ng-if="nieuwTeam.checked == true">Nieuw Team</span>
+                    <!-- <ion-toggle ng-model="newTeam" ng-change="pushNotificationChange()">
+					<span class="input-label" ng-if="newTeam != true">Bestaand Team</span>
+					<span class="input-label" ng-if="newTeam == true">Nieuw Team</span>
 					</ion-toggle> -->
-						<h3 ng-if="nieuwTeam.checked == true">Nieuw Team</h3>
-						<h3 ng-if="nieuwTeam.checked != true">Bestaand Team</h3>
+						<h3 ng-if="newTeam == true">Nieuw Team</h3>
+						<h3 ng-if="newTeam != true">Bestaand Team</h3>
 							<label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
-								<span class="input-label" ng-if="nieuwTeam.checked == true">Teamnaam</span>
-								<span class="input-label" ng-if="nieuwTeam.checked != true">Team Referentie</span>
-								<input type="text" ng-model="teamName" name="teamName"/>
+								<span class="input-label" ng-if="newTeam == true">Teamnaam</span>
+								<span class="input-label" ng-if="newTeam != true">Team Referentie</span>
+								<input type="text" ng-model="teamId" name="teamId" ng-disabled="newTeam != true"/>
 							</label>
-						<h3 ng-if="nieuwTeam.checked == true">Beheerder</h3>
-						<h3 ng-if="nieuwTeam.checked != true">Speler</h3>
-                    <div class="list">
+						<h3 ng-if="newTeam == true">Beheerder</h3>
+						<h3 ng-if="newTeam != true">Speler</h3>
+                    <div class="list" ng-hide="isRegistered">
                         <!--Voornaam + validatie-->
                         <label class="item item-input" ng-class="{ 'has-error' : registerForm.$submitted}">
                             <span class="input-label">Voornaam</span>
@@ -48,11 +48,18 @@
                             <input type="password" ng-model="pwd" required/>
                         </label>
                     </div>
+                    <div class="list" ng-if="isRegistered && newTeam == false">
+                       <p>Wil je <player-name player="currentUser" nick-name="false"></player-name> koppelen aan {{ teamName }}?</p>
+                    </div>
+                    <div class="list" ng-if="isRegistered && newTeam == true">
+                        <p><player-name player="currentUser" nick-name="false"></player-name> wordt beheerder van {{ teamId }}</p>
+                    </div>
                     <div>
-                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="createTeam(teamName,nieuwTeam.checked, fn, ln, in, em, pwd)">
-                            Registreren
+                        <button class="button button-block button-greenbricks waves-light waves-effect" ng-click="register(teamId,newTeam, fn, ln, in, em, pwd)">
+                            <span ng-if="newTeam">Nieuw team</span>
+                            <span ng-if="!newTeam">Registreren</span>
                         </button>
-						<img ng-if="spinner === true" id="spinner" ng-src="img/spinner.gif">
+						<!--<img ng-if="spinner === true" id="spinner" ng-src="img/spinner.gif">-->
                     </div>
                 </form>
                 <button class="button button-block button-clear button-stable waves-light waves-effect"
@@ -61,8 +68,8 @@
                 </button>
             </div>
         </div>
-		<div ng-if="spinner === true">
-				<img id="spinner" ng-src="img/spinner.gif">
-		</div>
+		<!--<div ng-if="spinner === true">-->
+				<!--<img id="spinner" ng-src="img/spinner.gif">-->
+		<!--</div>-->
     </ion-content>
 </ion-view>

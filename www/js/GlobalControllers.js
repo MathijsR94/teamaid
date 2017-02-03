@@ -1,18 +1,22 @@
 angular.module('starter.GlobalControllers', [])
 
-    .controller('AppCtrl', function ($scope, User, $ionicBackdrop, $ionicSideMenuDelegate) {
+    .controller('AppCtrl', function ($scope, $rootScope, User, $ionicBackdrop, $ionicSideMenuDelegate, localStorageFactory) {
 
-        // With the new view caching in Ionic, Controllers are only called
-        // when they are recreated or on app start, instead of every page change.
-        // To listen for when this page is active (for example, to refresh data),
-        // listen for the $ionicView.enter event:
-        //$scope.$on('$ionicView.enter', function(e) {
-        //});
 
-        User.getName().then(function (data) {
-            $scope.firstName = data.firstName;
-            $scope.name = data.firstName + " " + data.insertion + " " + data.lastName;
-        })
+            if( localStorageFactory.getSeasonId() !== null)
+                $rootScope.isSeasonSet = true;
+            else
+                $rootScope.isSeasonSet = false;
+
+            User.getName().then(function (data) {
+                $scope.player = data;
+            })
+
+            $rootScope.$watch('seasonSet', function() {
+                if($rootScope.seasonSet == true)
+                    $rootScope.isSeasonSet = $rootScope.seasonSet;
+            })
+
     })
 
 

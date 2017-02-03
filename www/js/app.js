@@ -113,14 +113,17 @@ var app = angular.module('starter', ['ionic',
             .state('register', {
                 url: '/registreren',
                 templateUrl: 'templates/register.html',
-                controller: 'RegisterCtrl'
+                controller: 'RegisterCtrl',
+                cache: false
             })
 
             .state('app', {
                 url: "/app",
                 abstract: true,
                 templateUrl: "templates/menu.html",
-                controller: 'AppCtrl'
+                controller: 'AppCtrl',
+                cache: false
+
             })
             .state('app.home', {
                 url: "/home",
@@ -402,6 +405,6 @@ window.onNotification = function (e) {
     }
 }
 
-window.errorHandler = function(error){
+window.errorHandler = function (error) {
     alert('an error occured');
 }

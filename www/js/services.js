@@ -14,7 +14,7 @@ angular.module('starter.services', [])
         }
     })
 
-    .factory('fireBaseData', function (firebaseRef) {
+    .factory('fireBaseData', function (firebaseRef, localStorageFactory) {
         var ref = firebaseRef.ref();
         return {
             ref: function () {
@@ -24,7 +24,8 @@ angular.module('starter.services', [])
                 return ref.getAuth();
             },
             logout: function () {
-                ref.unauth()
+                localStorageFactory.clear();
+                ref.unauth();
             },
             resetPassword: function (email) {
                 ref.resetPassword({
@@ -74,9 +75,13 @@ angular.module('starter.services', [])
 
     .factory('User', function ($firebaseObject, $firebaseArray, $q, $timeout, firebaseRef) {
         var ref = firebaseRef.ref();
-        var user = ref.getAuth();
-        var accountData = $firebaseObject(ref.child("Users").child(user.uid));
-        var userTeamsRef = ref.child("Users").child(user.uid).child("Teams");
+        var accountData = {};
+        if(ref.getAuth() != null) {
+            console.log('nope');
+            var user = ref.getAuth();
+            accountData = $firebaseObject(ref.child("Users").child(user.uid));
+            var userTeamsRef = ref.child("Users").child(user.uid).child("Teams");
+        }
         return {
             all: function () {
                 return accountData;
@@ -95,7 +100,9 @@ angular.module('starter.services', [])
                 });
                 return deferred.promise;
             },
-
+            getAuth: function() {
+                return ref.getAuth() != null;
+            },
             isAdmin: function (teamId) {
 
                 var admins = $firebaseArray(ref.child("Admins").child(teamId));
@@ -110,11 +117,22 @@ angular.module('starter.services', [])
                 return accountData;
             },
             getName: function () {
+
                 var deferred = $q.defer();
-                accountData.$loaded(function () {
-                    deferred.resolve(accountData);
-                });
+                console.log();
+                if(!(Object.keys(accountData).length === 0 && accountData.constructor === Object)) {
+                    accountData.$loaded(function () {
+                        deferred.resolve(accountData);
+                    });
+                } else {
+                    deferred.resolve(false);
+                }
                 return deferred.promise;
+            },
+            setUser: function(authData) {
+                user = authData;
+                accountData = $firebaseObject(ref.child("Users").child(user.uid));
+                userTeamsRef = ref.child("Users").child(user.uid).child("Teams");
             }
         }
     })
@@ -132,7 +150,6 @@ angular.module('starter.services', [])
                 return teamsRef;
             },
             getTeamName: function (teamId) {
-                //console.log(teamId);
                 var deferred = $q.defer();
                 var team = $firebaseObject(teamsRef.child(teamId));
                 team.$loaded(function () {
@@ -1194,8 +1211,10 @@ angular.module('starter.services', [])
             },
             getEvents: function () {
                 return JSON.parse(localStorage.getItem('events'));
+            },
+            clear: function() {
+                localStorage.clear();
             }
-
         }
     })
 		

@@ -7,17 +7,39 @@ angular.module('starter.LoginControllers', [])
             }
         }
     })
-    .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams, Admins) {
+    .controller('RegisterCtrl', function ($scope, fireBaseData, $state, Teams, Admins, User, $timeout) {
         $scope.spinner = false;
 
+        var usersRef = fireBaseData.ref().child("Users");
+
+        $scope.isRegistered = User.getAuth();
+
+        $scope.newTeam = false;
         // get passed variables from URL
         $scope.URL = window.location.href;
+
+        if($scope.isRegistered) {
+            User.getName().then(function (data) {
+                console.log(data);
+                $scope.currentUser = data;
+            });
+        }
+
         var teamRefPos = $scope.URL.indexOf("TeamRef=");
         if (teamRefPos !== -1) {
-            $scope.teamName = $scope.URL.substr(teamRefPos + 8, 20);
-            if ($scope.teamName.indexOf("&") !== -1)
-                $scope.teamName = $scope.teamName.substr(0, $scope.teamName.indexOf("&"))
+            $scope.teamId = $scope.URL.substr(teamRefPos + 8, 20);
+            if ($scope.teamId.indexOf("&") !== -1) {
+                $scope.teamId = $scope.teamId.substr(0, $scope.teamId.indexOf("&"))
+            }
+            Teams.getTeamName($scope.teamId).then(function (team) {
+                console.log(team);
+                $scope.teamName = team;
+            });
+
+        } else {
+            $scope.newTeam = true;
         }
+
         var emailPos = $scope.URL.indexOf("Email=");
         if (emailPos !== -1) {
             $scope.em = $scope.URL.substr(emailPos + 6);
@@ -25,19 +47,24 @@ angular.module('starter.LoginControllers', [])
                 $scope.em = $scope.em.substr(0, $scope.em.indexOf("&"))
         }
 
-
         //Create user methode
-        $scope.createTeam = function (teamName, newTeam, firstName, lastName, insertion, em, pwd) {
+        $scope.register = function (teamName, newTeam, firstName, lastName, insertion, em, pwd) {
             $scope.spinner = true;
             if (newTeam === true) {
                 // teams can be added  allways
-                $scope.createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
+                if($scope.isRegistered)
+                    $scope.createTeam(teamName,  $scope.currentUser.firstName, $scope.currentUser.lastName, $scope.currentUser.insertion, $scope.currentUser.$id);
+                else
+                    $scope.createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
             }
             else {
                 // teamRef must be a key in the DB
                 fireBaseData.ref().child("Teams").once('value', function (snapshot) {
                     if (snapshot.hasChild(teamName)) {
-                        $scope.createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
+                        if($scope.isRegistered)
+                            $scope.linkToExistingTeam();
+                        else
+                            $scope.createNewUser(teamName, newTeam, firstName, lastName, insertion, em, pwd);
                     }
                     else {
                         $scope.spinner = false;
@@ -87,23 +114,7 @@ angular.module('starter.LoginControllers', [])
                                 });
 
                                 if (newTeam === true) {
-                                    $scope.getTeamId = Teams.addTeam(teamName);
-                                    $scope.getTeamId.then(function (data) {
-                                        var teamId = data.$id;
-
-                                        // link User to team
-                                        Teams.linkPlayer(teamId, firstName, ins, lastName, uid);
-
-                                        // add team to User
-                                        var usrTeams = {};
-                                        usrTeams[teamId] = true;
-                                        usersRef.child(uid).child("Teams").set(usrTeams);
-
-                                        //add admin position
-                                        Admins.linkAdmin(teamId, uid);
-
-                                        $state.go('app.home');
-                                    });
+                                    $scope.createTeam(teamName, firstName, lastName, ins, uid);
                                 }
                                 else {
                                     var teamId = teamName;
@@ -117,7 +128,9 @@ angular.module('starter.LoginControllers', [])
                                     usrTeams[teamId] = true;
                                     usersRef.child(uid).child("Teams").set(usrTeams);
 
-                                    $state.go('app.home');
+                                    $timeout(function() {
+                                        $state.go('app.home');
+                                    }, 2000);
                                 }
 
                             }
@@ -135,13 +148,53 @@ angular.module('starter.LoginControllers', [])
                 alert('Vul alle gegevens in!');
             }
         }
+
+        $scope.linkToExistingTeam = function () {
+            var ins = "";
+            if (typeof $scope.currentUser.ins == "undefined") $scope.currentUser.ins = ins;
+            var teamId = $scope.teamId;
+            console.log(teamId, $scope.currentUser.firstName, $scope.currentUser.ins, $scope.currentUser.lastName, $scope.currentUser.$id);
+
+
+            // link User to team
+            Teams.linkPlayer(teamId, $scope.currentUser.firstName, $scope.currentUser.ins, $scope.currentUser.lastName, $scope.currentUser.$id);
+
+            // add team to User
+            var usrTeams = {};
+            usrTeams[teamId] = true;
+            usersRef.child($scope.currentUser.$id).child("Teams").update(usrTeams);
+            //
+            $state.go('app.home');
+        }
+
+        $scope.createTeam = function(teamName, firstName, lastName, insertion, uid) {
+            $scope.getTeamId = Teams.addTeam(teamName);
+            $scope.getTeamId.then(function (data) {
+                var teamId = data.$id;
+
+                // link User to team
+                Teams.linkPlayer(teamId, firstName, insertion, lastName, uid);
+
+                // add team to User
+                var usrTeams = {};
+                usrTeams[teamId] = true;
+                usersRef.child(uid).child("Teams").update(usrTeams);
+
+                //add admin position
+                Admins.linkAdmin(teamId, uid);
+
+                $state.go('app.home');
+            });
+        }
     })
 
-    .controller('LoginCtrl', function ($scope, firebaseRef, $state) {
+
+    .controller('LoginCtrl', function ($scope, firebaseRef, $state, User) {
 
         firebaseRef.ref().onAuth(function (authData) {
             if (authData) {
                 console.log("Authenticated with uid:", authData.uid);
+                User.setUser(authData);
                 $state.go('app.home');
             } else {
                 console.log("Client unauthenticated.")
@@ -158,7 +211,7 @@ angular.module('starter.LoginControllers', [])
                         $state.go('app.home');
                     }
                     else {
-
+                        console.log(error);
                     }
                 })
             }

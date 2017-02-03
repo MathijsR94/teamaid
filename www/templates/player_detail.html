@@ -1,7 +1,9 @@
 <ion-view view-title="Statistieken">
     <ion-content>
         <div class="header">
-            <h1 class="center"><player-name player='players[playerId]' nick-name='useNickNames'></player-name></h1>
+            <h1 class="center">
+                <player-name player='players[playerId]' nick-name='useNickNames'></player-name>
+            </h1>
         </div>
         <ion-list>
             <div class="item" ng-click="toggleGroup('%')"
@@ -11,10 +13,18 @@
                    ng-class="isGroupShown('%') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
             </div>
             <div ng-show="isGroupShown('%')">
-                <div class="item row"><div class="col float-left"><b>Games present:  {{ playerStats.totGamePresent }}</b> </div></div>
-                <div class="item row"><div class="col float-left"><b> Maximum minuten: {{ playerStats.maxGameTime }}</b> </div></div>
-                <div class="item row"><div class="col float-left"><b> Gespeelde minuten: {{ playerStats.totGameTime }}</b> </div></div>
-                <div class="item row"><div class="col float-left"><b> Aantal wisselbeurten: {{ playerStats.totChanges }}</b> </div></div>
+                <div class="item row">
+                    <div class="col float-left"><b>Games present: {{ playerStats.totGamePresent }}</b></div>
+                </div>
+                <div class="item row">
+                    <div class="col float-left"><b> Maximum minuten: {{ playerStats.maxGameTime }}</b></div>
+                </div>
+                <div class="item row">
+                    <div class="col float-left"><b> Gespeelde minuten: {{ playerStats.totGameTime }}</b></div>
+                </div>
+                <div class="item row">
+                    <div class="col float-left"><b> Aantal wisselbeurten: {{ playerStats.totChanges }}</b></div>
+                </div>
             </div>
             <div class="item" ng-click="toggleGroup('gameTime')"
                  ng-class="{active: isGroupShown('gameTime')}">
@@ -46,7 +56,7 @@
                         {{games[item.game].away}}
                     </b>
                 </div>
-                <div class="col float-left">Goal: {{ item.date | date:'dd-MM-yyyy' }} </div>
+                <div class="col float-left">Goal: {{ item.date | date:'dd-MM-yyyy' }}</div>
                 <div class="col float-left">{{statistics[item.game].GameLog[item.gamelogId].comment}}</div>
 
             </div>
@@ -57,15 +67,29 @@
             </div>
             <div class="item" ng-repeat="item in playerStats.cardsList | orderObjectBy:'date'"
                  ng-show="isGroupShown('cards')">
-                <div class="col float-left"><span ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'yellow'"> Geel: </span></div>
-                <div class="col float-left"><span ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'yellow2'"> 2e Geel: </span></div>
-                <div class="col float-left"><span ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'red'"> Rood: </span></div>
+                <div class="col float-left"><span
+                        ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'yellow'"> Geel: </span>
+                </div>
+                <div class="col float-left"><span
+                        ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'yellow2'"> 2e Geel: </span>
+                </div>
+                <div class="col float-left"><span
+                        ng-if="statistics[item.game].GameLog[item.gamelogId].statsType === 'red'"> Rood: </span></div>
                 <div class="col float-left"><b> {{games[item.game].home}} vs {{games[item.game].away}} </b></div>
-                <div class="col float-left">{{ item.date | date:'dd-MM-yyyy' }} </div>
+                <div class="col float-left">{{ item.date | date:'dd-MM-yyyy' }}</div>
                 <div class="col float-left">{{statistics[item.game].GameLog[item.gamelogId].comment}}</div>
+            </div>
+
+            <div class="item" ng-click="toggleGroup('heatmap')" ng-class="{active: isGroupShown('heatmap')}">
+                <span class="highlight">Heatmap</span>
+                <i class="icon float-right"
+                   ng-class="isGroupShown('heatmap') ? 'ion-android-arrow-dropright-circle' : 'ion-android-arrow-dropdown-circle'"></i>
+            </div>
+            <div>
+                <heat-field heatmap-data="heatmapData" heatmap-config="heatmapConfig" grid="false"
+                            ng-show="isGroupShown('heatmap')"></heat-field>
             </div>
         </ion-list>
 
-        <heat-field heatmap-data="heatmapData" heatmap-config="heatmapConfig" grid="false"></heat-field>
     </ion-content>
 </ion-view>
