@@ -342,17 +342,18 @@ angular.module('starter.PlayerControllers', [])
                 var keys = playerExt.split("?key?");
                 var gameId = keys[0];
                 var extId = keys[1];
-                Attendance.addAttendance("present", "Games", playerInt, gameId, $scope.teamId, []); // player must be set to present!
+                console.log(keys, gameId, extId);
+                Attendance.addAttendance("present", "Games", playerInt, gameId, $scope.teamId,$scope.seasonId, []); // player must be set to present!
                 //basis must be updated
                 var basis = $scope.statistics[gameId].Basis;
                 console.log(basis[extId]);
                 if (typeof basis[extId] !== 'undefined') {
                     basis[playerInt] = basis[extId];
                     delete basis[extId];
-                    firebaseRef.ref().child("Statistics").child($scope.teamId).child(gameId).child("Basis").set(basis);
+                    firebaseRef.ref().child("Statistics").child($scope.teamId).child($scope.seasonId).child(gameId).child("Basis").set(basis);
                 }
-
-                //gamelog Must be  updaed and any reference to External key must be updated
+             
+                //gamelog Must be  updated and any reference to External key must be updated
                 var gameLog = $scope.statistics[gameId].GameLog;
                 for (item in gameLog) {
                     var updated = false;
@@ -385,10 +386,10 @@ angular.module('starter.PlayerControllers', [])
                         }
                     }
                     if (updated === true)
-                        firebaseRef.ref().child("Statistics").child($scope.teamId).child(gameId).child("GameLog").child(item).update(gameLog[item]);
+                        firebaseRef.ref().child("Statistics").child($scope.teamId).child($scope.seasonId).child(gameId).child("GameLog").child(item).update(gameLog[item]);
                 }
 
-                firebaseRef.ref().child("Statistics").child($scope.teamId).child(gameId).child("externalPlayers").child(extId).update({firstName: "<removed>"});
+                firebaseRef.ref().child("Statistics").child($scope.teamId).child($scope.seasonId).child(gameId).child("externalPlayers").child(extId).update({ firstName: "<removed>" });
 
             }
 
